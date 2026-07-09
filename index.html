@@ -904,7 +904,9 @@
     overflow: hidden;
     pointer-events: none;
     z-index: 1;
-    opacity: calc(1 - var(--nite));
+    /* full flocks all day AND through the sunset; they only roost once real
+       night falls (fade runs nite 0.55 -> 0.85 instead of linearly from 0) */
+    opacity: clamp(0, calc((0.85 - var(--nite)) / 0.3), 1);
   }
   .skein {
     position: absolute;
@@ -942,16 +944,16 @@
   @keyframes migrate-lr {
     0%   { transform: translate(var(--x0), var(--y0)); opacity: 0; }
     2%   { opacity: 1; }
-    82%  { opacity: 1; }
-    84%  { transform: translate(var(--x1), var(--y1)); opacity: 0; }
+    94%  { opacity: 1; }
+    96%  { transform: translate(var(--x1), var(--y1)); opacity: 0; }
     100% { transform: translate(var(--x1), var(--y1)); opacity: 0; }
   }
   /* opposite direction: enters from the right edge, exits left */
   @keyframes migrate-rl {
     0%   { transform: translate(var(--x0), var(--y0)); opacity: 0; }
     2%   { opacity: 1; }
-    82%  { opacity: 1; }
-    84%  { transform: translate(var(--x1), var(--y1)); opacity: 0; }
+    94%  { opacity: 1; }
+    96%  { transform: translate(var(--x1), var(--y1)); opacity: 0; }
     100% { transform: translate(var(--x1), var(--y1)); opacity: 0; }
   }
 
