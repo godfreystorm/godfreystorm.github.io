@@ -1,0 +1,2227 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Godfrey Osagiede — Payments engineer by day, founder by night</title>
+<meta name="description" content="Godfrey Osagiede — payments engineer at LineLeader by day, building FocusDown and Throwda by night. AI-agent-driven product engineering.">
+<meta property="og:title" content="Godfrey Osagiede — Payments engineer by day, founder by night">
+<meta property="og:description" content="I own Adyen payment operations across 8,000+ stores in production — then go home and ship revenue-generating products end-to-end.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Godfrey Osagiede — Payments engineer by day, founder by night">
+<meta name="twitter:description" content="I own Adyen payment operations across 8,000+ stores in production — then go home and ship revenue-generating products end-to-end.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --nite: 0;
+    --nite-ink: 0; /* steepened curve for text: stays dark through early dusk, then flips decisively */
+    --dusk: 0;     /* sin(pi * nite): peaks at the dusk midpoint, 0 at both ends */
+    --day-bg: #FDF8F3;
+    --day-ink: #2A1E17;
+    --day-tangerine: #E8621A;
+    --day-amber: #F5A623;
+    --night-bg: #0E0D16;
+    --night-ink: #F4EEE4;
+    --night-tangerine: #FF7A33;
+    --night-amber: #FFC24D;
+
+    --bg: color-mix(in oklab, var(--day-bg), var(--night-bg) calc(var(--nite) * 100%));
+    --ink: color-mix(in oklab, var(--day-ink), var(--night-ink) calc(var(--nite-ink) * 100%));
+    --tangerine: color-mix(in oklab, var(--day-tangerine), var(--night-tangerine) calc(var(--nite) * 100%));
+    --amber: color-mix(in oklab, var(--day-amber), var(--night-amber) calc(var(--nite) * 100%));
+    --ink-fade: color-mix(in oklab, var(--ink), transparent 45%);
+    --ink-faint: color-mix(in oklab, var(--ink), transparent 78%);
+    --card-bg: color-mix(in oklab, var(--bg), var(--ink) calc(4% + var(--nite) * 4%));
+    --border: color-mix(in oklab, var(--ink), transparent 85%);
+
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    --space-4: 2.5rem;
+    --space-5: 4rem;
+    --space-6: 6rem;
+    --space-7: 9rem;
+    --container: 1200px;
+  }
+
+  * { box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    /* NOTE: no transition on background — it is a color-mix() driven per-frame by
+       --nite; Chrome fails to re-resolve a transitioned shorthand whose inputs only
+       change via custom properties, wedging the paint at the initial day value. */
+  }
+
+  ::selection { background: var(--day-tangerine); color: #FDF8F3; }
+
+  a { color: inherit; }
+
+  h1, h2, h3 { font-family: 'Fraunces', serif; margin: 0; }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+
+  .container {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+  }
+
+  img, svg { max-width: 100%; display: block; }
+
+  /* ---------- grain overlay ---------- */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 5;
+    pointer-events: none;
+    opacity: 0.035;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  /* ---------- sky glow ---------- */
+  .sky-glow {
+    position: fixed;
+    top: -10vw;
+    right: -10vw;
+    width: 50vw;
+    height: 50vw;
+    max-width: 700px;
+    max-height: 700px;
+    border-radius: 50%;
+    background: radial-gradient(circle, color-mix(in oklab, var(--day-tangerine), transparent 78%) 0%, transparent 70%);
+    opacity: calc(1 - var(--nite));
+    z-index: 0;
+    pointer-events: none;
+    transition: opacity 0.1s linear;
+  }
+
+  /* ---------- sunset veil (dusk warmth: amber horizon -> dusty rose -> plum) ---------- */
+  .sunset-veil {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: var(--dusk);
+    transition: opacity 0.1s linear;
+    background:
+      radial-gradient(ellipse 90vw 55vh at 68% 105%, rgba(232, 98, 26, 0.42) 0%, rgba(245, 166, 35, 0.26) 32%, transparent 68%),
+      linear-gradient(to top,
+        rgba(224, 110, 40, 0.30) 0%,
+        rgba(209, 116, 96, 0.20) 26%,
+        rgba(158, 94, 134, 0.16) 56%,
+        rgba(88, 66, 122, 0.20) 82%,
+        rgba(64, 52, 106, 0.24) 100%);
+  }
+
+  /* ---------- sun / moon ---------- */
+  .celestial-wrap {
+    position: fixed;
+    top: 6vh;
+    right: 8vw;
+    z-index: 1;
+    pointer-events: none;
+    transform: translate(calc(var(--nite) * -14vw), calc(var(--nite) * 34vh));
+    transition: transform 0.1s linear;
+  }
+  .celestial {
+    position: relative;
+    width: 120px;
+    height: 120px;
+  }
+  .celestial .sun,
+  .celestial .moon {
+    position: absolute;
+    inset: 0;
+    border-radius: 50%;
+    transition: opacity 0.1s linear;
+  }
+  .celestial .sun {
+    background: radial-gradient(circle at 35% 30%, var(--day-amber), var(--day-tangerine) 75%);
+    box-shadow: 0 0 90px 20px color-mix(in oklab, var(--day-tangerine), transparent 55%);
+    opacity: calc(1 - var(--nite));
+  }
+  .celestial .moon {
+    background: radial-gradient(circle at 35% 30%, #F4F1E8, #E8E2D6 75%);
+    box-shadow: 0 0 70px 14px color-mix(in oklab, #9FB4D9, transparent 65%);
+    opacity: var(--nite);
+  }
+  .celestial .crater {
+    position: absolute;
+    border-radius: 50%;
+    background: color-mix(in oklab, #C9C2AF, transparent 20%);
+  }
+  .crater.c1 { width: 22px; height: 22px; top: 24px; left: 30px; }
+  .crater.c2 { width: 14px; height: 14px; top: 62px; left: 68px; }
+  .crater.c3 { width: 10px; height: 10px; top: 40px; left: 76px; }
+
+  /* ---------- stars canvas ---------- */
+  #stars {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: var(--nite);
+    transition: opacity 0.15s linear;
+  }
+
+  main, header, footer { position: relative; z-index: 2; }
+
+  /* ---------- nav ---------- */
+  .site-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-3) var(--space-4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: color-mix(in oklab, var(--bg), transparent 22%);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-mono {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.4rem;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+  }
+  .nav-links {
+    display: flex;
+    gap: var(--space-4);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+  .nav-links a {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.14em;
+    text-decoration: none;
+    color: var(--ink-fade);
+    position: relative;
+    padding-bottom: 4px;
+    /* no transition on color: value comes from the --nite-driven color-mix chain */
+  }
+  .nav-links a::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 100%;
+    bottom: 0;
+    height: 1px;
+    background: var(--tangerine);
+    transition: right 0.3s cubic-bezier(0.22,1,0.36,1);
+  }
+  .nav-links a:hover,
+  .nav-links a:focus-visible {
+    color: var(--ink);
+  }
+  .nav-links a:hover::after,
+  .nav-links a:focus-visible::after { right: 0; }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--tangerine);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------- hero ---------- */
+  .hero {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding-top: 6rem;
+    position: relative;
+  }
+  .eyebrow {
+    font-size: 0.76rem;
+    color: var(--tangerine);
+    margin-bottom: var(--space-3);
+    display: inline-block;
+  }
+  .hero-heading {
+    font-size: clamp(2.6rem, 10vw, 9rem);
+    font-weight: 620;
+    line-height: 0.98;
+    letter-spacing: -0.02em;
+    overflow: hidden;
+  }
+  .hero-heading span {
+    display: block;
+    opacity: 0;
+    transform: translateY(100%);
+    animation: rise 1s cubic-bezier(0.22,1,0.36,1) forwards;
+  }
+  .hero-heading span:nth-child(2) { animation-delay: 0.14s; }
+  @keyframes rise {
+    to { opacity: 1; transform: translateY(0); }
+  }
+  .hero-tagline {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.4rem, 3vw, 2.2rem);
+    margin-top: var(--space-4);
+    max-width: 40ch;
+  }
+  .hero-tagline .accent { color: var(--tangerine); font-weight: 600; }
+  .hero-sub {
+    max-width: 65ch;
+    margin-top: var(--space-4);
+    font-size: 1.08rem;
+    color: var(--ink-fade);
+  }
+  .scroll-cue {
+    margin-top: var(--space-6);
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+  .scroll-cue .line {
+    width: 1px;
+    height: 42px;
+    background: var(--ink-faint);
+    position: relative;
+    overflow: hidden;
+  }
+  .scroll-cue .line::after {
+    content: '';
+    position: absolute;
+    top: -100%;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: var(--tangerine);
+    animation: pulse-line 2.2s ease-in-out infinite;
+  }
+  @keyframes pulse-line {
+    0% { top: -100%; }
+    60% { top: 100%; }
+    100% { top: 100%; }
+  }
+  .scroll-cue span {
+    font-size: 0.68rem;
+    color: var(--ink-fade);
+    animation: pulse-opacity 2.6s ease-in-out infinite;
+  }
+  @keyframes pulse-opacity {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 1; }
+  }
+
+  /* ---------- marquee ---------- */
+  .marquee-wrap {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    overflow: hidden;
+    padding: var(--space-3) 0;
+    background: color-mix(in oklab, var(--bg), var(--ink) 2%);
+  }
+  .marquee-track {
+    display: flex;
+    width: max-content;
+    animation: marquee 38s linear infinite;
+  }
+  .marquee-track span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    padding: 0 var(--space-3);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--ink-fade);
+  }
+  .marquee-track svg { flex-shrink: 0; }
+  @keyframes marquee {
+    from { transform: translateX(0); }
+    to { transform: translateX(-50%); }
+  }
+
+  /* ---------- section header ---------- */
+  .section-head {
+    position: relative;
+    margin-bottom: var(--space-6);
+    padding-top: var(--space-2);
+  }
+  .section-head .big-num {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(6rem, 18vw, 13rem);
+    font-weight: 500;
+    line-height: 1;
+    color: transparent;
+    -webkit-text-stroke: 1px var(--ink-faint);
+    position: absolute;
+    top: -3.5rem;
+    left: -0.5rem;
+    z-index: -1;
+    user-select: none;
+  }
+  .section-head h2 {
+    font-size: clamp(2.4rem, 6vw, 4.4rem);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: var(--space-2);
+  }
+  .section-head .eyebrow { margin-bottom: 0; margin-top: var(--space-2); }
+
+  section {
+    padding: var(--space-7) 0;
+    position: relative;
+  }
+
+  .lede {
+    max-width: 68ch;
+    font-size: 1.15rem;
+    color: var(--ink-fade);
+    margin-bottom: var(--space-5);
+  }
+
+  /* ---------- reveal ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(28px);
+    transition: opacity 0.8s cubic-bezier(0.22,1,0.36,1), transform 0.8s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* ---------- stat grid ---------- */
+  .stat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+    margin-bottom: var(--space-6);
+  }
+  .stat-cell {
+    background: var(--bg);
+    padding: var(--space-4);
+  }
+  .stat-num {
+    font-family: 'Fraunces', serif;
+    font-size: clamp(2.2rem, 5vw, 3.6rem);
+    font-weight: 600;
+    color: var(--tangerine);
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+  .stat-label {
+    margin-top: var(--space-2);
+    font-size: 0.82rem;
+    color: var(--ink-fade);
+    max-width: 32ch;
+  }
+
+  /* ---------- pipeline ---------- */
+  .pipeline {
+    position: relative;
+    margin: var(--space-6) 0 var(--space-3);
+  }
+  .pipeline-track {
+    display: flex;
+    justify-content: space-between;
+    position: relative;
+    gap: var(--space-2);
+  }
+  .pipeline-track::before {
+    content: '';
+    position: absolute;
+    top: 9px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--ink-faint);
+    z-index: 0;
+  }
+  .pipeline-step {
+    position: relative;
+    z-index: 1;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-2);
+    opacity: 0;
+    transform: translateY(16px);
+    transition: opacity 0.6s cubic-bezier(0.22,1,0.36,1), transform 0.6s cubic-bezier(0.22,1,0.36,1);
+  }
+  .pipeline-step.in { opacity: 1; transform: translateY(0); }
+  .pipeline-step .dot {
+    width: 19px;
+    height: 19px;
+    border-radius: 50%;
+    background: var(--bg);
+    border: 1px solid var(--tangerine);
+  }
+  .pipeline-step .mono {
+    font-size: 0.62rem;
+    color: var(--ink-fade);
+    max-width: 16ch;
+  }
+  .pipeline-caption {
+    margin-top: var(--space-4);
+    font-size: 0.85rem;
+    color: var(--ink-faint);
+    font-style: italic;
+    font-family: 'Fraunces', serif;
+  }
+
+  /* ---------- dusk interlude ---------- */
+  .dusk {
+    min-height: 120vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: var(--space-6) var(--space-4);
+  }
+  .dusk-line {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.8rem, 6vw, 4.2rem);
+    max-width: 18ch;
+  }
+  .dusk-line .word {
+    display: inline-block;
+    opacity: 0.08;
+    transition: opacity 0.4s ease;
+  }
+  .dusk-line .word.lit { opacity: 1; }
+  .dusk-sub {
+    margin-top: var(--space-5);
+    font-size: 0.72rem;
+    color: var(--ink-fade);
+  }
+
+  /* ---------- panels ---------- */
+  .panels { display: flex; flex-direction: column; gap: var(--space-6); }
+  .panel {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+    align-items: center;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    padding: var(--space-5);
+    transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease; /* border-color excluded: --nite-driven color-mix */
+  }
+  .panel:hover {
+    transform: translateY(-4px);
+    border-color: var(--tangerine);
+    box-shadow: 0 24px 60px -20px color-mix(in oklab, var(--tangerine), transparent 60%);
+  }
+  .panel:nth-child(even) { grid-template-columns: 1fr 1fr; }
+  .panel:nth-child(even) .panel-visual { order: 2; }
+  .panel-title {
+    font-size: clamp(1.8rem, 3.6vw, 2.6rem);
+    font-weight: 600;
+    margin: var(--space-2) 0 var(--space-3);
+    letter-spacing: -0.01em;
+  }
+  .panel-copy {
+    color: var(--ink-fade);
+    margin-bottom: var(--space-3);
+    font-size: 1rem;
+  }
+  .panel-stats {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: var(--space-3);
+    color: var(--ink);
+  }
+  .panel-stats span { white-space: nowrap; }
+  .panel-callout {
+    border-left: 2px solid var(--tangerine);
+    padding-left: var(--space-3);
+    margin: var(--space-3) 0;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.05rem;
+  }
+  .panel-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: var(--space-2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--tangerine);
+  }
+  .panel-link svg { transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
+  .panel-link:hover svg { transform: translateX(6px); }
+  .panel-visual {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    min-height: 220px;
+  }
+  .orbit {
+    position: relative;
+    width: 160px;
+    height: 160px;
+  }
+  .orbit .globe {
+    position: absolute;
+    inset: 0;
+    margin: auto;
+    width: 100px;
+    height: 100px;
+  }
+  .orbit .ring {
+    position: absolute;
+    inset: 0;
+    border: 1px solid var(--ink-faint);
+    border-radius: 50%;
+    animation: spin 16s linear infinite;
+  }
+  .orbit .ring.r2 { inset: -22px; animation-duration: 24s; animation-direction: reverse; }
+  .orbit .dot-orbit {
+    position: absolute;
+    top: -3px;
+    left: 50%;
+    width: 6px;
+    height: 6px;
+    background: var(--tangerine);
+    border-radius: 50%;
+    transform: translateX(-50%);
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  .ledger-visual {
+    width: 100%;
+    max-width: 260px;
+  }
+
+  /* ---------- method ---------- */
+  .principle-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: var(--space-4);
+    margin-top: var(--space-5);
+  }
+  .principle-card {
+    border: 1px solid var(--border);
+    padding: var(--space-4);
+    background: var(--card-bg);
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1); /* border-color excluded: --nite-driven color-mix */
+  }
+  .principle-card:hover {
+    transform: translateY(-4px);
+    border-color: var(--tangerine);
+  }
+  .principle-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    color: var(--ink-faint);
+  }
+  .principle-card svg { margin: var(--space-3) 0; }
+  .principle-quote {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 1.2rem;
+    line-height: 1.35;
+  }
+  .principle-desc {
+    margin-top: var(--space-2);
+    font-size: 0.92rem;
+    color: var(--ink-fade);
+  }
+
+  /* ---------- contact ---------- */
+  .contact-section { text-align: left; }
+  .contact-line {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: clamp(1.6rem, 4vw, 2.6rem);
+    max-width: 20ch;
+    margin-bottom: var(--space-5);
+  }
+  .email-link {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: clamp(1.6rem, 7vw, 4rem);
+    color: var(--tangerine);
+    text-decoration: none;
+    display: inline-block;
+    position: relative;
+    word-break: break-word;
+  }
+  .email-link::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    bottom: -0.06em;
+    width: 100%;
+    height: 2px;
+    background: var(--tangerine);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.45s cubic-bezier(0.22,1,0.36,1);
+  }
+  .email-link:hover::after { transform: scaleX(1); }
+
+  .icon-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    margin-top: var(--space-6);
+  }
+  .icon-link {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    text-decoration: none;
+    color: var(--ink-fade);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    transition: transform 0.25s ease; /* color excluded: --nite-driven color-mix */
+  }
+  .icon-link:hover { color: var(--tangerine); transform: translateY(-2px); }
+  .icon-link svg { flex-shrink: 0; }
+
+  footer {
+    border-top: 1px solid var(--border);
+    padding: var(--space-4);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+  }
+  footer .foot-right {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+  }
+
+  /* ---------- clouds ---------- */
+  .cloud-layer {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+  }
+  .cloud {
+    position: absolute;
+    border-radius: 50%;
+    background: radial-gradient(ellipse at center, color-mix(in oklab, var(--day-bg), #fff 40%), transparent 72%);
+    filter: blur(28px);
+    opacity: calc((1 - var(--nite)) * 0.11);
+    will-change: transform;
+  }
+  .cloud-1 { width: 46vw; height: 14vw; top: 12%; left: -20vw; animation: drift-1 165s linear infinite; }
+  .cloud-2 { width: 34vw; height: 11vw; top: 28%; left: -30vw; animation: drift-2 190s linear infinite; animation-delay: -40s; }
+  .cloud-3 { width: 26vw; height: 9vw; top: 6%; left: -15vw; animation: drift-3 145s linear infinite; animation-delay: -80s; }
+  @keyframes drift-1 { to { transform: translateX(160vw); } }
+  @keyframes drift-2 { to { transform: translateX(170vw); } }
+  @keyframes drift-3 { to { transform: translateX(150vw); } }
+
+  /* ---------- birds ---------- */
+  .birds-flock {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    pointer-events: none;
+    z-index: 0;
+    opacity: calc(1 - var(--nite));
+  }
+  .bird {
+    position: absolute;
+    top: 18%;
+    left: -6%;
+    color: var(--ink-faint);
+    animation: fly-across 42s linear infinite;
+  }
+  .bird path { stroke: currentColor; }
+  .bird.b1 { top: 14%; animation-duration: 46s; animation-delay: 0s; }
+  .bird.b2 { top: 20%; animation-duration: 51s; animation-delay: 9s; }
+  .bird.b3 { top: 11%; animation-duration: 44s; animation-delay: 21s; }
+  .bird.b4 { top: 24%; animation-duration: 55s; animation-delay: 31s; }
+  .bird.b5 { top: 17%; animation-duration: 48s; animation-delay: 14s; }
+  @keyframes fly-across {
+    0% { transform: translate(0, 0); }
+    50% { transform: translate(65vw, -3vh); }
+    100% { transform: translate(132vw, 2vh); }
+  }
+
+  /* ---------- per-letter hero name ---------- */
+  .hero-heading .line {
+    display: block;
+    overflow: hidden;
+  }
+  .hero-heading .letter {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(100%) rotate(2deg);
+    animation: rise-letter 0.7s cubic-bezier(0.22,1,0.36,1) forwards;
+    animation-delay: var(--ld, 0ms);
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1);
+    transition-delay: var(--hd, 0ms);
+  }
+  @keyframes rise-letter {
+    to { opacity: 1; transform: translateY(0) rotate(0deg); }
+  }
+  .hero-heading .letter.lift { transform: translateY(-6px); }
+
+  /* ---------- custom cursor ---------- */
+  .cursor-dot, .cursor-ring {
+    position: fixed;
+    top: 0;
+    left: 0;
+    pointer-events: none;
+    z-index: 999;
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    opacity: 0;
+    transition: opacity 0.2s ease, width 0.25s cubic-bezier(0.22,1,0.36,1), height 0.25s cubic-bezier(0.22,1,0.36,1);
+  }
+  .cursor-dot {
+    width: 6px;
+    height: 6px;
+    background: var(--tangerine);
+  }
+  .cursor-ring {
+    width: 28px;
+    height: 28px;
+    border: 1px solid var(--tangerine);
+  }
+  .cursor-dot.active, .cursor-ring.active { opacity: 1; }
+  .cursor-ring.magnetic { width: 50px; height: 50px; opacity: 0.55; }
+  .cursor-ring.hidden-cursor, .cursor-dot.hidden-cursor { opacity: 0 !important; }
+  @media (pointer: fine) {
+    body.custom-cursor-on, body.custom-cursor-on a, body.custom-cursor-on button { cursor: none; }
+  }
+
+  /* ---------- magnetic elements ---------- */
+  .magnetic { transition: transform 0.35s cubic-bezier(0.22,1,0.36,1); }
+
+  /* ---------- vault graph ---------- */
+  .vault-lede-wrap { max-width: 68ch; }
+  .vault-canvas-wrap {
+    position: relative;
+    width: 100vw;
+    left: 50%;
+    right: 50%;
+    margin-left: -50vw;
+    margin-right: -50vw;
+    height: 85vh;
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    background: transparent;
+    overflow: hidden;
+  }
+  #vault-canvas {
+    display: block;
+    width: 100%;
+    height: 100%;
+    cursor: grab;
+    touch-action: none;
+  }
+  #vault-canvas.dragging { cursor: grabbing; }
+  .vault-hint {
+    position: absolute;
+    left: var(--space-4);
+    bottom: var(--space-3);
+    font-size: 0.62rem;
+    color: var(--ink-faint);
+    pointer-events: none;
+    z-index: 2;
+  }
+
+  .vault-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    height: 100%;
+    width: min(420px, 92vw);
+    background: color-mix(in oklab, var(--bg), var(--ink) 5%);
+    border-left: 1px solid var(--border);
+    box-shadow: -30px 0 80px -30px rgba(0,0,0,0.4);
+    z-index: 200;
+    padding: var(--space-5) var(--space-4);
+    transform: translateX(100%);
+    transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+    overflow-y: auto;
+  }
+  .vault-panel.open { transform: translateX(0); }
+  .vault-panel-close {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    background: none;
+    border: 1px solid var(--border);
+    border-radius: 50%;
+    width: 34px;
+    height: 34px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--ink);
+    cursor: pointer;
+  }
+  .vault-panel-close:hover { border-color: var(--tangerine); color: var(--tangerine); }
+  .vault-panel-meta {
+    font-size: 0.68rem;
+    color: var(--tangerine);
+    margin-top: var(--space-4);
+    display: block;
+  }
+  .vault-panel-title {
+    font-size: clamp(1.6rem, 3.4vw, 2.2rem);
+    font-weight: 600;
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-3);
+    letter-spacing: -0.01em;
+  }
+  .vault-panel-story {
+    color: var(--ink-fade);
+    font-size: 0.98rem;
+    line-height: 1.65;
+  }
+  .vault-panel-link[hidden] { display: none; }
+  .vault-panel-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    margin-top: var(--space-4);
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.76rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: var(--tangerine);
+  }
+  .vault-panel-link svg { transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
+  .vault-panel-link:hover svg { transform: translateX(6px); }
+  .vault-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.25);
+    z-index: 150;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  .vault-backdrop.open { opacity: 1; pointer-events: auto; }
+
+  @media (max-width: 900px) {
+    .vault-canvas-wrap { height: 70vh; }
+    .vault-panel { top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: min(72vh, 560px); transform: translateY(100%); border-left: none; border-top: 1px solid var(--border); }
+    .vault-panel.open { transform: translateY(0); }
+  }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 900px) {
+    .celestial-wrap { top: 3vh; right: 4vw; }
+    .celestial, .celestial .sun, .celestial .moon { width: 72px; height: 72px; }
+    .stat-grid { grid-template-columns: 1fr; }
+    .panel, .panel:nth-child(even) { grid-template-columns: 1fr; }
+    .panel .panel-visual, .panel:nth-child(even) .panel-visual { order: -1; min-height: 160px; }
+    .principle-grid { grid-template-columns: 1fr; }
+    .pipeline-track { flex-wrap: wrap; row-gap: var(--space-4); }
+    .pipeline-track::before { display: none; }
+    .pipeline-step { flex: 0 0 45%; }
+  }
+
+  @media (max-width: 640px) {
+    .container { padding-left: var(--space-3); padding-right: var(--space-3); }
+    .nav-links { gap: var(--space-3); }
+    .nav-links li:not(:last-child) { display: none; }
+    .pipeline-step { flex: 0 0 100%; }
+    .stat-grid { border-left: none; border-right: none; }
+    .section-head .big-num { top: -2.2rem; font-size: clamp(4.5rem, 26vw, 8rem); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+    .marquee-track { animation: none; }
+    .hero-heading span { animation: none; opacity: 1; transform: none; }
+    .hero-heading .letter { animation: none; opacity: 1; transform: none; transition: none; }
+    .reveal, .pipeline-step { transition: none; opacity: 1; transform: none; }
+    .scroll-cue .line::after, .scroll-cue span { animation: none; }
+    .orbit .ring { animation: none; }
+    .panel, .principle-card { transition: none; }
+    .dusk-line .word { transition: none; }
+    .cloud, .bird { animation: none; display: none; }
+    .cursor-dot, .cursor-ring { display: none; }
+    .magnetic { transition: none; transform: none !important; }
+  }
+
+  /* ---------- marquee pause on hover ---------- */
+  .marquee-wrap:hover .marquee-track { animation-play-state: paused; }
+</style>
+</head>
+<body>
+
+<div class="grain"></div>
+<div class="sky-glow"></div>
+<div class="sunset-veil" aria-hidden="true"></div>
+
+<div class="celestial-wrap" aria-hidden="true">
+  <div class="celestial">
+    <div class="sun"></div>
+    <div class="moon">
+      <div class="crater c1"></div>
+      <div class="crater c2"></div>
+      <div class="crater c3"></div>
+    </div>
+  </div>
+</div>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<header class="site-nav">
+  <a href="#" class="nav-mono">G.O.</a>
+  <ul class="nav-links">
+    <li><a href="#day">Day</a></li>
+    <li><a href="#night">Night</a></li>
+    <li><a href="#method">Method</a></li>
+    <li><a href="#vault">Vault</a></li>
+    <li><a href="resume.html">Résumé</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</header>
+
+<main>
+
+  <section class="hero container">
+    <div class="cloud-layer" aria-hidden="true">
+      <div class="cloud cloud-1"></div>
+      <div class="cloud cloud-2"></div>
+      <div class="cloud cloud-3"></div>
+    </div>
+    <div class="birds-flock" aria-hidden="true">
+      <svg class="bird b1" width="20" height="10" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird b2" width="16" height="8" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird b3" width="14" height="7" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird b4" width="18" height="9" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird b5" width="15" height="7.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <span class="eyebrow mono">Dallas–Fort Worth, TX · Payments &amp; AI Product</span>
+    <h1 class="hero-heading" id="hero-heading">
+      <span class="line" data-word="Godfrey">Godfrey</span>
+      <span class="line" data-word="Osagiede">Osagiede</span>
+    </h1>
+    <p class="hero-tagline reveal">Payments engineer by day. <span class="accent">Founder by night.</span></p>
+    <p class="hero-sub reveal">I own Adyen payment operations across 8,000+ stores in production — then go home and ship revenue-generating products end-to-end: an iOS app with 10,000+ customers and a Nigerian WhatsApp fintech moving ₦35M+ a month.</p>
+    <div class="scroll-cue">
+      <div class="line"></div>
+      <span class="mono">Scroll — the sun is setting</span>
+    </div>
+  </section>
+
+  <div class="marquee-wrap" aria-hidden="true">
+    <div class="marquee-track" id="marquee-track">
+      <span id="marquee-a"></span>
+      <span id="marquee-b"></span>
+    </div>
+  </div>
+
+  <section id="day" class="container">
+    <div class="section-head reveal">
+      <span class="big-num" aria-hidden="true">01</span>
+      <h2>Day Shift</h2>
+      <span class="eyebrow mono">LineLeader · Technical Support Engineer, Payments &amp; Data Ops · 2024 — Present</span>
+    </div>
+
+    <p class="lede reveal">Primary engineer for all Adyen payment operations — Balance Platform, Management, and Legal Entity APIs — for a childcare SaaS serving 2,500+ franchise organizations across the US, Australia, and the UK.</p>
+
+    <div class="stat-grid">
+      <div class="stat-cell reveal">
+        <div class="stat-num" data-count-to="8651">0</div>
+        <div class="stat-label">Adyen stores audited by a Node.js audit-and-repair tool I built</div>
+      </div>
+      <div class="stat-cell reveal">
+        <div class="stat-num" data-count-to="4088">0</div>
+        <div class="stat-label">Misconfigured stores safely repaired under a compliance deadline</div>
+      </div>
+      <div class="stat-cell reveal">
+        <div class="stat-num"><span class="static-part">2,393 → </span><span data-count-to="87">0</span></div>
+        <div class="stat-label">Indeterminate cases cut via Legal Entity API lookups</div>
+      </div>
+      <div class="stat-cell reveal">
+        <div class="stat-num"><span data-count-to="30">0</span>–<span data-count-to="40">0</span>M</div>
+        <div class="stat-label">Records in a timezone migration I'm leading across 2,905 orgs</div>
+      </div>
+    </div>
+
+    <div class="pipeline reveal">
+      <div class="pipeline-track" id="pipeline-track">
+        <div class="pipeline-step">
+          <span class="dot"></span>
+          <span class="mono">Dry-Run</span>
+        </div>
+        <div class="pipeline-step">
+          <span class="dot"></span>
+          <span class="mono">Verified Backup</span>
+        </div>
+        <div class="pipeline-step">
+          <span class="dot"></span>
+          <span class="mono">Stakeholder Approval</span>
+        </div>
+        <div class="pipeline-step">
+          <span class="dot"></span>
+          <span class="mono">Per-Document Apply</span>
+        </div>
+        <div class="pipeline-step">
+          <span class="dot"></span>
+          <span class="mono">Count Verification</span>
+        </div>
+      </div>
+      <p class="pipeline-caption">Every production mutation, every time.</p>
+    </div>
+  </section>
+
+  <section class="dusk" id="dusk">
+    <p class="dusk-line mono-off" id="dusk-line">
+      <span class="word">Then</span> <span class="word">the</span> <span class="word">sun</span> <span class="word">goes</span> <span class="word">down.</span>
+    </p>
+    <p class="dusk-sub mono">Raidersoul LLC · Founded 2025 · Two products in production</p>
+  </section>
+
+  <section id="night" class="container">
+    <div class="section-head reveal">
+      <span class="big-num" aria-hidden="true">02</span>
+      <h2>Night Shift</h2>
+      <span class="eyebrow mono">Raidersoul LLC · Solo Founder &amp; Engineer</span>
+    </div>
+
+    <div class="panels">
+      <article class="panel reveal">
+        <div class="panel-content">
+          <span class="eyebrow mono">iOS · React Native + ~8K lines native Swift · Launched Feb 2026</span>
+          <h3 class="panel-title">FocusDown</h3>
+          <p class="panel-copy">A focus timer with a travel mascot that journeys around the world as you complete sessions. Screen Time (Family Controls) app blocking, WidgetKit widgets, Live Activities &amp; Dynamic Island — all native Swift.</p>
+          <div class="panel-stats">
+            <span>10,000+ customers</span>
+            <span>4.8★ App Store</span>
+            <span>~1,500 MAU</span>
+            <span>510 solo commits</span>
+          </div>
+          <p class="panel-copy">Built the whole monetization funnel (StoreKit + RevenueCat + Superwall) and a 20+ step Mixpanel onboarding funnel — found and fixed the #1 drop-off (22.6%).</p>
+          <a class="panel-link" href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener">
+            On the App Store
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+        <div class="panel-visual" aria-hidden="true">
+          <div class="orbit">
+            <svg class="globe" viewBox="0 0 100 100" fill="none">
+              <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+              <ellipse cx="50" cy="50" rx="46" ry="18" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+              <ellipse cx="50" cy="50" rx="20" ry="46" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+              <line x1="4" y1="50" x2="96" y2="50" stroke="currentColor" stroke-width="1" opacity="0.5"/>
+            </svg>
+            <div class="ring"></div>
+            <div class="ring r2"><span class="dot-orbit"></span></div>
+          </div>
+        </div>
+      </article>
+
+      <article class="panel reveal">
+        <div class="panel-content">
+          <span class="eyebrow mono">Fintech · TypeScript · Supabase/Postgres · Paystack · In production</span>
+          <h3 class="panel-title">Throwda</h3>
+          <p class="panel-copy">Bill payments, P2P, and community collections entirely inside WhatsApp. Live pilot with a Lagos church processing ₦35M+/month. Double-entry bookkeeping with DB-enforced balanced journals, bank reconciliation from real bank statements, ~45K-LOC dashboard with 75+ test files.</p>
+          <p class="panel-callout">Designed a direct-charge architecture (zero stored value) that legally sidestepped a ₦100M PSSP licensing requirement.</p>
+          <div class="panel-stats">
+            <span>₦35M+/month</span>
+            <span>45K LOC</span>
+            <span>75+ test files</span>
+            <span>0 stored value</span>
+          </div>
+          <a class="panel-link" href="https://throwda.com" target="_blank" rel="noopener">
+            throwda.com
+            <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </a>
+        </div>
+        <div class="panel-visual" aria-hidden="true">
+          <svg class="ledger-visual" viewBox="0 0 260 160" fill="none">
+            <rect x="0.5" y="0.5" width="259" height="159" stroke="currentColor" stroke-opacity="0.25"/>
+            <line x1="0" y1="40" x2="260" y2="40" stroke="currentColor" stroke-opacity="0.25"/>
+            <line x1="130" y1="40" x2="130" y2="160" stroke="currentColor" stroke-opacity="0.25"/>
+            <text x="20" y="26" fill="currentColor" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2" opacity="0.7">LEDGER</text>
+            <text x="30" y="66" fill="currentColor" font-family="JetBrains Mono, monospace" font-size="9" opacity="0.55">DEBIT</text>
+            <text x="160" y="66" fill="currentColor" font-family="JetBrains Mono, monospace" font-size="9" opacity="0.55">CREDIT</text>
+            <line x1="20" y1="90" x2="110" y2="90" stroke="currentColor" stroke-opacity="0.3"/>
+            <line x1="150" y1="90" x2="240" y2="90" stroke="currentColor" stroke-opacity="0.3"/>
+            <line x1="20" y1="112" x2="110" y2="112" stroke="currentColor" stroke-opacity="0.3"/>
+            <line x1="150" y1="112" x2="240" y2="112" stroke="currentColor" stroke-opacity="0.3"/>
+            <line x1="20" y1="134" x2="90" y2="134" stroke="currentColor" stroke-opacity="0.3"/>
+            <line x1="150" y1="134" x2="220" y2="134" stroke="currentColor" stroke-opacity="0.3"/>
+          </svg>
+        </div>
+      </article>
+    </div>
+  </section>
+
+  <section id="method" class="container">
+    <div class="section-head reveal">
+      <span class="big-num" aria-hidden="true">03</span>
+      <h2>Method</h2>
+      <span class="eyebrow mono">How I Ship</span>
+    </div>
+    <p class="lede reveal">Multiple-engineer velocity. My entire workflow is AI-agent-driven — Claude Code, custom agents, MCP servers, autonomous pipelines — so a solo founder ships like a small team.</p>
+
+    <div class="principle-grid">
+      <div class="principle-card reveal">
+        <span class="principle-num mono">01</span>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <circle cx="14" cy="14" r="10" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="14" y1="1" x2="14" y2="6" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="14" y1="22" x2="14" y2="27" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="1" y1="14" x2="6" y2="14" stroke="currentColor" stroke-width="1.4"/>
+          <line x1="22" y1="14" x2="27" y2="14" stroke="currentColor" stroke-width="1.4"/>
+          <circle cx="14" cy="14" r="1.6" fill="currentColor"/>
+        </svg>
+        <p class="principle-quote">"Every screen should convert. Every touchpoint is a growth channel."</p>
+        <p class="principle-desc">I think like a product CEO.</p>
+      </div>
+      <div class="principle-card reveal">
+        <span class="principle-num mono">02</span>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <path d="M15.5 1L4 16H13L12.5 27L24 12H15L15.5 1Z" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"/>
+        </svg>
+        <p class="principle-quote">"Ship imperfect, iterate fast."</p>
+        <p class="principle-desc">I'd rather ship today and learn than plan for a week.</p>
+      </div>
+      <div class="principle-card reveal">
+        <span class="principle-num mono">03</span>
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" aria-hidden="true">
+          <path d="M6 8C6 4.7 9.6 2 14 2C18.4 2 22 4.7 22 8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M22 20C22 23.3 18.4 26 14 26C9.6 26 6 23.3 6 20" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+          <path d="M22 8L26 6.5V12L22 8Z" fill="currentColor"/>
+          <path d="M6 20L2 21.5V16L6 20Z" fill="currentColor"/>
+        </svg>
+        <p class="principle-quote">"Test like a BFS."</p>
+        <p class="principle-desc">I walk every path and edge case until it breaks or I trust it.</p>
+      </div>
+    </div>
+  </section>
+
+  <section id="vault" class="container">
+    <div class="section-head reveal">
+      <span class="big-num" aria-hidden="true">04</span>
+      <h2>The Vault</h2>
+      <span class="eyebrow mono">Everything Connects · My Head, Mapped</span>
+    </div>
+    <p class="lede vault-lede-wrap reveal">I live in an Obsidian vault and ship with an agent fleet. This is what the inside looks like — every node is real. Drag them. Click the bright ones.</p>
+
+    <div class="vault-canvas-wrap reveal">
+      <canvas id="vault-canvas" aria-label="Interactive graph of Godfrey's projects, skills, and facts"></canvas>
+      <span class="vault-hint mono" id="vault-hint">Drag nodes · hover to trace connections · click bright nodes for detail</span>
+    </div>
+  </section>
+
+  <section id="contact" class="container contact-section">
+    <p class="dusk-line contact-line reveal">The sun comes up, and I do it again.</p>
+    <a class="email-link reveal" href="mailto:godfreystorm@gmail.com">godfreystorm@gmail.com</a>
+
+    <div class="icon-links reveal">
+      <a class="icon-link" href="https://github.com/godfreystorm" target="_blank" rel="noopener" aria-label="GitHub">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.2C2 16.68 4.87 20.47 8.84 21.8C9.34 21.89 9.52 21.58 9.52 21.3C9.52 21.06 9.51 20.31 9.51 19.42C7 19.94 6.35 18.83 6.15 18.25C6.03 17.95 5.53 17.09 5.09 16.85C4.73 16.66 4.21 16.14 5.08 16.13C5.9 16.12 6.48 16.9 6.68 17.21C7.62 18.8 9.09 18.35 9.66 18.08C9.75 17.39 10.02 16.93 10.32 16.67C7.98 16.41 5.53 15.49 5.53 11.44C5.53 10.29 5.93 9.34 6.6 8.6C6.5 8.34 6.14 7.25 6.7 5.79C6.7 5.79 7.57 5.51 9.52 6.86C10.34 6.63 11.21 6.51 12.08 6.51C12.95 6.51 13.82 6.63 14.64 6.86C16.59 5.5 17.46 5.79 17.46 5.79C18.02 7.25 17.66 8.34 17.56 8.6C18.23 9.34 18.63 10.28 18.63 11.44C18.63 15.5 16.17 16.41 13.83 16.67C14.21 17 14.54 17.63 14.54 18.6C14.54 19.98 14.53 21 14.53 21.3C14.53 21.58 14.71 21.9 15.21 21.8C19.17 20.46 22 16.67 22 12.2C22 6.58 17.52 2 12 2Z" fill="currentColor"/></svg>
+        GitHub
+      </a>
+      <a class="icon-link" href="https://www.linkedin.com/in/godfrey-osagiede-a29013144" target="_blank" rel="noopener" aria-label="LinkedIn">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6C1.1 6 0 4.88 0 3.5C0 2.12 1.1 1 2.48 1C3.86 1 4.98 2.12 4.98 3.5ZM0.22 8.24H4.74V23H0.22V8.24ZM7.98 8.24H12.31V10.19H12.37C12.98 9.03 14.46 7.81 16.68 7.81C21.24 7.81 22.09 10.85 22.09 14.79V23H17.58V15.68C17.58 13.99 17.55 11.82 15.24 11.82C12.9 11.82 12.55 13.66 12.55 15.56V23H7.98V8.24Z" fill="currentColor"/></svg>
+        LinkedIn
+      </a>
+      <a class="icon-link" href="https://throwda.com" target="_blank" rel="noopener" aria-label="Throwda">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12C3 7.03 7.03 3 12 3C15.66 3 18.8 5.19 20.19 8.33" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M21 12C21 16.97 16.97 21 12 21C8.34 21 5.2 18.81 3.81 15.67" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M20.19 8.33L20.7 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.19 8.33L16.5 7.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.81 15.67L3.3 19.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.81 15.67L7.5 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Throwda
+      </a>
+      <a class="icon-link" href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener" aria-label="FocusDown on the App Store">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2.5" stroke="currentColor" stroke-width="1.6"/><line x1="10" y1="19" x2="14" y2="19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+        FocusDown
+      </a>
+      <a class="icon-link" href="resume.html" aria-label="Résumé">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="5" y="2" width="14" height="20" rx="1.5" stroke="currentColor" stroke-width="1.6"/><line x1="8.5" y1="8" x2="15.5" y2="8" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="8.5" y1="12" x2="15.5" y2="12" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/><line x1="8.5" y1="16" x2="12.5" y2="16" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/></svg>
+        Résumé
+      </a>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <span>© 2026 Godfrey Osagiede · Raidersoul LLC</span>
+  <span class="foot-right">
+    Designed &amp; built with Claude Code
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="9" cy="12" r="6" fill="currentColor" opacity="0.5"/><path d="M20 8C20 12.42 16.42 16 12 16C10.5 16 9.1 15.59 7.9 14.87C9.02 15.58 10.35 16 11.78 16C16.2 16 19.78 12.42 19.78 8C19.78 3.58 16.2 0 11.78 0C10.35 0 9.02 0.42 7.9 1.13C9.1 0.41 10.5 0 12 0C16.42 0 20 3.58 20 8Z" fill="currentColor"/></svg>
+  </span>
+</footer>
+
+<div class="vault-backdrop" id="vault-backdrop"></div>
+<aside class="vault-panel" id="vault-panel" aria-hidden="true">
+  <button class="vault-panel-close" id="vault-panel-close" aria-label="Close">
+    <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true"><path d="M1 1L13 13M13 1L1 13" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+  </button>
+  <span class="vault-panel-meta mono" id="vault-panel-meta"></span>
+  <h3 class="vault-panel-title" id="vault-panel-title"></h3>
+  <p class="vault-panel-story" id="vault-panel-story"></p>
+  <a class="vault-panel-link" id="vault-panel-link" href="#" target="_blank" rel="noopener" hidden>
+    <span id="vault-panel-link-label"></span>
+    <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+  </a>
+</aside>
+
+<div class="cursor-dot" id="cursor-dot" aria-hidden="true"></div>
+<div class="cursor-ring" id="cursor-ring" aria-hidden="true"></div>
+
+<script>
+(function() {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root = document.documentElement;
+
+  /* Typed registrations so the browser treats the scroll-driven theme knobs as
+     real numbers (proper interpolation + reliable re-resolution of dependent
+     color-mix() values). Safe no-op where CSS.registerProperty is unsupported. */
+  try {
+    if (window.CSS && CSS.registerProperty) {
+      ['--nite', '--dusk', '--nite-ink'].forEach(function(name) {
+        try {
+          CSS.registerProperty({ name: name, syntax: '<number>', inherits: true, initialValue: '0' });
+        } catch (e) { /* already registered or unsupported */ }
+      });
+    }
+  } catch (e) { /* ignore */ }
+
+  /* -------- marquee content -------- */
+  var marqueeItems = ["ADYEN","8,000+ STORES","TYPESCRIPT","SWIFT","MONGODB","POSTGRES","REACT NATIVE","SUPABASE","PAYSTACK","REVENUECAT","CLAUDE CODE","MCP","DOUBLE-ENTRY LEDGERS","₦35M+/MONTH","10,000+ CUSTOMERS"];
+  var diamond = '<svg width="7" height="7" viewBox="0 0 8 8" aria-hidden="true"><path d="M4 0L8 4L4 8L0 4Z" fill="currentColor" opacity="0.6"/></svg>';
+  function buildMarquee() {
+    var out = '';
+    marqueeItems.forEach(function(item, i) {
+      out += '<span class="mq-item">' + item + '</span>' + diamond;
+    });
+    return out;
+  }
+  document.getElementById('marquee-a').innerHTML = buildMarquee();
+  document.getElementById('marquee-b').innerHTML = buildMarquee();
+
+  /* -------- scroll-driven --nite -------- */
+  var duskEl = document.getElementById('dusk');
+  var ticking = false;
+
+  function computeNite() {
+    var rect = duskEl.getBoundingClientRect();
+    var vh = window.innerHeight;
+    var start = rect.top;
+    var end = rect.bottom;
+    var total = end - start;
+    var progress;
+    if (start > vh) {
+      progress = 0;
+    } else if (end < 0) {
+      progress = 1;
+    } else {
+      progress = (vh - start) / (total + vh);
+      progress = Math.min(1, Math.max(0, progress));
+    }
+    root.style.setProperty('--nite', progress.toFixed(4));
+
+    /* sunset warmth: peaks at the dusk midpoint, zero at both ends */
+    var dusk = Math.sin(Math.PI * progress);
+    root.style.setProperty('--dusk', dusk.toFixed(4));
+
+    /* steepened ink curve: text stays dark through early dusk, then flips decisively to light.
+       Window ends at 0.5 so text is fully light by the dusk midpoint (avoids gray-on-gray). */
+    var tInk = Math.min(1, Math.max(0, (progress - 0.30) / 0.2));
+    var niteInk = tInk * tInk * (3 - 2 * tInk); /* smoothstep */
+    root.style.setProperty('--nite-ink', niteInk.toFixed(4));
+
+    /* dusk word reveal */
+    var words = duskEl.querySelectorAll('.word');
+    var wordProgress = 0;
+    if (start < vh && end > 0) {
+      wordProgress = (vh - start) / (vh * 0.9);
+      wordProgress = Math.min(1, Math.max(0, wordProgress));
+    } else if (end <= 0) {
+      wordProgress = 1;
+    }
+    var litCount = Math.floor(wordProgress * words.length + 0.5);
+    words.forEach(function(w, i) {
+      if (i < litCount) w.classList.add('lit');
+      else w.classList.remove('lit');
+    });
+
+    ticking = false;
+  }
+
+  function onScroll() {
+    if (!ticking) {
+      requestAnimationFrame(computeNite);
+      ticking = true;
+    }
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+  window.addEventListener('resize', onScroll);
+  computeNite();
+
+  /* -------- IntersectionObserver reveals -------- */
+  var revealEls = document.querySelectorAll('.reveal');
+  if (reduceMotion) {
+    revealEls.forEach(function(el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+    revealEls.forEach(function(el) { io.observe(el); });
+  }
+
+  /* -------- pipeline sequential reveal -------- */
+  var pipelineTrack = document.getElementById('pipeline-track');
+  var steps = pipelineTrack.querySelectorAll('.pipeline-step');
+  if (reduceMotion) {
+    steps.forEach(function(s) { s.classList.add('in'); });
+  } else {
+    var pio = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          steps.forEach(function(step, i) {
+            setTimeout(function() { step.classList.add('in'); }, i * 160);
+          });
+          pio.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.3 });
+    pio.observe(pipelineTrack);
+  }
+
+  /* -------- count-up stats -------- */
+  var counters = document.querySelectorAll('[data-count-to]');
+  function animateCount(el) {
+    var target = parseInt(el.getAttribute('data-count-to'), 10);
+    if (reduceMotion) {
+      el.textContent = target.toLocaleString();
+      return;
+    }
+    var duration = 1400;
+    var startTime = null;
+    function easeOut(t) { return 1 - Math.pow(1 - t, 3); }
+    function step(ts) {
+      if (!startTime) startTime = ts;
+      var elapsed = ts - startTime;
+      var progress = Math.min(1, elapsed / duration);
+      var eased = easeOut(progress);
+      var value = Math.floor(eased * target);
+      el.textContent = value.toLocaleString();
+      if (progress < 1) requestAnimationFrame(step);
+      else el.textContent = target.toLocaleString();
+    }
+    requestAnimationFrame(step);
+  }
+  var cio = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        animateCount(entry.target);
+        cio.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.5 });
+  counters.forEach(function(el) { cio.observe(el); });
+
+  /* -------- stars canvas -------- */
+  var canvas = document.getElementById('stars');
+  var ctx = canvas.getContext('2d');
+  var stars = [];
+  var starsRafId = null;
+
+  function resizeCanvas() {
+    canvas.width = window.innerWidth * window.devicePixelRatio;
+    canvas.height = window.innerHeight * window.devicePixelRatio;
+    canvas.style.width = window.innerWidth + 'px';
+    canvas.style.height = window.innerHeight + 'px';
+    ctx.setTransform(window.devicePixelRatio, 0, 0, window.devicePixelRatio, 0, 0);
+    initStars();
+  }
+
+  function initStars() {
+    stars = [];
+    var count = 140;
+    for (var i = 0; i < count; i++) {
+      stars.push({
+        x: Math.random() * window.innerWidth,
+        y: Math.random() * window.innerHeight * 0.75,
+        r: Math.random() * 1.4 + 0.3,
+        baseAlpha: Math.random() * 0.5 + 0.35,
+        phase: Math.random() * Math.PI * 2,
+        speed: Math.random() * 0.015 + 0.006
+      });
+    }
+  }
+
+  var t = 0;
+
+  /* -------- shooting stars -------- */
+  var shootingStars = [];
+  var nextShootAt = performance.now() + 4000 + Math.random() * 4000;
+  function maybeSpawnShootingStar(now, nite) {
+    if (reduceMotion || nite < 0.05) return;
+    if (now < nextShootAt) return;
+    nextShootAt = now + 7000 + Math.random() * 8000;
+    var startX = Math.random() * window.innerWidth * 0.7 + window.innerWidth * 0.15;
+    var startY = Math.random() * window.innerHeight * 0.22;
+    var angle = (Math.PI / 4) + (Math.random() * 0.3 - 0.15);
+    var dist = 160 + Math.random() * 120;
+    shootingStars.push({
+      x1: startX, y1: startY,
+      x2: startX + Math.cos(angle) * dist,
+      y2: startY + Math.sin(angle) * dist,
+      start: now,
+      duration: 650 + Math.random() * 150
+    });
+  }
+  function drawShootingStars(now) {
+    for (var i = shootingStars.length - 1; i >= 0; i--) {
+      var s = shootingStars[i];
+      var p = (now - s.start) / s.duration;
+      if (p >= 1) { shootingStars.splice(i, 1); continue; }
+      var headX = s.x1 + (s.x2 - s.x1) * p;
+      var headY = s.y1 + (s.y2 - s.y1) * p;
+      var tailP = Math.max(0, p - 0.35);
+      var tailX = s.x1 + (s.x2 - s.x1) * tailP;
+      var tailY = s.y1 + (s.y2 - s.y1) * tailP;
+      var fade = p < 0.15 ? p / 0.15 : (1 - p);
+      var grad = ctx.createLinearGradient(tailX, tailY, headX, headY);
+      grad.addColorStop(0, 'rgba(244,238,228,0)');
+      grad.addColorStop(1, 'rgba(244,238,228,' + (0.85 * fade).toFixed(3) + ')');
+      ctx.strokeStyle = grad;
+      ctx.lineWidth = 1.6;
+      ctx.beginPath();
+      ctx.moveTo(tailX, tailY);
+      ctx.lineTo(headX, headY);
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.arc(headX, headY, 1.4, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255,250,240,' + (0.9 * fade).toFixed(3) + ')';
+      ctx.fill();
+    }
+  }
+
+  function drawStars() {
+    var nite = parseFloat(getComputedStyle(root).getPropertyValue('--nite')) || 0;
+    var now = performance.now();
+    ctx.clearRect(0, 0, window.innerWidth, window.innerHeight);
+    if (nite > 0.01) {
+      stars.forEach(function(s) {
+        var twinkle = reduceMotion ? 0 : Math.sin(t * s.speed + s.phase) * 0.35;
+        var alpha = Math.max(0, Math.min(1, s.baseAlpha + twinkle)) * nite;
+        ctx.beginPath();
+        ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(244,238,228,' + alpha.toFixed(3) + ')';
+        ctx.fill();
+      });
+      maybeSpawnShootingStar(now, nite);
+      drawShootingStars(now);
+    }
+    t += 1;
+    if (!reduceMotion || nite > 0.01 || shootingStars.length) {
+      starsRafId = requestAnimationFrame(drawStars);
+    } else {
+      starsRafId = null;
+    }
+  }
+
+  function ensureStarsLoop() {
+    if (starsRafId === null) {
+      starsRafId = requestAnimationFrame(drawStars);
+    }
+  }
+
+  window.addEventListener('resize', resizeCanvas);
+  resizeCanvas();
+  if (reduceMotion) {
+    /* draw a static frame reflecting current nite, no rAF loop */
+    drawStars();
+  } else {
+    ensureStarsLoop();
+  }
+
+  /* -------- per-letter hero name -------- */
+  (function heroLetters() {
+    var lines = document.querySelectorAll('#hero-heading .line');
+    var globalIndex = 0;
+    var allLetters = [];
+    lines.forEach(function(lineEl) {
+      var word = lineEl.getAttribute('data-word') || lineEl.textContent;
+      lineEl.textContent = '';
+      word.split('').forEach(function(ch) {
+        var span = document.createElement('span');
+        span.className = 'letter';
+        span.textContent = ch === ' ' ? ' ' : ch;
+        span.style.setProperty('--ld', (globalIndex * 30) + 'ms');
+        lineEl.appendChild(span);
+        allLetters.push(span);
+        globalIndex++;
+      });
+    });
+    if (!reduceMotion) {
+      allLetters.forEach(function(letterEl, idx) {
+        letterEl.addEventListener('mouseenter', function() {
+          allLetters.forEach(function(other, j) {
+            var dist = Math.abs(j - idx);
+            var delay = dist * 60;
+            other.style.setProperty('--hd', delay + 'ms');
+            other.classList.add('lift');
+            setTimeout(function() { other.classList.remove('lift'); }, delay + 260);
+          });
+        });
+      });
+    }
+  })();
+
+  /* -------- shared pointer position + moon parallax + custom cursor -------- */
+  var pointerFine = window.matchMedia('(pointer: fine)').matches;
+  var mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
+  var haveMouse = false;
+  var cursorDot = document.getElementById('cursor-dot');
+  var cursorRing = document.getElementById('cursor-ring');
+  var moonEl = document.querySelector('.celestial');
+  var ringX = mouseX, ringY = mouseY;
+  var moonPX = 0, moonPY = 0;
+
+  if (pointerFine && !reduceMotion) {
+    document.body.classList.add('custom-cursor-on');
+    cursorDot.classList.add('active');
+    cursorRing.classList.add('active');
+  }
+
+  window.addEventListener('mousemove', function(e) {
+    mouseX = e.clientX;
+    mouseY = e.clientY;
+    haveMouse = true;
+    if (pointerFine && !reduceMotion) {
+      cursorDot.style.transform = 'translate(' + mouseX + 'px,' + mouseY + 'px) translate(-50%,-50%)';
+    }
+  }, { passive: true });
+
+  /* magnetic scale/hide targets for the custom cursor ring */
+  if (pointerFine && !reduceMotion) {
+    var magnetTargets = document.querySelectorAll('a, button');
+    magnetTargets.forEach(function(el) {
+      el.addEventListener('mouseenter', function() { cursorRing.classList.add('magnetic'); });
+      el.addEventListener('mouseleave', function() { cursorRing.classList.remove('magnetic'); });
+    });
+  }
+
+  function uiFrame() {
+    if (pointerFine && !reduceMotion) {
+      ringX += (mouseX - ringX) * 0.18;
+      ringY += (mouseY - ringY) * 0.18;
+      cursorRing.style.transform = 'translate(' + ringX + 'px,' + ringY + 'px) translate(-50%,-50%)';
+    }
+    if (moonEl && !reduceMotion) {
+      var targetPX = ((mouseX / window.innerWidth) - 0.5) * 16;
+      var targetPY = ((mouseY / window.innerHeight) - 0.5) * 16;
+      moonPX += (targetPX - moonPX) * 0.06;
+      moonPY += (targetPY - moonPY) * 0.06;
+      moonEl.style.transform = 'translate(' + moonPX.toFixed(2) + 'px,' + moonPY.toFixed(2) + 'px)';
+    }
+    requestAnimationFrame(uiFrame);
+  }
+  requestAnimationFrame(uiFrame);
+
+  /* -------- magnetic hover: nav links + email -------- */
+  if (!reduceMotion) {
+    var magneticEls = document.querySelectorAll('.nav-links a, .email-link');
+    magneticEls.forEach(function(el) {
+      el.classList.add('magnetic');
+      el.addEventListener('mousemove', function(e) {
+        var rect = el.getBoundingClientRect();
+        var relX = (e.clientX - rect.left - rect.width / 2) / (rect.width / 2);
+        var relY = (e.clientY - rect.top - rect.height / 2) / (rect.height / 2);
+        el.style.transform = 'translate(' + (relX * 4).toFixed(2) + 'px,' + (relY * 4).toFixed(2) + 'px)';
+      });
+      el.addEventListener('mouseleave', function() {
+        el.style.transform = 'translate(0,0)';
+      });
+    });
+  }
+
+  /* ==========================================================
+     THE VAULT — Obsidian-style force-directed graph
+     ========================================================== */
+  (function vaultGraph() {
+    var wrap = document.querySelector('.vault-canvas-wrap');
+    var canvas = document.getElementById('vault-canvas');
+    if (!wrap || !canvas) return;
+    var vctx = canvas.getContext('2d');
+    var isMobile = window.innerWidth <= 640;
+
+    /* ---- data ---- */
+    var N = { HUB: 10, MAJOR: 7, MINOR: 4 };
+    var COLORS = { tangerine: 'tangerine', amber: 'amber', cream: 'cream' };
+
+    var nodes = [
+      { id: 'godfrey', label: 'GODFREY', color: 'tangerine', r: N.HUB, hub: true, major: true,
+        meta: 'GODFREY OSAGIEDE · THE CENTER NODE', story: 'Payments engineer at LineLeader by day, solo founder of Raidersoul LLC by night. Based in Dallas–Fort Worth. Everything in this graph — the day job, the two products, the method — runs through one person.' },
+      { id: 'day-shift', label: 'DAY SHIFT', color: 'tangerine', r: N.HUB, hub: true, major: true,
+        meta: 'LINELEADER · TECHNICAL SUPPORT ENGINEER', story: 'Primary engineer for all Adyen payment operations — Balance Platform, Management, and Legal Entity APIs — for a childcare SaaS serving 2,500+ franchise organizations across the US, Australia, and the UK.' },
+      { id: 'night-shift', label: 'NIGHT SHIFT', color: 'tangerine', r: N.HUB, hub: true, major: false,
+        meta: 'RAIDERSOUL LLC · SOLO FOUNDER', story: '' },
+      { id: 'method', label: 'METHOD', color: 'tangerine', r: N.HUB, hub: true, major: true,
+        meta: 'HOW I SHIP', story: 'The entire workflow is AI-agent-driven — Claude Code, custom agents, MCP servers, autonomous pipelines. It’s how one founder ships two production products while running payment ops for 2,500+ orgs.' },
+
+      { id: 'lineleader', label: 'LINELEADER', color: 'tangerine', r: N.MINOR, major: false },
+      { id: 'adyen', label: 'ADYEN', color: 'tangerine', r: N.MAJOR, major: true,
+        meta: 'PAYMENTS PLATFORM', story: 'The platform Godfrey operates at LineLeader — Balance Platform, Management API, and Legal Entity API — across 8,000+ stores in production.' },
+      { id: 'balance-platform', label: 'BALANCE PLATFORM', color: 'amber', r: N.MINOR, major: false },
+      { id: 'legal-entity-api', label: 'LEGAL ENTITY API', color: 'amber', r: N.MINOR, major: false },
+      { id: 'kyc', label: 'KYC', color: 'amber', r: N.MINOR, major: false },
+      { id: 'stores-8000', label: '8,000+ STORES', color: 'cream', r: N.MINOR + 1, major: false },
+      { id: 'audit-tool', label: 'AUDIT-AND-REPAIR TOOL', color: 'tangerine', r: N.MAJOR, major: true,
+        meta: 'NODE.JS · BUILT IN-HOUSE', story: 'A Node.js audit-and-repair tool that scanned 8,651 Adyen stores and safely repaired 4,088 misconfigurations under a compliance deadline.' },
+      { id: 'repaired-4088', label: '4,088 REPAIRED', color: 'cream', r: N.MINOR, major: false },
+      { id: 'mongodb', label: 'MONGODB', color: 'amber', r: N.MINOR, major: false },
+      { id: 'mysql', label: 'MYSQL', color: 'amber', r: N.MINOR, major: false },
+      { id: 'migration', label: '30–40M-RECORD MIGRATION', color: 'amber', r: N.MINOR + 1, major: false },
+      { id: 'runbooks', label: '24+ RUNBOOKS', color: 'amber', r: N.MINOR, major: false },
+      { id: 'production-ritual', label: 'PRODUCTION RITUAL', color: 'amber', r: N.MINOR, major: false },
+
+      { id: 'focusdown', label: 'FOCUSDOWN', color: 'tangerine', r: N.MAJOR + 1, major: true,
+        meta: 'IOS · LAUNCHED FEB 2026', story: 'A focus timer with a travel mascot that journeys the world as you complete sessions. React Native plus ~8,000 lines of native Swift for Screen Time blocking, WidgetKit, Live Activities, and Dynamic Island. 10,000+ customers, 4.8★.',
+        link: 'https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778', linkLabel: 'On the App Store' },
+      { id: 'throwda', label: 'THROWDA', color: 'tangerine', r: N.MAJOR + 1, major: true,
+        meta: 'FINTECH · IN PRODUCTION', story: 'WhatsApp-native bill payments, P2P, and community collections for Nigeria. A Lagos church pilot processes ₦35M+/month on a ~45K-LOC codebase with 75+ test files and DB-enforced double-entry bookkeeping.',
+        link: 'https://throwda.com', linkLabel: 'throwda.com' },
+
+      { id: 'swift', label: 'SWIFT', color: 'amber', r: N.MAJOR, major: true,
+        meta: '~8,000 LINES · NATIVE', story: 'Native Swift underneath FocusDown’s React Native shell — Screen Time app blocking, WidgetKit widgets, Live Activities, and Dynamic Island all run through it.' },
+      { id: 'widgetkit', label: 'WIDGETKIT', color: 'amber', r: N.MINOR, major: false },
+      { id: 'live-activities', label: 'LIVE ACTIVITIES', color: 'amber', r: N.MINOR, major: false },
+      { id: 'dynamic-island', label: 'DYNAMIC ISLAND', color: 'amber', r: N.MINOR, major: false },
+      { id: 'screen-time', label: 'SCREEN TIME API', color: 'amber', r: N.MAJOR, major: true,
+        meta: 'APPLE FAMILY CONTROLS', story: 'Apple’s Family Controls framework — the native engine behind FocusDown’s app-blocking during focus sessions.' },
+      { id: 'react-native', label: 'REACT NATIVE', color: 'amber', r: N.MINOR, major: false },
+      { id: 'expo', label: 'EXPO', color: 'amber', r: N.MINOR, major: false },
+      { id: 'revenuecat', label: 'REVENUECAT', color: 'amber', r: N.MAJOR, major: true,
+        meta: 'SUBSCRIPTION INFRASTRUCTURE', story: 'Handles FocusDown’s subscriptions, paired with StoreKit and Superwall to run the entire monetization funnel — plus a 20+ step Mixpanel onboarding funnel that found and fixed a 22.6% drop-off.' },
+      { id: 'superwall', label: 'SUPERWALL', color: 'amber', r: N.MINOR, major: false },
+      { id: 'mixpanel', label: 'MIXPANEL', color: 'amber', r: N.MINOR, major: false },
+      { id: 'customers-10000', label: '10,000+ CUSTOMERS', color: 'cream', r: N.MAJOR, major: true,
+        meta: 'FOCUSDOWN · AS OF LAUNCH', story: 'FocusDown’s customer base as of its February 2026 launch, with a 4.8★ App Store rating and roughly 1,500 monthly active users.' },
+      { id: 'rating-48', label: '4.8★', color: 'cream', r: N.MINOR, major: false },
+      { id: 'travel-mascot', label: 'TRAVEL MASCOT', color: 'cream', r: N.MINOR, major: false },
+      { id: 'tiktok-growth', label: 'TIKTOK GROWTH', color: 'amber', r: N.MINOR, major: false },
+      { id: 'signed-creators', label: '10 SIGNED CREATORS', color: 'cream', r: N.MINOR, major: false },
+
+      { id: 'whatsapp', label: 'WHATSAPP', color: 'amber', r: N.MINOR, major: false },
+      { id: 'nigeria', label: 'NIGERIA', color: 'cream', r: N.MINOR, major: false },
+      { id: 'lagos-pilot', label: 'LAGOS PILOT', color: 'cream', r: N.MINOR + 1, major: false },
+      { id: 'naira-35m', label: '₦35M+/MONTH', color: 'cream', r: N.MAJOR, major: true,
+        meta: 'LAGOS PILOT · MONTHLY VOLUME', story: 'The monthly transaction volume Throwda’s live pilot — a Lagos church — processes entirely inside WhatsApp.' },
+      { id: 'paystack', label: 'PAYSTACK', color: 'amber', r: N.MINOR, major: false },
+      { id: 'double-entry', label: 'DOUBLE-ENTRY LEDGER', color: 'amber', r: N.MAJOR, major: true,
+        meta: 'THROWDA LEDGER CORE', story: 'Every Throwda transaction posts as a DB-enforced balanced journal entry, reconciled against real bank statements — accounting-grade bookkeeping for a WhatsApp fintech.' },
+      { id: 'bank-recon', label: 'BANK RECONCILIATION', color: 'amber', r: N.MINOR, major: false },
+      { id: 'direct-charge', label: 'DIRECT-CHARGE ARCHITECTURE', color: 'amber', r: N.MAJOR, major: true,
+        meta: 'ZERO STORED VALUE', story: 'A direct-charge payment architecture Godfrey designed for Throwda that legally sidestepped a ₦100M PSSP licensing requirement — zero stored value, by design.' },
+      { id: 'license-100m', label: '₦100M LICENSE (SIDESTEPPED)', color: 'cream', r: N.MINOR, major: false },
+      { id: 'vtpass', label: 'VTPASS / EBILLS', color: 'amber', r: N.MINOR, major: false },
+      { id: 'supabase', label: 'SUPABASE', color: 'amber', r: N.MINOR + 1, major: false },
+      { id: 'postgres', label: 'POSTGRES', color: 'amber', r: N.MINOR, major: false },
+      { id: 'test-files', label: '75+ TEST FILES', color: 'cream', r: N.MINOR, major: false },
+      { id: 'pidgin', label: 'NIGERIAN PIDGIN', color: 'cream', r: N.MINOR, major: false },
+
+      { id: 'claude-code', label: 'CLAUDE CODE', color: 'amber', r: N.MAJOR, major: true,
+        meta: 'PRIMARY BUILD TOOL', story: 'Custom agents, MCP servers, and autonomous pipelines. Claude Code is the reason a solo founder ships at the velocity of a small engineering team.',
+        link: 'https://github.com/godfreystorm', linkLabel: 'GitHub' },
+      { id: 'ai-agents', label: 'AI AGENTS', color: 'amber', r: N.MINOR, major: false },
+      { id: 'mcp-servers', label: 'MCP SERVERS', color: 'amber', r: N.MINOR, major: false },
+      { id: 'ship-fast', label: 'SHIP FAST', color: 'amber', r: N.MINOR, major: false },
+      { id: 'bfs-testing', label: 'BFS TESTING', color: 'amber', r: N.MINOR, major: false },
+      { id: 'product-ceo', label: 'PRODUCT-CEO THINKING', color: 'amber', r: N.MINOR, major: false },
+
+      { id: 'dfw', label: 'DALLAS–FORT WORTH', color: 'cream', r: N.MINOR, major: false },
+      { id: 'texas-tech', label: 'TEXAS TECH', color: 'cream', r: N.MAJOR, major: true,
+        meta: 'B.S. COMPUTER SCIENCE · 2024', story: 'Texas Tech University, class of 2024 — where the CS foundation for all of this was built.' },
+      { id: 'raidersoul', label: 'RAIDERSOUL LLC', color: 'cream', r: N.MAJOR, major: true,
+        meta: 'FOUNDED 2025', story: 'Godfrey’s company. Home to two products in production: FocusDown and Throwda.' },
+      { id: 'alchemist', label: 'THE ALCHEMIST', color: 'cream', r: N.MAJOR, major: true,
+        meta: 'THE BOOK THAT STUCK', story: 'Solo founder, trust the process, follow the Personal Legend.' }
+    ];
+
+    var treeEdges = [
+      ['godfrey','day-shift'], ['godfrey','night-shift'], ['godfrey','method'],
+      ['godfrey','dfw'], ['godfrey','texas-tech'], ['godfrey','raidersoul'], ['godfrey','alchemist'],
+
+      ['day-shift','lineleader'], ['day-shift','adyen'],
+      ['adyen','balance-platform'], ['adyen','legal-entity-api'], ['adyen','kyc'],
+      ['day-shift','audit-tool'], ['audit-tool','stores-8000'], ['audit-tool','repaired-4088'],
+      ['day-shift','mongodb'], ['day-shift','mysql'], ['day-shift','migration'],
+      ['day-shift','runbooks'], ['day-shift','production-ritual'],
+
+      ['night-shift','focusdown'], ['night-shift','throwda'],
+
+      ['focusdown','swift'], ['swift','widgetkit'], ['swift','live-activities'], ['swift','dynamic-island'],
+      ['focusdown','screen-time'], ['focusdown','react-native'], ['react-native','expo'],
+      ['focusdown','revenuecat'], ['revenuecat','superwall'], ['focusdown','mixpanel'],
+      ['focusdown','customers-10000'], ['customers-10000','rating-48'],
+      ['focusdown','travel-mascot'], ['focusdown','tiktok-growth'], ['tiktok-growth','signed-creators'],
+
+      ['throwda','whatsapp'], ['whatsapp','nigeria'], ['nigeria','lagos-pilot'], ['lagos-pilot','naira-35m'],
+      ['throwda','paystack'], ['throwda','double-entry'], ['double-entry','bank-recon'],
+      ['throwda','direct-charge'], ['direct-charge','license-100m'],
+      ['throwda','vtpass'], ['throwda','supabase'], ['supabase','postgres'],
+      ['throwda','test-files'], ['throwda','pidgin'],
+
+      ['method','claude-code'], ['method','ai-agents'], ['method','mcp-servers'],
+      ['method','ship-fast'], ['method','bfs-testing'], ['method','product-ceo']
+    ];
+    var crossEdges = [
+      ['supabase','focusdown'],
+      ['claude-code','focusdown'], ['claude-code','throwda'],
+      ['ai-agents','tiktok-growth'],
+      ['pidgin','bfs-testing'],
+      ['paystack','direct-charge']
+    ];
+    var allEdges = treeEdges.concat(crossEdges);
+
+    var nodeById = {};
+    nodes.forEach(function(n) { nodeById[n.id] = n; n.vx = 0; n.vy = 0; n.neighbors = []; });
+    allEdges.forEach(function(e) {
+      nodeById[e[0]].neighbors.push(e[1]);
+      nodeById[e[1]].neighbors.push(e[0]);
+    });
+
+    /* ---- radial tree layout for initial positions ---- */
+    var childrenMap = {};
+    treeEdges.forEach(function(e) {
+      childrenMap[e[0]] = childrenMap[e[0]] || [];
+      childrenMap[e[0]].push(e[1]);
+    });
+    function subtreeSize(id) {
+      var kids = childrenMap[id] || [];
+      var size = 1;
+      kids.forEach(function(k) { size += subtreeSize(k); });
+      return size;
+    }
+    var W, H, cx, cy, layoutR;
+    function placeRadial(id, depth, angleStart, angleEnd) {
+      var node = nodeById[id];
+      var angle = (angleStart + angleEnd) / 2;
+      var depthR = depth === 0 ? 0 : layoutR * (0.15 + depth * 0.13);
+      node.x = cx + Math.cos(angle) * depthR;
+      node.y = cy + Math.sin(angle) * depthR;
+      node.homeAngle = angle;
+      var kids = childrenMap[id] || [];
+      if (!kids.length) return;
+      var total = 0;
+      var sizes = kids.map(function(k) { var s = subtreeSize(k); total += s; return s; });
+      var span = Math.max(angleEnd - angleStart, 0.001);
+      var a = angle - span / 2;
+      /* widen span for children so clusters fan out rather than stay pinched */
+      var childSpan = depth === 0 ? Math.PI * 2 : Math.min(span * 1.6, Math.PI * 1.7);
+      a = angle - childSpan / 2;
+      kids.forEach(function(k, i) {
+        var portion = (sizes[i] / total) * childSpan;
+        placeRadial(k, depth + 1, a, a + portion);
+        a += portion;
+      });
+    }
+
+    function initLayout() {
+      var rect = wrap.getBoundingClientRect();
+      W = rect.width; H = rect.height;
+      cx = W / 2; cy = H / 2;
+      layoutR = Math.min(W, H) * 0.92;
+      placeRadial('godfrey', 0, 0, Math.PI * 2);
+      nodes.forEach(function(n) {
+        n.x += (Math.random() - 0.5) * 14;
+        n.y += (Math.random() - 0.5) * 14;
+        n.vx = 0; n.vy = 0;
+        n.pulsePhase = Math.random() * Math.PI * 2;
+      });
+    }
+
+    /* ---- physics ---- */
+    var DAMPING = 0.90;
+    var REPULSION = 900;
+    var SPRING_K = 0.02;
+    var SPRING_LEN = 46;
+    var GRAVITY_K = 0.0012;
+    var DRIFT_AMP = reduceMotion ? 0 : 0.045;
+
+    function physicsStep(tGlobal, includeDrift) {
+      var fx = {}, fy = {};
+      nodes.forEach(function(n) { fx[n.id] = 0; fy[n.id] = 0; });
+
+      for (var i = 0; i < nodes.length; i++) {
+        for (var j = i + 1; j < nodes.length; j++) {
+          var a = nodes[i], b = nodes[j];
+          var dx = a.x - b.x, dy = a.y - b.y;
+          var distSq = dx * dx + dy * dy;
+          if (distSq < 1) distSq = 1;
+          var dist = Math.sqrt(distSq);
+          var minDist = a.r + b.r + 30;
+          if (dist < minDist * 4) {
+            var force = REPULSION / distSq;
+            var nx = dx / dist, ny = dy / dist;
+            fx[a.id] += nx * force; fy[a.id] += ny * force;
+            fx[b.id] -= nx * force; fy[b.id] -= ny * force;
+          }
+        }
+      }
+
+      allEdges.forEach(function(e) {
+        var a = nodeById[e[0]], b = nodeById[e[1]];
+        var dx = b.x - a.x, dy = b.y - a.y;
+        var dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
+        var rest = SPRING_LEN + a.r + b.r;
+        var stretch = dist - rest;
+        var force = stretch * SPRING_K;
+        var nx = dx / dist, ny = dy / dist;
+        fx[a.id] += nx * force; fy[a.id] += ny * force;
+        fx[b.id] -= nx * force; fy[b.id] -= ny * force;
+      });
+
+      nodes.forEach(function(n) {
+        fx[n.id] += (cx - n.x) * GRAVITY_K;
+        fy[n.id] += (cy - n.y) * GRAVITY_K;
+        if (includeDrift && DRIFT_AMP > 0) {
+          fx[n.id] += Math.sin(tGlobal * 0.0009 + n.pulsePhase) * DRIFT_AMP;
+          fy[n.id] += Math.cos(tGlobal * 0.0011 + n.pulsePhase * 1.3) * DRIFT_AMP;
+        }
+      });
+
+      nodes.forEach(function(n) {
+        if (n.dragging) return;
+        n.vx = (n.vx + fx[n.id]) * DAMPING;
+        n.vy = (n.vy + fy[n.id]) * DAMPING;
+        n.x += n.vx;
+        n.y += n.vy;
+        var pad = n.r + 14;
+        if (n.x < pad) { n.x = pad; n.vx *= -0.3; }
+        if (n.x > W - pad) { n.x = W - pad; n.vx *= -0.3; }
+        if (n.y < pad) { n.y = pad; n.vy *= -0.3; }
+        if (n.y > H - pad) { n.y = H - pad; n.vy *= -0.3; }
+      });
+    }
+
+    /* ---- rendering ---- */
+    var hoveredNode = null;
+    var highlightSet = null;
+    var dragNode = null;
+    var dragMoved = false;
+    var pointerStart = { x: 0, y: 0 };
+    var lastPointer = { x: -9999, y: -9999 };
+
+    /* Resolve themed custom properties (which are color-mix() expressions driven by
+       --nite) into concrete colors. getComputedStyle().getPropertyValue('--x') on a
+       custom property returns the raw, unresolved token stream — not a usable color —
+       so we bounce it through a hidden probe element's `color` and read that back. */
+    var colorProbe = document.createElement('span');
+    colorProbe.style.cssText = 'position:absolute;visibility:hidden;pointer-events:none;left:-9999px;top:-9999px;';
+    document.body.appendChild(colorProbe);
+    function themeColor(key) {
+      var varName = key === 'tangerine' ? '--tangerine' : key === 'amber' ? '--amber' : '--night-ink';
+      colorProbe.style.color = 'var(' + varName + ')';
+      return getComputedStyle(colorProbe).color;
+    }
+    function rgbaFromHex(resolvedColor, alpha) {
+      if (alpha >= 0.999) return resolvedColor;
+      return 'color-mix(in srgb, ' + resolvedColor + ' ' + Math.max(0, Math.round(alpha * 100)) + '%, transparent)';
+    }
+
+    function nodeAtPoint(px, py) {
+      for (var i = nodes.length - 1; i >= 0; i--) {
+        var n = nodes[i];
+        var dx = n.x - px, dy = n.y - py;
+        var hitR = Math.max(n.r + 6, 10);
+        if (dx * dx + dy * dy <= hitR * hitR) return n;
+      }
+      return null;
+    }
+
+    function render(tGlobal) {
+      vctx.clearRect(0, 0, W, H);
+      var tangerineHex = themeColor('tangerine');
+      var amberHex = themeColor('amber');
+      var creamHex = themeColor('cream');
+      var colorHex = { tangerine: tangerineHex, amber: amberHex, cream: creamHex };
+
+      var hovered = hoveredNode;
+      var hset = highlightSet;
+
+      /* edges */
+      allEdges.forEach(function(e) {
+        var a = nodeById[e[0]], b = nodeById[e[1]];
+        var isHi = hset && hset.has(a.id) && hset.has(b.id);
+        var dim = hovered && !isHi;
+        vctx.beginPath();
+        vctx.moveTo(a.x, a.y);
+        vctx.lineTo(b.x, b.y);
+        if (isHi) {
+          vctx.strokeStyle = rgbaFromHex(tangerineHex, 0.55);
+          vctx.lineWidth = 1.4;
+        } else {
+          vctx.strokeStyle = rgbaFromHex(creamHex, dim ? 0.04 : 0.12);
+          vctx.lineWidth = 1;
+        }
+        vctx.stroke();
+      });
+
+      /* nodes */
+      nodes.forEach(function(n) {
+        var isHi = !hovered || (hset && hset.has(n.id));
+        var alpha = hovered ? (isHi ? 1 : 0.25) : 1;
+        var pulse = n.hub && !reduceMotion ? (Math.sin(tGlobal * 0.0016 + n.pulsePhase) * 0.35 + 1) : 1;
+        var rr = n.r * pulse;
+        var hex = colorHex[n.color];
+
+        /* glow */
+        var glowR = rr * (n.hub ? 3.4 : n.major ? 2.6 : 2);
+        var grad = vctx.createRadialGradient(n.x, n.y, 0, n.x, n.y, glowR);
+        grad.addColorStop(0, rgbaFromHex(hex, 0.35 * alpha));
+        grad.addColorStop(1, rgbaFromHex(hex, 0));
+        vctx.fillStyle = grad;
+        vctx.beginPath();
+        vctx.arc(n.x, n.y, glowR, 0, Math.PI * 2);
+        vctx.fill();
+
+        /* dot */
+        vctx.beginPath();
+        vctx.arc(n.x, n.y, rr, 0, Math.PI * 2);
+        vctx.fillStyle = rgbaFromHex(hex, alpha);
+        vctx.fill();
+        if (n === hoveredNode) {
+          vctx.lineWidth = 1.5;
+          vctx.strokeStyle = rgbaFromHex(tangerineHex, 0.9);
+          vctx.stroke();
+        }
+
+        /* label */
+        var showLabel = n.hub || n.major || (!isMobile);
+        if (!showLabel) return;
+        var baseLabelAlpha = (n.hub || n.major) ? 0.85 : 0.3;
+        var labelAlpha = hovered ? (isHi ? 1 : 0.12) : baseLabelAlpha;
+        if (n === hoveredNode) labelAlpha = 1;
+        vctx.font = (n.hub ? '600 11px' : '500 10px') + ' "JetBrains Mono", monospace';
+        vctx.fillStyle = rgbaFromHex(n.hub || n.major ? tangerineHex : creamHex, labelAlpha);
+        vctx.textBaseline = 'middle';
+        vctx.fillText(n.label, n.x + rr + 7, n.y);
+      });
+    }
+
+    /* ---- interaction ---- */
+    function localPoint(e) {
+      var rect = canvas.getBoundingClientRect();
+      var clientX = e.clientX !== undefined ? e.clientX : (e.touches && e.touches[0].clientX);
+      var clientY = e.clientY !== undefined ? e.clientY : (e.touches && e.touches[0].clientY);
+      return { x: clientX - rect.left, y: clientY - rect.top };
+    }
+
+    function updateHighlight(node) {
+      hoveredNode = node;
+      if (node) {
+        var set = new Set([node.id]);
+        node.neighbors.forEach(function(id) { set.add(id); });
+        highlightSet = set;
+      } else {
+        highlightSet = null;
+      }
+    }
+
+    canvas.addEventListener('pointermove', function(e) {
+      var p = localPoint(e);
+      lastPointer = p;
+      if (dragNode) {
+        dragNode.x = p.x;
+        dragNode.y = p.y;
+        dragNode.vx = 0; dragNode.vy = 0;
+        var moved = Math.abs(p.x - pointerStart.x) + Math.abs(p.y - pointerStart.y);
+        if (moved > 4) dragMoved = true;
+        if (reduceMotion) render(performance.now());
+        return;
+      }
+      var n = nodeAtPoint(p.x, p.y);
+      if (n !== hoveredNode) {
+        updateHighlight(n);
+        canvas.style.cursor = n ? 'grab' : 'grab';
+      }
+      if (reduceMotion) render(performance.now());
+    });
+
+    canvas.addEventListener('pointerdown', function(e) {
+      var p = localPoint(e);
+      pointerStart = p;
+      dragMoved = false;
+      var n = nodeAtPoint(p.x, p.y);
+      if (n) {
+        dragNode = n;
+        n.dragging = true;
+        canvas.classList.add('dragging');
+        canvas.setPointerCapture && canvas.setPointerCapture(e.pointerId);
+        if (cursorDot) { cursorDot.classList.add('hidden-cursor'); cursorRing.classList.add('hidden-cursor'); }
+      }
+    });
+
+    function endDrag(e) {
+      if (dragNode) {
+        var p = localPoint(e);
+        var wasNode = dragNode;
+        dragNode.dragging = false;
+        canvas.classList.remove('dragging');
+        if (cursorDot) { cursorDot.classList.remove('hidden-cursor'); cursorRing.classList.remove('hidden-cursor'); }
+        dragNode = null;
+        if (!dragMoved && wasNode.major) {
+          openVaultPanel(wasNode);
+        }
+      }
+    }
+    canvas.addEventListener('pointerup', endDrag);
+    canvas.addEventListener('pointerleave', function(e) {
+      if (!dragNode) { updateHighlight(null); if (reduceMotion) render(performance.now()); }
+    });
+    canvas.addEventListener('pointercancel', endDrag);
+
+    /* ---- panel ---- */
+    var panel = document.getElementById('vault-panel');
+    var backdrop = document.getElementById('vault-backdrop');
+    var panelMeta = document.getElementById('vault-panel-meta');
+    var panelTitle = document.getElementById('vault-panel-title');
+    var panelStory = document.getElementById('vault-panel-story');
+    var panelLink = document.getElementById('vault-panel-link');
+    var panelLinkLabel = document.getElementById('vault-panel-link-label');
+    var panelClose = document.getElementById('vault-panel-close');
+
+    function openVaultPanel(node) {
+      panelMeta.textContent = node.meta || '';
+      panelTitle.textContent = node.label;
+      panelStory.textContent = node.story || '';
+      if (node.link) {
+        panelLink.href = node.link;
+        panelLinkLabel.textContent = node.linkLabel || 'Learn more';
+        panelLink.hidden = false;
+      } else {
+        panelLink.hidden = true;
+      }
+      panel.classList.add('open');
+      backdrop.classList.add('open');
+      panel.setAttribute('aria-hidden', 'false');
+    }
+    function closeVaultPanel() {
+      panel.classList.remove('open');
+      backdrop.classList.remove('open');
+      panel.setAttribute('aria-hidden', 'true');
+    }
+    panelClose.addEventListener('click', closeVaultPanel);
+    backdrop.addEventListener('click', closeVaultPanel);
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') closeVaultPanel();
+    });
+
+    /* ---- resize ---- */
+    function resizeVault() {
+      var rect = wrap.getBoundingClientRect();
+      var dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      canvas.style.width = rect.width + 'px';
+      canvas.style.height = rect.height + 'px';
+      vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      W = rect.width; H = rect.height; cx = W / 2; cy = H / 2;
+    }
+
+    /* ---- run loop with offscreen pause ---- */
+    var running = false;
+    var rafId = null;
+    var perfMs = 0;
+    function loop(ts) {
+      if (!running) return;
+      physicsStep(ts, true);
+      render(ts);
+      rafId = requestAnimationFrame(loop);
+    }
+    function startLoop() {
+      if (running) return;
+      running = true;
+      rafId = requestAnimationFrame(loop);
+    }
+    function stopLoop() {
+      running = false;
+      if (rafId) cancelAnimationFrame(rafId);
+      rafId = null;
+    }
+
+    window.addEventListener('resize', function() {
+      resizeVault();
+    });
+
+    resizeVault();
+    initLayout();
+
+    if (reduceMotion) {
+      /* pre-run simulation synchronously, no idle drift, then freeze */
+      for (var i = 0; i < 240; i++) physicsStep(i, false);
+      render(performance.now());
+    } else {
+      /* warm start so the graph doesn't pop/explode into place */
+      for (var w = 0; w < 90; w++) physicsStep(w, false);
+    }
+
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (reduceMotion) return;
+        if (entry.isIntersecting) startLoop();
+        else stopLoop();
+      });
+    }, { threshold: 0.05 });
+    io.observe(wrap);
+  })();
+
+})();
+</script>
+
+</body>
+</html>

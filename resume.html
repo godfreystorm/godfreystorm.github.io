@@ -1,0 +1,641 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Résumé — Godfrey Osagiede</title>
+<meta name="description" content="Résumé of Godfrey Osagiede — payments engineer at LineLeader, founder of FocusDown and Throwda.">
+<meta property="og:title" content="Résumé — Godfrey Osagiede">
+<meta property="og:description" content="Payments-focused software engineer who owns Adyen operations across 8,000+ stores in production, and ships revenue-generating products end-to-end outside of work.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Résumé — Godfrey Osagiede">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --day-bg: #FDF8F3;
+    --day-ink: #2A1E17;
+    --day-tangerine: #E8621A;
+    --day-amber: #F5A623;
+
+    --bg: var(--day-bg);
+    --ink: var(--day-ink);
+    --tangerine: var(--day-tangerine);
+    --amber: var(--day-amber);
+    --ink-fade: color-mix(in oklab, var(--ink), transparent 45%);
+    --ink-faint: color-mix(in oklab, var(--ink), transparent 78%);
+    --card-bg: color-mix(in oklab, var(--bg), var(--ink) 4%);
+    --border: color-mix(in oklab, var(--ink), transparent 85%);
+
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    --space-4: 2.5rem;
+    --space-5: 4rem;
+    --container: 980px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.62;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--day-tangerine); color: #FDF8F3; }
+
+  a { color: inherit; }
+
+  h1, h2, h3 { font-family: 'Fraunces', serif; margin: 0; }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  .container {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+  }
+
+  img, svg { max-width: 100%; display: block; }
+
+  /* ---------- grain overlay ---------- */
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.028;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--tangerine);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------- nav ---------- */
+  .site-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: color-mix(in oklab, var(--bg), transparent 15%);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-back {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.15rem;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    transition: transform 0.25s ease, color 0.25s ease;
+  }
+  .nav-back:hover { color: var(--tangerine); transform: translateX(-3px); }
+  .print-btn {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    background: transparent;
+    color: var(--ink);
+    border: 1px solid var(--border);
+    padding: 0.6em 1.1em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6em;
+    transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+  }
+  .print-btn:hover { border-color: var(--tangerine); color: var(--tangerine); transform: translateY(-1px); }
+  .print-btn svg { flex-shrink: 0; }
+
+  main { position: relative; z-index: 1; padding-top: 5.5rem; padding-bottom: var(--space-5); }
+
+  /* ---------- masthead ---------- */
+  .masthead { padding: var(--space-4) 0 var(--space-3); }
+  .masthead-name {
+    font-size: clamp(2.4rem, 7vw, 4.6rem);
+    font-weight: 620;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+  }
+  .masthead-role {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.1rem, 2.4vw, 1.5rem);
+    color: var(--tangerine);
+    margin-top: var(--space-2);
+  }
+  .masthead-contact {
+    margin-top: var(--space-3);
+    font-size: 0.72rem;
+    color: var(--ink-fade);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.2em 1em;
+  }
+  .masthead-contact a { text-decoration: none; transition: color 0.2s ease; }
+  .masthead-contact a:hover { color: var(--tangerine); }
+  .masthead-contact .sep { color: var(--ink-faint); }
+
+  .hairline {
+    height: 2px;
+    background: var(--tangerine);
+    margin: var(--space-4) 0;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  /* ---------- layout ---------- */
+  .resume-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
+    gap: var(--space-5);
+    align-items: start;
+  }
+
+  section.block { margin-bottom: var(--space-5); }
+  section.block:last-child { margin-bottom: 0; }
+
+  .block-head {
+    font-size: 0.72rem;
+    color: var(--tangerine);
+    margin-bottom: var(--space-3);
+    display: block;
+    padding-bottom: 0.4em;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .summary-text {
+    font-size: 1.02rem;
+    color: var(--ink);
+    max-width: 62ch;
+  }
+
+  /* ---------- experience ---------- */
+  .exp-item {
+    display: grid;
+    grid-template-columns: 148px 1fr;
+    gap: var(--space-3);
+    margin-bottom: var(--space-4);
+  }
+  .exp-item:last-child { margin-bottom: 0; }
+  .exp-meta {
+    font-size: 0.66rem;
+    line-height: 1.55;
+    color: var(--ink-fade);
+    padding-top: 0.15em;
+  }
+  .exp-meta .exp-dates { color: var(--tangerine); display: block; margin-top: 0.3em; }
+  .exp-role {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.18rem;
+    letter-spacing: -0.005em;
+    color: var(--ink);
+  }
+  .exp-org {
+    font-size: 0.98rem;
+    color: var(--ink);
+    margin-top: 0.15em;
+  }
+  .exp-blurb {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 0.92rem;
+    color: var(--ink-fade);
+    margin: 0.5em 0 0.8em;
+    max-width: 60ch;
+  }
+  ul.bullets {
+    list-style: none;
+    margin: 0.6em 0 0;
+    padding: 0;
+  }
+  ul.bullets li {
+    position: relative;
+    padding-left: 1.3em;
+    margin-bottom: 0.55em;
+    font-size: 0.93rem;
+    color: var(--ink);
+  }
+  ul.bullets li:last-child { margin-bottom: 0; }
+  ul.bullets li::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0.42em;
+    width: 6px;
+    height: 6px;
+    background: var(--tangerine);
+    transform: rotate(45deg);
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+
+  .sub-role { margin-top: var(--space-3); }
+  .sub-role:first-of-type { margin-top: var(--space-2); }
+  .sub-role-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 0.5em 0.9em;
+  }
+  .sub-role-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.02rem;
+  }
+  .sub-role-meta {
+    font-size: 0.63rem;
+    color: var(--ink-fade);
+  }
+
+  /* ---------- aside ---------- */
+  aside .block-head { color: var(--tangerine); }
+  .skill-group { margin-bottom: var(--space-3); }
+  .skill-group:last-child { margin-bottom: 0; }
+  .skill-group-name {
+    font-size: 0.64rem;
+    color: var(--ink);
+    margin-bottom: 0.4em;
+    display: block;
+  }
+  .skill-list {
+    font-size: 0.85rem;
+    color: var(--ink-fade);
+    line-height: 1.55;
+  }
+
+  .edu-school {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1rem;
+  }
+  .edu-detail {
+    font-size: 0.85rem;
+    color: var(--ink-fade);
+    margin-top: 0.3em;
+  }
+
+  .link-list { list-style: none; margin: 0; padding: 0; }
+  .link-list li { margin-bottom: 0.7em; }
+  .link-list li:last-child { margin-bottom: 0; }
+  .link-list a {
+    display: flex;
+    align-items: center;
+    gap: 0.6em;
+    text-decoration: none;
+    font-size: 0.82rem;
+    color: var(--ink-fade);
+    transition: color 0.2s ease, transform 0.2s ease;
+  }
+  .link-list a:hover { color: var(--tangerine); transform: translateX(2px); }
+  .link-list svg { flex-shrink: 0; }
+
+  footer.resume-footer {
+    max-width: var(--container);
+    margin: var(--space-5) auto 0;
+    padding: var(--space-3) var(--space-4) 0;
+    border-top: 1px solid var(--border);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+
+  /* ---------- reveal ---------- */
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  /* ---------- responsive ---------- */
+  @media (max-width: 780px) {
+    .resume-grid { grid-template-columns: 1fr; gap: var(--space-4); }
+    .exp-item { grid-template-columns: 1fr; gap: 0.4em; }
+    .exp-meta { padding-top: 0; }
+    .exp-meta .exp-dates { display: inline; margin-top: 0; }
+    .exp-meta .exp-dates::before { content: ' · '; }
+    .nav-back span.label { display: none; }
+  }
+
+  @media (max-width: 480px) {
+    .container { padding-left: var(--space-3); padding-right: var(--space-3); }
+    footer.resume-footer { padding-left: var(--space-3); padding-right: var(--space-3); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none; opacity: 1; transform: none; }
+    .nav-back, .print-btn, .link-list a { transition: none; }
+  }
+
+  /* ---------- print ---------- */
+  @media print {
+    @page { size: letter; margin: 0.5in 0.55in; }
+    html, body {
+      background: #FFFFFF;
+      color: #141414;
+      font-size: 10.5pt;
+      line-height: 1.42;
+    }
+    .grain, .site-nav, .print-btn { display: none !important; }
+    main { padding-top: 0; padding-bottom: 0; }
+    .container { max-width: 100%; padding: 0; }
+    .masthead { padding: 0 0 var(--space-2); }
+    .masthead-name { font-size: 26pt; color: #141414; }
+    .masthead-role { font-size: 11.5pt; color: #B8471A; }
+    .masthead-contact { font-size: 8pt; color: #333333; }
+    .hairline { height: 1.4pt; background: #E8621A !important; margin: var(--space-2) 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .resume-grid { gap: 1.6rem; }
+    section.block { margin-bottom: 1rem; break-inside: avoid; }
+    .exp-item { margin-bottom: 0.85rem; break-inside: avoid; gap: 1rem; grid-template-columns: 118px 1fr; }
+    .exp-role { font-size: 10.8pt; color: #141414; }
+    .exp-org { font-size: 10pt; color: #141414; }
+    .exp-meta { font-size: 7.2pt; color: #555555; }
+    .exp-meta .exp-dates { color: #B8471A; }
+    .exp-blurb { font-size: 9pt; color: #444444; margin: 0.3em 0 0.5em; }
+    ul.bullets li { font-size: 9pt; margin-bottom: 0.32em; color: #1a1a1a; }
+    ul.bullets li::before { background: #E8621A !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+    .sub-role { margin-top: 0.6rem; break-inside: avoid; }
+    .sub-role-name { font-size: 9.6pt; }
+    .sub-role-meta { font-size: 7pt; color: #555555; }
+    .block-head { color: #B8471A; border-bottom-color: #cccccc; font-size: 7.4pt; margin-bottom: 0.6rem; }
+    .skill-group { margin-bottom: 0.6rem; break-inside: avoid; }
+    .skill-group-name { font-size: 6.8pt; color: #141414; }
+    .skill-list { font-size: 8.4pt; color: #333333; }
+    .edu-school { font-size: 9.6pt; }
+    .edu-detail { font-size: 8.4pt; color: #333333; }
+    .link-list a { font-size: 8.2pt; color: #333333; }
+    .link-list a::after {
+      content: attr(data-print-url);
+      margin-left: 0.3em;
+      color: #777777;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 7pt;
+    }
+    .reveal { opacity: 1 !important; transform: none !important; }
+    footer.resume-footer { display: none; }
+    a { text-decoration: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<header class="site-nav">
+  <a href="index.html" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>G.O.</span>
+  </a>
+  <button class="print-btn mono" type="button" onclick="window.print()">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M4 6V2H12V6" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"/><rect x="2" y="6" width="12" height="6" rx="1" stroke="currentColor" stroke-width="1.3"/><rect x="4.5" y="10" width="7" height="4" stroke="currentColor" stroke-width="1.3"/></svg>
+    Print / Save PDF
+  </button>
+</header>
+
+<main>
+  <div class="container">
+
+    <div class="masthead reveal">
+      <h1 class="masthead-name">Godfrey Osagiede</h1>
+      <p class="masthead-role">Software Engineer — Payments &amp; AI Product</p>
+      <p class="masthead-contact mono">
+        <span>Dallas–Fort Worth, TX</span>
+        <span class="sep">·</span>
+        <span>(469) 660-7278</span>
+        <span class="sep">·</span>
+        <a href="mailto:godfreystorm@gmail.com">godfreystorm@gmail.com</a>
+        <span class="sep">·</span>
+        <a href="https://www.linkedin.com/in/godfrey-osagiede-a29013144" target="_blank" rel="noopener">linkedin.com/in/godfrey-osagiede-a29013144</a>
+        <span class="sep">·</span>
+        <a href="https://github.com/godfreystorm" target="_blank" rel="noopener">github.com/godfreystorm</a>
+        <span class="sep">·</span>
+        <a href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener">FocusDown on the App Store</a>
+        <span class="sep">·</span>
+        <a href="https://throwda.com" target="_blank" rel="noopener">throwda.com</a>
+      </p>
+    </div>
+
+    <div class="hairline reveal" aria-hidden="true"></div>
+
+    <div class="resume-grid">
+      <div class="main-col">
+
+        <section class="block reveal">
+          <span class="block-head mono">Summary</span>
+          <p class="summary-text">Payments-focused software engineer who owns Adyen operations across 8,000+ stores in production, and ships revenue-generating products end-to-end outside of work — an iOS app with 10,000+ customers and a WhatsApp fintech with a live paying pilot. Deep production database experience (MongoDB, MySQL, Postgres) and an AI-agent-driven development workflow (Claude Code, custom agents, MCP) that lets me deliver at multiple-engineer velocity.</p>
+        </section>
+
+        <section class="block reveal">
+          <span class="block-head mono">Experience</span>
+
+          <div class="exp-item">
+            <div class="exp-meta mono">
+              Dallas, TX
+              <span class="exp-dates">Dec 2024 – Present</span>
+            </div>
+            <div class="exp-body">
+              <p class="exp-role">Technical Support Engineer, Payments &amp; Data Operations</p>
+              <p class="exp-org">LineLeader</p>
+              <p class="exp-blurb">Childcare-management SaaS serving 2,500+ franchise organizations across US, AU, and UK.</p>
+              <ul class="bullets">
+                <li>Primary engineer for all Adyen payment operations (Balance Platform, Management, Legal Entity APIs): store configuration, fee structures, KYC enablement/resets, and sweep management across 8,000+ stores.</li>
+                <li>Built a Node.js audit-and-repair tool that validated 8,651 Adyen stores across two production environments, cut indeterminate cases from 2,393 to 87 via Legal Entity API lookups, and safely repaired 4,088 misconfigured stores under a compliance deadline — with rate-limit retry/backoff.</li>
+                <li>Leading a timezone migration touching 30–40M records across 2,905 organizations (in code review).</li>
+                <li>Operate daily in production MongoDB (aggregation pipelines, <code>$graphLookup</code> over 2,500+ org hierarchies, bulkWrite backfills) and MySQL (284-table CRM schema, FK-cascade-safe bulk operations, 600K+ row inserts) across multiple environments.</li>
+                <li>Every production mutation follows dry-run → verified backup → stakeholder approval → per-document apply → count verification; scripts ship through Bitbucket PR review.</li>
+                <li>Authored the team's operational knowledge base: 24+ runbooks, 236 reusable query pages, and 300+ reproducible per-ticket docs.</li>
+              </ul>
+            </div>
+          </div>
+
+          <div class="exp-item">
+            <div class="exp-meta mono">
+              Dallas, TX
+              <span class="exp-dates">Feb 2025 – Present</span>
+            </div>
+            <div class="exp-body">
+              <p class="exp-role">Software Engineer (Products)</p>
+              <p class="exp-org">Raidersoul LLC</p>
+              <p class="exp-blurb">Build and operate two revenue-generating products alongside my full-time role.</p>
+
+              <div class="sub-role">
+                <div class="sub-role-head">
+                  <span class="sub-role-name">FocusDown — iOS focus app</span>
+                  <span class="sub-role-meta mono">App Store · Launched Feb 2026 · 4.8★ · React Native/Expo, TypeScript, Swift, Supabase</span>
+                </div>
+                <ul class="bullets">
+                  <li>Grew to 10,000+ customers and ~1,500 monthly active users with paying subscribers in 5 months; 510 commits solo.</li>
+                  <li>Wrote ~8K lines of native Swift: WidgetKit home-screen widgets, Live Activities/Dynamic Island, and a Screen Time (Family Controls) app-blocking stack.</li>
+                  <li>Built the full monetization funnel — StoreKit + RevenueCat + remotely configurable Superwall paywalls with webhook processing on Supabase edge functions — and instrumented a 20+ step onboarding funnel in Mixpanel, fixing the #1 drop-off (22.6%) found in the data.</li>
+                  <li>Automated growth operations with AI agent pipelines: daily content generation/posting, creator outreach, and a contracted influencer program (10 signed creators).</li>
+                </ul>
+              </div>
+
+              <div class="sub-role">
+                <div class="sub-role-head">
+                  <span class="sub-role-name">Throwda — WhatsApp-native fintech for Nigeria</span>
+                  <span class="sub-role-meta mono">Production, paying pilot · TypeScript, Node.js, Next.js, Supabase/Postgres, Paystack</span>
+                </div>
+                <ul class="bullets">
+                  <li>Bill payments, P2P, and community collections entirely inside WhatsApp; live pilot with a Lagos church processing ₦35M+/month.</li>
+                  <li>Implemented double-entry bookkeeping with DB-enforced balanced journals, bank reconciliation from real bank CSV/XLSX statements, and financial reports (balance sheet, cashflow, budget variance) — ~45K LOC dashboard with 75+ test files (Vitest + Playwright).</li>
+                  <li>Designed a direct-charge payment architecture (Paystack <code>charge_authorization</code>, zero stored value) that avoided a ₦100M PSSP licensing requirement; multi-provider routing (VTPass/eBills) with margin-based failover and SQL kill switches.</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+
+          <div class="exp-item">
+            <div class="exp-meta mono">
+              Dallas, TX
+              <span class="exp-dates">2024</span>
+            </div>
+            <div class="exp-body">
+              <p class="exp-role">Software Engineering Intern</p>
+              <p class="exp-org">RHD Industries</p>
+              <ul class="bullets">
+                <li>Built an AI route-optimization desktop tool (Python, Google Places API, OpenAI API) that sequenced multi-stop delivery routes, reducing per-shift drive time.</li>
+              </ul>
+            </div>
+          </div>
+
+        </section>
+
+      </div>
+
+      <aside class="aside-col">
+
+        <section class="block reveal">
+          <span class="block-head mono">Skills</span>
+
+          <div class="skill-group">
+            <span class="skill-group-name mono">Payments</span>
+            <p class="skill-list">Adyen (Balance Platform, Management, Legal Entity APIs), Paystack, RevenueCat, Apple StoreKit, Superwall, KYC/onboarding flows, double-entry ledgers, idempotent payment processing, webhook pipelines</p>
+          </div>
+          <div class="skill-group">
+            <span class="skill-group-name mono">AI Engineering</span>
+            <p class="skill-list">LLM integration (Anthropic/OpenAI APIs), AI agents &amp; orchestration, MCP servers, Claude Code (advanced), RAG, prompt pipelines, autonomous workflow automation</p>
+          </div>
+          <div class="skill-group">
+            <span class="skill-group-name mono">Languages</span>
+            <p class="skill-list">TypeScript/JavaScript, PHP (Symfony), SQL, Python, Swift, Bash</p>
+          </div>
+          <div class="skill-group">
+            <span class="skill-group-name mono">Databases</span>
+            <p class="skill-list">MongoDB (production aggregation pipelines, Atlas), MySQL, Postgres (Supabase, RLS, migrations)</p>
+          </div>
+          <div class="skill-group">
+            <span class="skill-group-name mono">Platforms</span>
+            <p class="skill-list">Node.js, React, Next.js, React Native/Expo, Supabase edge functions, Docker, Railway, AWS, Git/Bitbucket, Mixpanel</p>
+          </div>
+        </section>
+
+        <section class="block reveal">
+          <span class="block-head mono">Education</span>
+          <p class="edu-school">Texas Tech University</p>
+          <p class="edu-detail">B.S. Computer Science, Minor in Mathematics — May 2024</p>
+        </section>
+
+        <section class="block reveal">
+          <span class="block-head mono">Links</span>
+          <ul class="link-list">
+            <li>
+              <a href="https://github.com/godfreystorm" target="_blank" rel="noopener" data-print-url="github.com/godfreystorm">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 2C6.48 2 2 6.58 2 12.2C2 16.68 4.87 20.47 8.84 21.8C9.34 21.89 9.52 21.58 9.52 21.3C9.52 21.06 9.51 20.31 9.51 19.42C7 19.94 6.35 18.83 6.15 18.25C6.03 17.95 5.53 17.09 5.09 16.85C4.73 16.66 4.21 16.14 5.08 16.13C5.9 16.12 6.48 16.9 6.68 17.21C7.62 18.8 9.09 18.35 9.66 18.08C9.75 17.39 10.02 16.93 10.32 16.67C7.98 16.41 5.53 15.49 5.53 11.44C5.53 10.29 5.93 9.34 6.6 8.6C6.5 8.34 6.14 7.25 6.7 5.79C6.7 5.79 7.57 5.51 9.52 6.86C10.34 6.63 11.21 6.51 12.08 6.51C12.95 6.51 13.82 6.63 14.64 6.86C16.59 5.5 17.46 5.79 17.46 5.79C18.02 7.25 17.66 8.34 17.56 8.6C18.23 9.34 18.63 10.28 18.63 11.44C18.63 15.5 16.17 16.41 13.83 16.67C14.21 17 14.54 17.63 14.54 18.6C14.54 19.98 14.53 21 14.53 21.3C14.53 21.58 14.71 21.9 15.21 21.8C19.17 20.46 22 16.67 22 12.2C22 6.58 17.52 2 12 2Z" fill="currentColor"/></svg>
+                GitHub
+              </a>
+            </li>
+            <li>
+              <a href="https://www.linkedin.com/in/godfrey-osagiede-a29013144" target="_blank" rel="noopener" data-print-url="linkedin.com/in/godfrey-osagiede-a29013144">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4.98 3.5C4.98 4.88 3.86 6 2.48 6C1.1 6 0 4.88 0 3.5C0 2.12 1.1 1 2.48 1C3.86 1 4.98 2.12 4.98 3.5ZM0.22 8.24H4.74V23H0.22V8.24ZM7.98 8.24H12.31V10.19H12.37C12.98 9.03 14.46 7.81 16.68 7.81C21.24 7.81 22.09 10.85 22.09 14.79V23H17.58V15.68C17.58 13.99 17.55 11.82 15.24 11.82C12.9 11.82 12.55 13.66 12.55 15.56V23H7.98V8.24Z" fill="currentColor"/></svg>
+                LinkedIn
+              </a>
+            </li>
+            <li>
+              <a href="https://throwda.com" target="_blank" rel="noopener" data-print-url="throwda.com">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M3 12C3 7.03 7.03 3 12 3C15.66 3 18.8 5.19 20.19 8.33" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M21 12C21 16.97 16.97 21 12 21C8.34 21 5.2 18.81 3.81 15.67" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M20.19 8.33L20.7 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M20.19 8.33L16.5 7.6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.81 15.67L3.3 19.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><path d="M3.81 15.67L7.5 16.4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Throwda
+              </a>
+            </li>
+            <li>
+              <a href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener" data-print-url="apps.apple.com/focus-down">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4" y="2" width="16" height="20" rx="2.5" stroke="currentColor" stroke-width="1.6"/><line x1="10" y1="19" x2="14" y2="19" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                FocusDown
+              </a>
+            </li>
+            <li>
+              <a href="mailto:godfreystorm@gmail.com" data-print-url="godfreystorm@gmail.com">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 6L12 13L21 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                Email
+              </a>
+            </li>
+          </ul>
+        </section>
+
+      </aside>
+    </div>
+
+  </div>
+
+  <footer class="resume-footer mono">
+    <span>Godfrey Osagiede · Résumé</span>
+    <span>Updated 2026</span>
+  </footer>
+</main>
+
+<script>
+(function() {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var revealEls = document.querySelectorAll('.reveal');
+  if (reduceMotion) {
+    revealEls.forEach(function(el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    revealEls.forEach(function(el) { io.observe(el); });
+  }
+})();
+</script>
+
+</body>
+</html>
