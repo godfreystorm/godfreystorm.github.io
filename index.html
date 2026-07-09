@@ -648,6 +648,24 @@
     line-height: 1.65;
     max-width: 62ch;
   }
+  /* full per-project tech list — quiet mono tags, the site's answer to badge walls */
+  .stack-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.5em;
+    margin: var(--space-3) 0;
+  }
+  .stack-tags span {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.62rem;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--ink-fade);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    padding: 0.35em 0.8em;
+    white-space: nowrap;
+  }
   .panel-stats {
     display: flex;
     flex-wrap: wrap;
@@ -1522,6 +1540,9 @@
             <span>510 solo commits</span>
           </div>
           <p class="panel-copy">Built the whole monetization funnel (StoreKit + RevenueCat + Superwall) and a 20+ step Mixpanel onboarding funnel — found and fixed the #1 drop-off (22.6%).</p>
+          <div class="stack-tags" aria-label="FocusDown tech stack">
+            <span>TypeScript</span><span>React Native</span><span>Expo</span><span>Swift</span><span>WidgetKit</span><span>Live Activities</span><span>Screen Time API</span><span>Supabase</span><span>StoreKit</span><span>RevenueCat</span><span>Superwall</span><span>Mixpanel</span><span>Claude Code</span>
+          </div>
           <a class="panel-link chip-btn" href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener" aria-label="FocusDown on the App Store">
             On the App Store
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
@@ -1543,6 +1564,9 @@
             <span>45K LOC</span>
             <span>75+ test files</span>
             <span>0 stored value</span>
+          </div>
+          <div class="stack-tags" aria-label="Throwda tech stack">
+            <span>TypeScript</span><span>Node.js</span><span>Next.js</span><span>WhatsApp Business API</span><span>Supabase</span><span>Postgres</span><span>Paystack</span><span>VTPass / eBills</span><span>Vitest</span><span>Playwright</span><span>Railway</span><span>Claude Code</span>
           </div>
           <a class="panel-link chip-btn" href="https://throwda.com" target="_blank" rel="noopener" aria-label="Throwda — throwda.com">
             throwda.com
