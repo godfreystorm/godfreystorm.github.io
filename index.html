@@ -13,6 +13,8 @@
 <meta name="twitter:title" content="Godfrey Osagiede — Payments engineer by day, founder by night">
 <meta name="twitter:description" content="I own Adyen payment operations across 8,000+ stores in production — then go home and ship revenue-generating products end-to-end.">
 <meta name="twitter:image" content="assets/og.jpg">
+<meta name="theme-color" content="#FDF8F3" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D16" media="(prefers-color-scheme: dark)">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
 <link rel="preload" as="image" href="assets/sky-day.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -51,7 +53,7 @@
     --container: 1200px;
   }
 
-  * { box-sizing: border-box; }
+  * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
   html { scroll-behavior: smooth; }
 
   body {
@@ -240,9 +242,37 @@
     border-radius: 2px;
   }
 
+  /* ---------- F3: tap targets ----------
+     Every small link/chip/icon gets an invisible >=44x44 CSS px hit area via
+     a centered pseudo-element, rather than padding that would visually
+     enlarge these deliberately small mono labels/icons. */
+  .nav-mono,
+  .nav-links a,
+  .icon-link,
+  .chip-btn,
+  .vault-panel-close,
+  .vault-panel-link {
+    position: relative;
+  }
+  .nav-mono::before,
+  .nav-links a::before,
+  .icon-link::before,
+  .chip-btn::before,
+  .vault-panel-close::before,
+  .vault-panel-link::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+  }
+
   /* ---------- hero ---------- */
   .hero {
     min-height: 100vh;
+    min-height: 100svh; /* F3: iOS address-bar-safe viewport unit, vh fallback above */
     display: flex;
     flex-direction: column;
     justify-content: center;
@@ -838,10 +868,15 @@
     gap: 0.6em;
   }
 
-  /* ---------- E3: bird migration ----------
-     A single migration "moment" sweeping the full hero diagonally, then long
-     quiet gaps before it recurs. Three skeins (2 L→R, 1 R→L), each a rigid
-     V-formation (.skein moves as one unit along the diagonal); individual
+  /* ---------- F1: bird migration ----------
+     The sky stays alive continuously — 8 skeins (5 rigid V-formations of
+     6–9, 3 lone/duo/trio stragglers), mixed L→R / R→L, spread across
+     altitudes 8%–58vh, each on its own duration (20–34s) and entry stagger
+     (0.3s/1.5s/3s, then +1.5s per additional skein) so the first bird is
+     on-screen within ~0.3s of load and a new arrival is always close behind.
+     Per-skein entry/exit coordinates are parameterized via --x0/--y0/--x1/--y1
+     custom properties consumed by the two shared keyframes below (these are
+     static per instance, not animated, so substitution is safe). Individual
      birds get a static V-position offset (the independent `translate`
      property, so it composes cleanly with the position-moving `transform`
      used for wing flap on the nested SVG) plus a staggered bob and flap.
@@ -861,27 +896,39 @@
     animation-timing-function: linear;
     animation-iteration-count: infinite;
   }
-  .skein-a { animation-name: migrate-lr; animation-duration: 54s; animation-delay: 2s; }
-  .skein-b { animation-name: migrate-lr; animation-duration: 60s; animation-delay: 2.6s; }
-  .skein-c { animation-name: migrate-rl; animation-duration: 68s; animation-delay: 3.4s; }
+  .skein-a { animation-name: migrate-lr; animation-duration: 22s; animation-delay: 0.3s; --x0: -18vw; --y0: 55vh; --x1: 120vw; --y1: 12vh; }
+  .skein-a .bird-wing { width: 26px; height: 13px; }
+  .skein-b { animation-name: migrate-lr; animation-duration: 27s; animation-delay: 1.5s; --x0: -18vw; --y0: 38vh; --x1: 120vw; --y1: 20vh; }
+  .skein-b .bird-wing { width: 19px; height: 9.5px; opacity: 0.9; }
+  .skein-c { animation-name: migrate-rl; animation-duration: 31s; animation-delay: 3s; --x0: 120vw; --y0: 18vh; --x1: -20vw; --y1: 45vh; }
+  .skein-c .bird-wing { width: 12px; height: 6px; opacity: 0.6; }
+  .skein-d { animation-name: migrate-lr; animation-duration: 25s; animation-delay: 4.5s; --x0: -18vw; --y0: 50vh; --x1: 120vw; --y1: 30vh; }
+  .skein-d .bird-wing { width: 16px; height: 8px; opacity: 0.75; }
+  .skein-e { animation-name: migrate-rl; animation-duration: 34s; animation-delay: 6s; --x0: 120vw; --y0: 25vh; --x1: -20vw; --y1: 8vh; }
+  .skein-e .bird-wing { width: 23px; height: 11.5px; }
+  .skein-f { animation-name: migrate-lr; animation-duration: 20s; animation-delay: 7.5s; --x0: -18vw; --y0: 42vh; --x1: 120vw; --y1: 15vh; }
+  .skein-f .bird-wing { width: 11px; height: 5.5px; opacity: 0.55; }
+  .skein-g { animation-name: migrate-rl; animation-duration: 29s; animation-delay: 9s; --x0: 120vw; --y0: 12vh; --x1: -20vw; --y1: 50vh; }
+  .skein-g .bird-wing { width: 17px; height: 8.5px; opacity: 0.8; }
+  .skein-h { animation-name: migrate-lr; animation-duration: 24s; animation-delay: 10.5s; --x0: -18vw; --y0: 58vh; --x1: 120vw; --y1: 18vh; }
+  .skein-h .bird-wing { width: 22px; height: 11px; }
 
-  /* enter lower-left ~55% height, exit upper-right ~12% — flight occupies the
-     first 35% of the cycle (≈19–21s here), the rest is the quiet gap */
+  /* crossing occupies ~84% of the cycle, off-screen hold ~16% — short enough
+     that the sky never feels empty between passes of a given skein */
   @keyframes migrate-lr {
-    0%   { transform: translate(-18vw, 55vh); opacity: 0; }
-    3%   { opacity: 1; }
-    32%  { opacity: 1; }
-    35%  { transform: translate(120vw, 12vh); opacity: 0; }
-    100% { transform: translate(120vw, 12vh); opacity: 0; }
+    0%   { transform: translate(var(--x0), var(--y0)); opacity: 0; }
+    2%   { opacity: 1; }
+    82%  { opacity: 1; }
+    84%  { transform: translate(var(--x1), var(--y1)); opacity: 0; }
+    100% { transform: translate(var(--x1), var(--y1)); opacity: 0; }
   }
-  /* opposite direction, different altitude: enters upper-right-ish, exits
-     lower-left — reads as a separate skein, not a mirrored twin */
+  /* opposite direction: enters from the right edge, exits left */
   @keyframes migrate-rl {
-    0%   { transform: translate(120vw, 40vh); opacity: 0; }
-    3%   { opacity: 1; }
-    32%  { opacity: 1; }
-    35%  { transform: translate(-20vw, 15vh); opacity: 0; }
-    100% { transform: translate(-20vw, 15vh); opacity: 0; }
+    0%   { transform: translate(var(--x0), var(--y0)); opacity: 0; }
+    2%   { opacity: 1; }
+    82%  { opacity: 1; }
+    84%  { transform: translate(var(--x1), var(--y1)); opacity: 0; }
+    100% { transform: translate(var(--x1), var(--y1)); opacity: 0; }
   }
 
   /* per-bird V-position: static `translate` (independent of `transform`, so
@@ -916,12 +963,11 @@
     100%     { transform: scaleY(1); }
   }
 
-  /* near skein (a): largest, first to arrive */
-  .skein-a .bird-wing { width: 26px; height: 13px; }
-  /* mid skein (b): medium */
-  .skein-b .bird-wing { width: 18px; height: 9px; }
-  /* far skein (c): smallest + faintest, opposite direction */
-  .skein-c .bird-wing { width: 12px; height: 6px; opacity: 0.6; }
+  /* F3: cap the flock on small screens — hide the busier/mid skeins, keep
+     a,c,g,h visible (21 birds total, within the ≤~24 mobile budget) */
+  @media (max-width: 640px) {
+    .skein-b, .skein-d, .skein-e, .skein-f { display: none; }
+  }
 
   /* ---------- per-letter hero name ---------- */
   .hero-heading .line {
@@ -974,6 +1020,12 @@
   .cursor-dot.active, .cursor-ring.active { opacity: 1; }
   .cursor-ring.magnetic { width: 50px; height: 50px; opacity: 0.55; }
   .cursor-ring.hidden-cursor, .cursor-dot.hidden-cursor { opacity: 0 !important; }
+  /* F3: belt-and-suspenders — cursor is JS-gated to pointer:fine already
+     (opacity only ever set via .active, added on real mousemove), but a
+     CSS-level guard rules out any artifact on coarse/touch pointers. */
+  @media (pointer: coarse) {
+    .cursor-dot, .cursor-ring { display: none; }
+  }
   @media (pointer: fine) {
     body.custom-cursor-on, body.custom-cursor-on a, body.custom-cursor-on button { cursor: none; }
   }
@@ -991,6 +1043,7 @@
     margin-left: -50vw;
     margin-right: -50vw;
     height: 85vh;
+    height: 85svh; /* F3: iOS address-bar-safe viewport unit, vh fallback above */
     border-top: 1px solid var(--border);
     border-bottom: 1px solid var(--border);
     background: transparent;
@@ -1014,7 +1067,11 @@
     width: 100%;
     height: 100%;
     cursor: grab;
-    touch-action: none;
+    /* F3: default to allowing native one-finger vertical page scroll; JS
+       hit-tests on pointerdown and switches to 'none' only when the touch
+       starts on/near a node, so dragging a node doesn't fight page scroll
+       and scrolling past the graph doesn't fight node-dragging. */
+    touch-action: pan-y;
   }
   #vault-canvas.dragging { cursor: grabbing; }
   #vault-canvas:focus-visible {
@@ -1165,7 +1222,7 @@
   .vault-backdrop.open { opacity: 1; pointer-events: auto; }
 
   @media (max-width: 900px) {
-    .vault-canvas-wrap { height: 70vh; }
+    .vault-canvas-wrap { height: 70vh; height: 70svh; }
     .vault-panel { top: auto; bottom: 0; left: 0; right: 0; width: 100%; height: min(72vh, 560px); transform: translateY(100%); border-left: none; border-top: 1px solid var(--border); }
     .vault-panel.open { transform: translateY(0); }
   }
@@ -1175,6 +1232,7 @@
     .stat-grid { grid-template-columns: 1fr; }
     .panel, .panel:nth-child(even) { grid-template-columns: 1fr; }
     .panel .panel-visual, .panel:nth-child(even) .panel-visual { order: -1; min-height: 160px; }
+    .vignette { max-width: 320px; } /* F3: cap image size so cards don't get too tall */
     .principle-grid { grid-template-columns: 1fr; }
     .pipeline-track { flex-wrap: wrap; row-gap: var(--space-4); }
     .pipeline-track::before { display: none; }
@@ -1183,11 +1241,17 @@
 
   @media (max-width: 640px) {
     .container { padding-left: var(--space-3); padding-right: var(--space-3); }
-    .nav-links { gap: var(--space-3); }
-    .nav-links li:not(:last-child) { display: none; }
+    /* F3: compact inline row of key anchors (Day/Night/Vault/Résumé) plus
+       Contact stays visible; Method/Lab collapse to save width */
+    .site-nav { padding-left: var(--space-3); padding-right: var(--space-3); }
+    .nav-links { gap: 0.6rem; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; min-width: 0; flex-shrink: 1; }
+    .nav-links::-webkit-scrollbar { display: none; }
+    .nav-links a { font-size: 11px; }
+    .nav-links li:not(.nav-key):not(:last-child) { display: none; }
     .pipeline-step { flex: 0 0 100%; }
     .stat-grid { border-left: none; border-right: none; }
     .section-head .big-num { top: -2.2rem; font-size: clamp(4.5rem, 26vw, 8rem); }
+    .marquee-track { animation-duration: 52s; } /* F3: slower for readability on small screens */
   }
 
   @media (prefers-reduced-motion: reduce) {
@@ -1226,12 +1290,12 @@
 <header class="site-nav">
   <a href="#" class="nav-mono">G.O.</a>
   <ul class="nav-links">
-    <li><a href="#day">Day</a></li>
-    <li><a href="#night">Night</a></li>
+    <li class="nav-key"><a href="#day">Day</a></li>
+    <li class="nav-key"><a href="#night">Night</a></li>
     <li><a href="#method">Method</a></li>
-    <li><a href="#vault">Vault</a></li>
+    <li class="nav-key"><a href="#vault">Vault</a></li>
     <li><a href="#lab">Lab</a></li>
-    <li><a href="resume.html">Résumé</a></li>
+    <li class="nav-key"><a href="resume.html">Résumé</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
 </header>
@@ -1239,32 +1303,72 @@
 <main>
 
   <section class="hero container">
-    <!-- E3: bird migration — 3 V-formation skeins (2 L→R, 1 R→L), 17 birds
-         total, moving as rigid formations along a full-hero diagonal. Each
-         .bird-slot's --vx/--vy is its static V-offset from the leader. -->
+    <!-- F1: bird migration — 8 skeins (5 V-formations of 6-9, 3 lone/
+         duo/trio stragglers), mixed L->R / R->L, 46 birds total, each on
+         its own duration/altitude/stagger. Each .bird-slot's --vx/--vy is
+         its static V-offset from the leader. -->
     <div class="migration" aria-hidden="true" id="migration">
       <div class="skein skein-a">
-      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0.0s;--bob-delay:0.0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:-20px;--vy:-12px;--flap-delay:0.06s;--bob-delay:0.28s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:-20px;--vy:12px;--flap-delay:0.12s;--bob-delay:0.56s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:-40px;--vy:-24px;--flap-delay:0.18s;--bob-delay:0.84s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:-40px;--vy:24px;--flap-delay:0.24s;--bob-delay:1.12s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:-60px;--vy:-36px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0s;--bob-delay:0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:-12px;--flap-delay:0.04s;--bob-delay:0.17s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:12px;--flap-delay:0.07s;--bob-delay:0.35s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-40px;--vy:-24px;--flap-delay:0.11s;--bob-delay:0.52s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-40px;--vy:24px;--flap-delay:0.15s;--bob-delay:0.7s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-60px;--vy:-36px;--flap-delay:0.19s;--bob-delay:0.88s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-60px;--vy:36px;--flap-delay:0.22s;--bob-delay:1.05s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-80px;--vy:-48px;--flap-delay:0.26s;--bob-delay:1.22s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-80px;--vy:48px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
       </div>
       <div class="skein skein-b">
-      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0.0s;--bob-delay:0.0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:-14px;--vy:-9px;--flap-delay:0.05s;--bob-delay:0.25s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:-14px;--vy:9px;--flap-delay:0.1s;--bob-delay:0.5s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:-28px;--vy:-18px;--flap-delay:0.15s;--bob-delay:0.75s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:-28px;--vy:18px;--flap-delay:0.2s;--bob-delay:1.0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:-42px;--vy:-27px;--flap-delay:0.25s;--bob-delay:1.25s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0s;--bob-delay:0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:-12px;--flap-delay:0.04s;--bob-delay:0.2s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:12px;--flap-delay:0.09s;--bob-delay:0.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-40px;--vy:-24px;--flap-delay:0.13s;--bob-delay:0.6s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-40px;--vy:24px;--flap-delay:0.17s;--bob-delay:0.8s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-60px;--vy:-36px;--flap-delay:0.21s;--bob-delay:1s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-60px;--vy:36px;--flap-delay:0.26s;--bob-delay:1.2s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-80px;--vy:-48px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
       </div>
       <div class="skein skein-c">
-      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0.0s;--bob-delay:0.0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:12px;--vy:-7px;--flap-delay:0.07s;--bob-delay:0.3s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:12px;--vy:7px;--flap-delay:0.14s;--bob-delay:0.6s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:24px;--vy:-14px;--flap-delay:0.21s;--bob-delay:0.9s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
-      <span class="bird-slot" style="--vx:24px;--vy:14px;--flap-delay:0.28s;--bob-delay:1.2s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0s;--bob-delay:0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:20px;--vy:-12px;--flap-delay:0.06s;--bob-delay:0.28s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:20px;--vy:12px;--flap-delay:0.12s;--bob-delay:0.56s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:40px;--vy:-24px;--flap-delay:0.18s;--bob-delay:0.84s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:40px;--vy:24px;--flap-delay:0.24s;--bob-delay:1.12s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:60px;--vy:-36px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      </div>
+      <div class="skein skein-d">
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0s;--bob-delay:0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:-12px;--flap-delay:0.04s;--bob-delay:0.2s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:12px;--flap-delay:0.09s;--bob-delay:0.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-40px;--vy:-24px;--flap-delay:0.13s;--bob-delay:0.6s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-40px;--vy:24px;--flap-delay:0.17s;--bob-delay:0.8s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-60px;--vy:-36px;--flap-delay:0.21s;--bob-delay:1s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-60px;--vy:36px;--flap-delay:0.26s;--bob-delay:1.2s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-80px;--vy:-48px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      </div>
+      <div class="skein skein-e">
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0s;--bob-delay:0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:20px;--vy:-12px;--flap-delay:0.05s;--bob-delay:0.23s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:20px;--vy:12px;--flap-delay:0.1s;--bob-delay:0.47s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:40px;--vy:-24px;--flap-delay:0.15s;--bob-delay:0.7s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:40px;--vy:24px;--flap-delay:0.2s;--bob-delay:0.93s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:60px;--vy:-36px;--flap-delay:0.25s;--bob-delay:1.17s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:60px;--vy:36px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      </div>
+      <div class="skein skein-f">
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0s;--bob-delay:0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:-12px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      </div>
+      <div class="skein skein-g">
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0s;--bob-delay:0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:20px;--vy:-12px;--flap-delay:0.15s;--bob-delay:0.7s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:20px;--vy:12px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      </div>
+      <div class="skein skein-h">
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0s;--bob-delay:0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:-12px;--flap-delay:0.15s;--bob-delay:0.7s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:12px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
       </div>
     </div>
     <span class="eyebrow mono">Dallas–Fort Worth, TX · Payments &amp; AI Product</span>
@@ -1807,24 +1911,45 @@
 
   var t = 0;
 
-  /* -------- shooting stars -------- */
+  /* -------- shooting stars --------
+     F2: cadence 2.5-6s while night is visible, occasional (~25%) double
+     streak 300-600ms after the first on a different path. Paths cover the
+     whole upper 2/3 of the sky in both diagonal directions; length/speed/
+     brightness vary per streak so no two look identical. */
   var shootingStars = [];
-  var nextShootAt = performance.now() + 4000 + Math.random() * 4000;
-  function maybeSpawnShootingStar(now, nite) {
-    if (reduceMotion || nite < 0.05) return;
-    if (now < nextShootAt) return;
-    nextShootAt = now + 7000 + Math.random() * 8000;
-    var startX = Math.random() * window.innerWidth * 0.7 + window.innerWidth * 0.15;
-    var startY = Math.random() * window.innerHeight * 0.22;
-    var angle = (Math.PI / 4) + (Math.random() * 0.3 - 0.15);
-    var dist = 160 + Math.random() * 120;
+  var nextShootAt = performance.now() + 800 + Math.random() * 1200;
+
+  function spawnStreak(now) {
+    var dir = Math.random() < 0.5 ? 1 : -1; /* 1 = down-right, -1 = down-left */
+    var startX = dir === 1
+      ? Math.random() * window.innerWidth * 0.55 + window.innerWidth * 0.05
+      : Math.random() * window.innerWidth * 0.55 + window.innerWidth * 0.4;
+    var startY = Math.random() * window.innerHeight * 0.5; /* upper 2/3 of sky */
+    var baseAngle = (Math.PI / 4) + (Math.random() * 0.3 - 0.15);
+    var angle = dir === 1 ? baseAngle : (Math.PI - baseAngle);
+    var dist = 140 + Math.random() * 140; /* varies streak length */
+    var brightness = 0.55 + Math.random() * 0.45; /* varies streak brightness */
     shootingStars.push({
       x1: startX, y1: startY,
       x2: startX + Math.cos(angle) * dist,
       y2: startY + Math.sin(angle) * dist,
       start: now,
-      duration: 650 + Math.random() * 150
+      duration: 450 + Math.random() * 350, /* varies streak speed */
+      brightness: brightness
     });
+  }
+
+  function maybeSpawnShootingStar(now, nite) {
+    if (reduceMotion || nite < 0.05) return;
+    if (now < nextShootAt) return;
+    nextShootAt = now + 2500 + Math.random() * 3500;
+    spawnStreak(now);
+    if (Math.random() < 0.25) {
+      var doubleDelay = 300 + Math.random() * 300;
+      setTimeout(function() {
+        if (!reduceMotion) spawnStreak(performance.now());
+      }, doubleDelay);
+    }
   }
   function drawShootingStars(now) {
     for (var i = shootingStars.length - 1; i >= 0; i--) {
@@ -1836,7 +1961,7 @@
       var tailP = Math.max(0, p - 0.35);
       var tailX = s.x1 + (s.x2 - s.x1) * tailP;
       var tailY = s.y1 + (s.y2 - s.y1) * tailP;
-      var fade = p < 0.15 ? p / 0.15 : (1 - p);
+      var fade = (p < 0.15 ? p / 0.15 : (1 - p)) * (s.brightness || 1);
       var grad = ctx.createLinearGradient(tailX, tailY, headX, headY);
       grad.addColorStop(0, 'rgba(244,238,228,0)');
       grad.addColorStop(1, 'rgba(244,238,228,' + (0.85 * fade).toFixed(3) + ')');
@@ -2587,6 +2712,10 @@
       dragMoved = false;
       var n = nodeAtPoint(p.x, p.y);
       if (n) {
+        /* F3: only claim the gesture (blocking native scroll) when the
+           touch actually starts on a node — otherwise leave pan-y active
+           so a swipe that starts elsewhere on the canvas scrolls the page. */
+        canvas.style.touchAction = 'none';
         dragNode = n;
         n.dragging = true;
         canvas.classList.add('dragging');
@@ -2596,6 +2725,7 @@
     });
 
     function endDrag(e) {
+      canvas.style.touchAction = 'pan-y';
       if (dragNode) {
         var p = localPoint(e);
         var wasNode = dragNode;
