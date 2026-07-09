@@ -8,10 +8,13 @@
 <meta property="og:title" content="Godfrey Osagiede — Payments engineer by day, founder by night">
 <meta property="og:description" content="I own Adyen payment operations across 8,000+ stores in production — then go home and ship revenue-generating products end-to-end.">
 <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="assets/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Godfrey Osagiede — Payments engineer by day, founder by night">
 <meta name="twitter:description" content="I own Adyen payment operations across 8,000+ stores in production — then go home and ship revenue-generating products end-to-end.">
+<meta name="twitter:image" content="assets/og.jpg">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
+<link rel="preload" as="image" href="assets/sky-day.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400..800&display=swap" rel="stylesheet">
@@ -95,81 +98,23 @@
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
-  /* ---------- sky glow ---------- */
-  .sky-glow {
-    position: fixed;
-    top: -10vw;
-    right: -10vw;
-    width: 50vw;
-    height: 50vw;
-    max-width: 700px;
-    max-height: 700px;
-    border-radius: 50%;
-    background: radial-gradient(circle, color-mix(in oklab, var(--day-tangerine), transparent 78%) 0%, transparent 70%);
-    opacity: calc(1 - var(--nite));
-    z-index: 0;
-    pointer-events: none;
-    transition: opacity 0.1s linear;
-  }
-
-  /* ---------- sunset veil (dusk warmth: amber horizon -> dusty rose -> plum) ---------- */
-  .sunset-veil {
+  /* ---------- painted sky crossfade rig ----------
+     Replaces the CSS-drawn sun/moon, sky-glow, sunset veil, and cloud blobs.
+     Opacity is driven per-frame from the computeNite rAF handler via inline
+     style — never via CSS transition (--nite paint-property rule). */
+  .sky-layer {
     position: fixed;
     inset: 0;
     z-index: 0;
     pointer-events: none;
-    opacity: var(--dusk);
-    transition: opacity 0.1s linear;
-    background:
-      radial-gradient(ellipse 90vw 55vh at 68% 105%, rgba(232, 98, 26, 0.42) 0%, rgba(245, 166, 35, 0.26) 32%, transparent 68%),
-      linear-gradient(to top,
-        rgba(224, 110, 40, 0.30) 0%,
-        rgba(209, 116, 96, 0.20) 26%,
-        rgba(158, 94, 134, 0.16) 56%,
-        rgba(88, 66, 122, 0.20) 82%,
-        rgba(64, 52, 106, 0.24) 100%);
+    background-size: cover;
+    background-position: center top;
+    background-repeat: no-repeat;
+    opacity: 0;
   }
-
-  /* ---------- sun / moon ---------- */
-  .celestial-wrap {
-    position: fixed;
-    top: 6vh;
-    right: 8vw;
-    z-index: 1;
-    pointer-events: none;
-    transform: translate(calc(var(--nite) * -14vw), calc(var(--nite) * 34vh));
-    transition: transform 0.1s linear;
-  }
-  .celestial {
-    position: relative;
-    width: 120px;
-    height: 120px;
-  }
-  .celestial .sun,
-  .celestial .moon {
-    position: absolute;
-    inset: 0;
-    border-radius: 50%;
-    transition: opacity 0.1s linear;
-  }
-  .celestial .sun {
-    background: radial-gradient(circle at 35% 30%, var(--day-amber), var(--day-tangerine) 75%);
-    box-shadow: 0 0 90px 20px color-mix(in oklab, var(--day-tangerine), transparent 55%);
-    opacity: calc(1 - var(--nite));
-  }
-  .celestial .moon {
-    background: radial-gradient(circle at 35% 30%, #F4F1E8, #E8E2D6 75%);
-    box-shadow: 0 0 70px 14px color-mix(in oklab, #9FB4D9, transparent 65%);
-    opacity: var(--nite);
-  }
-  .celestial .crater {
-    position: absolute;
-    border-radius: 50%;
-    background: color-mix(in oklab, #C9C2AF, transparent 20%);
-  }
-  .crater.c1 { width: 22px; height: 22px; top: 24px; left: 30px; }
-  .crater.c2 { width: 14px; height: 14px; top: 62px; left: 68px; }
-  .crater.c3 { width: 10px; height: 10px; top: 40px; left: 76px; }
+  .sky-day   { background-image: url('assets/sky-day.webp'); opacity: 1; }
+  .sky-dusk  { background-image: url('assets/sky-dusk.webp'); }
+  .sky-night { background-image: url('assets/sky-night.webp'); }
 
   /* ---------- stars canvas ---------- */
   #stars {
@@ -592,41 +537,33 @@
     height: 100%;
     min-height: 220px;
   }
-  .orbit {
-    position: relative;
-    width: 160px;
-    height: 160px;
-  }
-  .orbit .globe {
-    position: absolute;
-    inset: 0;
-    margin: auto;
-    width: 100px;
-    height: 100px;
-  }
-  .orbit .ring {
-    position: absolute;
-    inset: 0;
-    border: 1px solid var(--ink-faint);
-    border-radius: 50%;
-    animation: spin 16s linear infinite;
-  }
-  .orbit .ring.r2 { inset: -22px; animation-duration: 24s; animation-direction: reverse; }
-  .orbit .dot-orbit {
-    position: absolute;
-    top: -3px;
-    left: 50%;
-    width: 6px;
-    height: 6px;
-    background: var(--tangerine);
-    border-radius: 50%;
-    transform: translateX(-50%);
-  }
-  @keyframes spin { to { transform: rotate(360deg); } }
-
-  .ledger-visual {
+  /* ---------- painted project vignettes ---------- */
+  .vignette {
     width: 100%;
-    max-width: 260px;
+    max-width: 420px;
+    height: auto;
+    -webkit-mask-image: radial-gradient(closest-side, black 55%, transparent 98%);
+    mask-image: radial-gradient(closest-side, black 55%, transparent 98%);
+    transition: transform 0.9s cubic-bezier(0.22,1,0.36,1);
+  }
+  .panel:hover .vignette { transform: scale(1.03); }
+
+  /* ---------- painted horizon strips ---------- */
+  .horizon-strip {
+    height: clamp(120px, 20vw, 260px);
+    overflow: hidden;
+    width: 100%;
+  }
+  .horizon-strip img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: bottom;
+    display: block;
+  }
+  .horizon-strip.horizon-night img {
+    -webkit-mask-image: linear-gradient(to top, black 75%, transparent);
+    mask-image: linear-gradient(to top, black 75%, transparent);
   }
 
   /* ---------- method ---------- */
@@ -736,29 +673,6 @@
     align-items: center;
     gap: 0.6em;
   }
-
-  /* ---------- clouds ---------- */
-  .cloud-layer {
-    position: absolute;
-    inset: 0;
-    overflow: hidden;
-    pointer-events: none;
-    z-index: 0;
-  }
-  .cloud {
-    position: absolute;
-    border-radius: 50%;
-    background: radial-gradient(ellipse at center, color-mix(in oklab, var(--day-bg), #fff 40%), transparent 72%);
-    filter: blur(28px);
-    opacity: calc((1 - var(--nite)) * 0.11);
-    will-change: transform;
-  }
-  .cloud-1 { width: 46vw; height: 14vw; top: 12%; left: -20vw; animation: drift-1 165s linear infinite; }
-  .cloud-2 { width: 34vw; height: 11vw; top: 28%; left: -30vw; animation: drift-2 190s linear infinite; animation-delay: -40s; }
-  .cloud-3 { width: 26vw; height: 9vw; top: 6%; left: -15vw; animation: drift-3 145s linear infinite; animation-delay: -80s; }
-  @keyframes drift-1 { to { transform: translateX(160vw); } }
-  @keyframes drift-2 { to { transform: translateX(170vw); } }
-  @keyframes drift-3 { to { transform: translateX(150vw); } }
 
   /* ---------- birds ---------- */
   .birds-flock {
@@ -956,8 +870,6 @@
 
   /* ---------- responsive ---------- */
   @media (max-width: 900px) {
-    .celestial-wrap { top: 3vh; right: 4vw; }
-    .celestial, .celestial .sun, .celestial .moon { width: 72px; height: 72px; }
     .stat-grid { grid-template-columns: 1fr; }
     .panel, .panel:nth-child(even) { grid-template-columns: 1fr; }
     .panel .panel-visual, .panel:nth-child(even) .panel-visual { order: -1; min-height: 160px; }
@@ -983,12 +895,13 @@
     .hero-heading .letter { animation: none; opacity: 1; transform: none; transition: none; }
     .reveal, .pipeline-step { transition: none; opacity: 1; transform: none; }
     .scroll-cue .line::after, .scroll-cue span { animation: none; }
-    .orbit .ring { animation: none; }
     .panel, .principle-card { transition: none; }
     .dusk-line .word { transition: none; }
-    .cloud, .bird { animation: none; display: none; }
+    .bird { animation: none; display: none; }
     .cursor-dot, .cursor-ring { display: none; }
     .magnetic { transition: none; transform: none !important; }
+    .vignette { transition: none; }
+    .panel:hover .vignette { transform: none; }
   }
 
   /* ---------- marquee pause on hover ---------- */
@@ -997,20 +910,10 @@
 </head>
 <body>
 
+<div class="sky-layer sky-day" id="sky-day" aria-hidden="true"></div>
+<div class="sky-layer sky-dusk" id="sky-dusk" aria-hidden="true"></div>
+<div class="sky-layer sky-night" id="sky-night" aria-hidden="true"></div>
 <div class="grain"></div>
-<div class="sky-glow"></div>
-<div class="sunset-veil" aria-hidden="true"></div>
-
-<div class="celestial-wrap" aria-hidden="true">
-  <div class="celestial">
-    <div class="sun"></div>
-    <div class="moon">
-      <div class="crater c1"></div>
-      <div class="crater c2"></div>
-      <div class="crater c3"></div>
-    </div>
-  </div>
-</div>
 
 <canvas id="stars" aria-hidden="true"></canvas>
 
@@ -1029,11 +932,6 @@
 <main>
 
   <section class="hero container">
-    <div class="cloud-layer" aria-hidden="true">
-      <div class="cloud cloud-1"></div>
-      <div class="cloud cloud-2"></div>
-      <div class="cloud cloud-3"></div>
-    </div>
     <div class="birds-flock" aria-hidden="true">
       <svg class="bird b1" width="20" height="10" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
       <svg class="bird b2" width="16" height="8" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
@@ -1053,6 +951,10 @@
       <span class="mono">Scroll — the sun is setting</span>
     </div>
   </section>
+
+  <div class="horizon-strip horizon-day reveal">
+    <img src="assets/horizon-day.webp" alt="Painted silhouette of the Dallas skyline" decoding="async">
+  </div>
 
   <div class="marquee-wrap" aria-hidden="true">
     <div class="marquee-track" id="marquee-track">
@@ -1149,16 +1051,7 @@
           </a>
         </div>
         <div class="panel-visual" aria-hidden="true">
-          <div class="orbit">
-            <svg class="globe" viewBox="0 0 100 100" fill="none">
-              <circle cx="50" cy="50" r="46" stroke="currentColor" stroke-width="1" opacity="0.5"/>
-              <ellipse cx="50" cy="50" rx="46" ry="18" stroke="currentColor" stroke-width="1" opacity="0.5"/>
-              <ellipse cx="50" cy="50" rx="20" ry="46" stroke="currentColor" stroke-width="1" opacity="0.5"/>
-              <line x1="4" y1="50" x2="96" y2="50" stroke="currentColor" stroke-width="1" opacity="0.5"/>
-            </svg>
-            <div class="ring"></div>
-            <div class="ring r2"><span class="dot-orbit"></span></div>
-          </div>
+          <img class="vignette" src="assets/vignette-focusdown.webp" alt="" width="1020" height="1020" loading="lazy" decoding="async">
         </div>
       </article>
 
@@ -1180,20 +1073,7 @@
           </a>
         </div>
         <div class="panel-visual" aria-hidden="true">
-          <svg class="ledger-visual" viewBox="0 0 260 160" fill="none">
-            <rect x="0.5" y="0.5" width="259" height="159" stroke="currentColor" stroke-opacity="0.25"/>
-            <line x1="0" y1="40" x2="260" y2="40" stroke="currentColor" stroke-opacity="0.25"/>
-            <line x1="130" y1="40" x2="130" y2="160" stroke="currentColor" stroke-opacity="0.25"/>
-            <text x="20" y="26" fill="currentColor" font-family="JetBrains Mono, monospace" font-size="10" letter-spacing="2" opacity="0.7">LEDGER</text>
-            <text x="30" y="66" fill="currentColor" font-family="JetBrains Mono, monospace" font-size="9" opacity="0.55">DEBIT</text>
-            <text x="160" y="66" fill="currentColor" font-family="JetBrains Mono, monospace" font-size="9" opacity="0.55">CREDIT</text>
-            <line x1="20" y1="90" x2="110" y2="90" stroke="currentColor" stroke-opacity="0.3"/>
-            <line x1="150" y1="90" x2="240" y2="90" stroke="currentColor" stroke-opacity="0.3"/>
-            <line x1="20" y1="112" x2="110" y2="112" stroke="currentColor" stroke-opacity="0.3"/>
-            <line x1="150" y1="112" x2="240" y2="112" stroke="currentColor" stroke-opacity="0.3"/>
-            <line x1="20" y1="134" x2="90" y2="134" stroke="currentColor" stroke-opacity="0.3"/>
-            <line x1="150" y1="134" x2="220" y2="134" stroke="currentColor" stroke-opacity="0.3"/>
-          </svg>
+          <img class="vignette" src="assets/vignette-throwda.webp" alt="" width="1020" height="1020" loading="lazy" decoding="async">
         </div>
       </article>
     </div>
@@ -1285,6 +1165,10 @@
     </div>
   </section>
 
+  <div class="horizon-strip horizon-night reveal">
+    <img src="assets/horizon-night.webp" alt="Painted Lagos skyline at night with lit windows" loading="lazy" decoding="async">
+  </div>
+
 </main>
 
 <footer>
@@ -1346,6 +1230,11 @@
   /* -------- scroll-driven --nite -------- */
   var duskEl = document.getElementById('dusk');
   var ticking = false;
+  var skyDayEl = document.getElementById('sky-day');
+  var skyDuskEl = document.getElementById('sky-dusk');
+  var skyNightEl = document.getElementById('sky-night');
+  function smoothstep(t) { return t * t * (3 - 2 * t); }
+  function clamp01(v) { return Math.min(1, Math.max(0, v)); }
 
   function computeNite() {
     var rect = duskEl.getBoundingClientRect();
@@ -1367,6 +1256,11 @@
     /* sunset warmth: peaks at the dusk midpoint, zero at both ends */
     var dusk = Math.sin(Math.PI * progress);
     root.style.setProperty('--dusk', dusk.toFixed(4));
+
+    /* painted sky crossfade — inline styles, never CSS transitions (--nite paint rule) */
+    skyDayEl.style.opacity = (1 - smoothstep(clamp01(progress / 0.5))).toFixed(4);
+    skyDuskEl.style.opacity = dusk.toFixed(4);
+    skyNightEl.style.opacity = smoothstep(clamp01((progress - 0.5) / 0.5)).toFixed(4);
 
     /* steepened ink curve: text stays dark through early dusk, then flips decisively to light.
        Window ends at 0.5 so text is fully light by the dusk midpoint (avoids gray-on-gray). */
@@ -1620,15 +1514,13 @@
     }
   })();
 
-  /* -------- shared pointer position + moon parallax + custom cursor -------- */
+  /* -------- shared pointer position + custom cursor -------- */
   var pointerFine = window.matchMedia('(pointer: fine)').matches;
   var mouseX = window.innerWidth / 2, mouseY = window.innerHeight / 2;
   var haveMouse = false;
   var cursorDot = document.getElementById('cursor-dot');
   var cursorRing = document.getElementById('cursor-ring');
-  var moonEl = document.querySelector('.celestial');
   var ringX = mouseX, ringY = mouseY;
-  var moonPX = 0, moonPY = 0;
 
   if (pointerFine && !reduceMotion) {
     document.body.classList.add('custom-cursor-on');
@@ -1660,16 +1552,17 @@
       ringY += (mouseY - ringY) * 0.18;
       cursorRing.style.transform = 'translate(' + ringX + 'px,' + ringY + 'px) translate(-50%,-50%)';
     }
-    if (moonEl && !reduceMotion) {
-      var targetPX = ((mouseX / window.innerWidth) - 0.5) * 16;
-      var targetPY = ((mouseY / window.innerHeight) - 0.5) * 16;
-      moonPX += (targetPX - moonPX) * 0.06;
-      moonPY += (targetPY - moonPY) * 0.06;
-      moonEl.style.transform = 'translate(' + moonPX.toFixed(2) + 'px,' + moonPY.toFixed(2) + 'px)';
-    }
     requestAnimationFrame(uiFrame);
   }
   requestAnimationFrame(uiFrame);
+
+  /* -------- warm the remaining painted layers after load -------- */
+  window.addEventListener('load', function() {
+    ['assets/sky-dusk.webp', 'assets/sky-night.webp', 'assets/horizon-day.webp', 'assets/horizon-night.webp'].forEach(function(src) {
+      var img = new Image();
+      img.src = src;
+    });
+  });
 
   /* -------- magnetic hover: nav links + email -------- */
   if (!reduceMotion) {
