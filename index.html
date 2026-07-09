@@ -36,8 +36,8 @@
     --ink: color-mix(in oklab, var(--day-ink), var(--night-ink) calc(var(--nite-ink) * 100%));
     --tangerine: color-mix(in oklab, var(--day-tangerine), var(--night-tangerine) calc(var(--nite) * 100%));
     --amber: color-mix(in oklab, var(--day-amber), var(--night-amber) calc(var(--nite) * 100%));
-    --ink-fade: color-mix(in oklab, var(--ink), transparent 45%);
-    --ink-faint: color-mix(in oklab, var(--ink), transparent 78%);
+    --ink-fade: color-mix(in oklab, var(--ink), transparent 38%);
+    --ink-faint: color-mix(in oklab, var(--ink), transparent 50%); /* D6: tuned so mono labels/eyebrows clear ~3:1 contrast on both day and night */
     --card-bg: color-mix(in oklab, var(--bg), var(--ink) calc(4% + var(--nite) * 4%));
     --border: color-mix(in oklab, var(--ink), transparent 85%);
 
@@ -210,9 +210,8 @@
   .hero-heading {
     font-size: clamp(2.6rem, 10vw, 9rem);
     font-weight: 620;
-    line-height: 0.98;
+    line-height: 1.08;
     letter-spacing: -0.02em;
-    overflow: hidden;
   }
   .hero-heading span {
     display: block;
@@ -275,6 +274,56 @@
   @keyframes pulse-opacity {
     0%, 100% { opacity: 0.5; }
     50% { opacity: 1; }
+  }
+
+  /* ---------- D4: now strip ---------- */
+  .now-strip {
+    border-top: 1px solid var(--border);
+    border-bottom: 1px solid var(--border);
+    padding: var(--space-3) 0;
+  }
+  .now-strip-inner {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+  }
+  .now-eyebrow {
+    color: var(--tangerine);
+    font-size: 0.72rem;
+    flex-shrink: 0;
+  }
+  .now-items {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    gap: var(--space-4);
+    flex-wrap: wrap;
+    flex: 1;
+  }
+  .now-items li {
+    font-size: 0.7rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-fade);
+    max-width: 30ch;
+    line-height: 1.4;
+  }
+  .now-commit {
+    margin-left: auto;
+    flex-shrink: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-size: 0.68rem;
+    color: var(--tangerine);
+    text-decoration: none;
+  }
+  .now-commit svg { transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
+  .now-commit:hover svg { transform: translateX(4px); }
+  @media (max-width: 900px) {
+    .now-strip-inner { flex-direction: column; align-items: flex-start; }
+    .now-commit { margin-left: 0; }
   }
 
   /* ---------- marquee ---------- */
@@ -378,8 +427,9 @@
   }
   .stat-label {
     margin-top: var(--space-2);
-    font-size: 0.82rem;
-    color: var(--ink-fade);
+    font-size: 0.87rem;
+    line-height: 1.5;
+    color: var(--ink);
     max-width: 32ch;
   }
 
@@ -463,12 +513,25 @@
   .dusk-sub {
     margin-top: var(--space-5);
     font-size: 0.72rem;
-    color: var(--ink-fade);
+    color: var(--ink);
+    /* D6: painted dusk sky is busier than the old flat gradient — a themed chip
+       (same --bg/--ink pairing the rest of the page relies on for contrast)
+       keeps this line legible wherever it lands on the horizon/sun. */
+    background: color-mix(in oklab, var(--bg), transparent 28%);
+    padding: 0.45em 1em;
+    border-radius: 999px;
+    display: inline-block;
   }
 
   /* ---------- panels ---------- */
   .panels { display: flex; flex-direction: column; gap: var(--space-6); }
   .panel {
+    /* D8: position:relative alone doesn't create a stacking context, so the
+       later-in-DOM .panel-visual img (which gets its own stacking context via
+       mask-image) would paint above the stretched ::after. z-index:0 forces
+       .panel to contain its own paint order so the ::after wins everywhere. */
+    position: relative;
+    z-index: 0;
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: var(--space-5);
@@ -476,6 +539,7 @@
     background: var(--card-bg);
     border: 1px solid var(--border);
     padding: var(--space-5);
+    cursor: pointer;
     transition: transform 0.4s cubic-bezier(0.22,1,0.36,1), box-shadow 0.4s ease; /* border-color excluded: --nite-driven color-mix */
   }
   .panel:hover {
@@ -495,6 +559,8 @@
     color: var(--ink-fade);
     margin-bottom: var(--space-3);
     font-size: 1rem;
+    line-height: 1.65;
+    max-width: 62ch;
   }
   .panel-stats {
     display: flex;
@@ -527,6 +593,16 @@
     text-transform: uppercase;
     text-decoration: none;
     color: var(--tangerine);
+  }
+  /* D8: stretched-link — makes the whole panel one clickable target while
+     keeping a single link in the tab order and natural screen-reader
+     announcement. .panel-link itself stays unpositioned so ::after (position:
+     absolute, inset:0) escalates to its nearest positioned ancestor, .panel. */
+  .panel-link::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 1;
   }
   .panel-link svg { transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
   .panel-link:hover svg { transform: translateX(6px); }
@@ -599,6 +675,55 @@
     margin-top: var(--space-2);
     font-size: 0.92rem;
     color: var(--ink-fade);
+  }
+
+  /* ---------- D5: the lab ---------- */
+  .lab-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1px;
+    background: var(--border);
+    border: 1px solid var(--border);
+  }
+  .lab-card {
+    background: var(--card-bg);
+    padding: var(--space-4);
+    display: block;
+    text-decoration: none;
+    color: inherit;
+    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1); /* border-color excluded: --nite-driven color-mix */
+  }
+  .lab-card:hover { transform: translateY(-4px); }
+  .lab-card h3 {
+    font-size: 1.05rem;
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    margin-bottom: var(--space-2);
+  }
+  .lab-card p {
+    font-size: 0.86rem;
+    line-height: 1.55;
+    color: var(--ink-fade);
+    margin: 0 0 var(--space-2);
+  }
+  .lab-tag {
+    font-size: 0.62rem;
+    color: var(--tangerine);
+  }
+  .lab-card-more {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+  }
+  .lab-card-more p {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    color: var(--ink);
+    font-size: 0.98rem;
+  }
+  @media (max-width: 900px) {
+    .lab-grid { grid-template-columns: 1fr; }
   }
 
   /* ---------- contact ---------- */
@@ -674,7 +799,7 @@
     gap: 0.6em;
   }
 
-  /* ---------- birds ---------- */
+  /* ---------- birds (D2: three independent flocks, different altitude/scale/direction) ---------- */
   .birds-flock {
     position: absolute;
     inset: 0;
@@ -685,27 +810,66 @@
   }
   .bird {
     position: absolute;
-    top: 18%;
-    left: -6%;
+    left: 0;
     color: var(--ink-faint);
-    animation: fly-across 42s linear infinite;
   }
   .bird path { stroke: currentColor; }
-  .bird.b1 { top: 14%; animation-duration: 46s; animation-delay: 0s; }
-  .bird.b2 { top: 20%; animation-duration: 51s; animation-delay: 9s; }
-  .bird.b3 { top: 11%; animation-duration: 44s; animation-delay: 21s; }
-  .bird.b4 { top: 24%; animation-duration: 55s; animation-delay: 31s; }
-  .bird.b5 { top: 17%; animation-duration: 48s; animation-delay: 14s; }
-  @keyframes fly-across {
-    0% { transform: translate(0, 0); }
-    50% { transform: translate(65vw, -3vh); }
-    100% { transform: translate(132vw, 2vh); }
+
+  /* near flock: top ~8%, largest/fastest, left → right, 6 birds */
+  .flock-near .bird { top: 8%; animation-name: fly-near; animation-timing-function: linear; animation-iteration-count: infinite; }
+  .bird.bn1 { top: 6%;  animation-duration: 66s; animation-delay: 0s; }
+  .bird.bn2 { top: 8%;  animation-duration: 70s; animation-delay: 2.4s; }
+  .bird.bn3 { top: 5%;  animation-duration: 63s; animation-delay: 4.8s; }
+  .bird.bn4 { top: 9.5%; animation-duration: 74s; animation-delay: 1.2s; }
+  .bird.bn5 { top: 7%;  animation-duration: 68s; animation-delay: 3.6s; }
+  .bird.bn6 { top: 10%; animation-duration: 71s; animation-delay: 6s; }
+  @keyframes fly-near {
+    0%   { transform: translate(-10vw, 0); }
+    18%  { transform: translate(20vw, -1.4vh); }
+    32%  { transform: translate(58vw, 1.2vh); }
+    46%  { transform: translate(90vw, -0.8vh); }
+    50%  { transform: translate(122vw, 1.2vh); }
+    100% { transform: translate(122vw, 1.2vh); }
+  }
+
+  /* mid flock: top ~22%, medium, right → left, 4 birds */
+  .flock-mid .bird { top: 22%; animation-name: fly-mid; animation-timing-function: linear; animation-iteration-count: infinite; }
+  .bird.bm1 { top: 20%;   animation-duration: 82s; animation-delay: 24s; }
+  .bird.bm2 { top: 23%;   animation-duration: 86s; animation-delay: 26.5s; }
+  .bird.bm3 { top: 21.5%; animation-duration: 79s; animation-delay: 29s; }
+  .bird.bm4 { top: 24.5%; animation-duration: 90s; animation-delay: 22s; }
+  @keyframes fly-mid {
+    0%   { transform: translate(108vw, 0); }
+    22%  { transform: translate(70vw, 1.3vh); }
+    38%  { transform: translate(30vw, -1vh); }
+    52%  { transform: translate(-8vw, 0.8vh); }
+    56%  { transform: translate(-14vw, 0.8vh); }
+    100% { transform: translate(-14vw, 0.8vh); }
+  }
+
+  /* far flock: top ~38%, smallest/slowest/faintest, left → right, 2 birds */
+  .flock-far .bird { top: 38%; animation-name: fly-far; animation-timing-function: linear; animation-iteration-count: infinite; opacity: 0.55; }
+  .bird.bf1 { top: 36%; animation-duration: 108s; animation-delay: 52s; }
+  .bird.bf2 { top: 40%; animation-duration: 116s; animation-delay: 58s; }
+  @keyframes fly-far {
+    0%   { transform: translate(-6vw, 0); }
+    30%  { transform: translate(45vw, 0.9vh); }
+    48%  { transform: translate(92vw, -0.6vh); }
+    56%  { transform: translate(118vw, 0.6vh); }
+    100% { transform: translate(118vw, 0.6vh); }
   }
 
   /* ---------- per-letter hero name ---------- */
   .hero-heading .line {
     display: block;
     overflow: hidden;
+    padding-bottom: 0.2em;
+    margin-bottom: -0.2em;
+  }
+  /* D1: once the rise-in entrance finishes, drop the clip window entirely so
+     Fraunces descenders (g/y) never get cropped, at any viewport width. */
+  .hero-heading.entered .line {
+    overflow: visible;
   }
   .hero-heading .letter {
     display: inline-block;
@@ -768,14 +932,31 @@
     background: transparent;
     overflow: hidden;
   }
+  /* D3: quiet stage — mute the painted milky way behind the graph so nodes/labels own the space */
+  .vault-canvas-wrap::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    background:
+      radial-gradient(ellipse at center, rgba(244,238,228,0.045), transparent 75%),
+      rgba(13, 12, 22, 0.88);
+  }
   #vault-canvas {
     display: block;
+    position: relative;
+    z-index: 1;
     width: 100%;
     height: 100%;
     cursor: grab;
     touch-action: none;
   }
   #vault-canvas.dragging { cursor: grabbing; }
+  #vault-canvas:focus-visible {
+    outline: 2px solid var(--tangerine);
+    outline-offset: -3px;
+  }
   .vault-hint {
     position: absolute;
     left: var(--space-4);
@@ -784,6 +965,36 @@
     color: var(--ink-faint);
     pointer-events: none;
     z-index: 2;
+  }
+
+  /* ---------- D3: vault legend ---------- */
+  .vault-legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-4);
+    align-items: center;
+    margin-bottom: var(--space-3);
+    font-size: 0.66rem;
+    color: var(--ink-fade);
+  }
+  .vault-legend span { display: inline-flex; align-items: center; }
+  .vault-legend .dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    display: inline-block;
+    margin-right: 0.6em;
+    flex-shrink: 0;
+  }
+  .vault-legend .dot.stories {
+    background: var(--tangerine);
+    animation: legend-pulse 2s ease-in-out infinite;
+  }
+  .vault-legend .dot.skills { background: var(--amber); }
+  .vault-legend .dot.context { background: color-mix(in oklab, #F4EEE4, transparent 25%); }
+  @keyframes legend-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--tangerine), transparent 65%); }
+    50% { box-shadow: 0 0 0 5px color-mix(in oklab, var(--tangerine), transparent 88%); }
   }
 
   .vault-panel {
@@ -902,6 +1113,8 @@
     .magnetic { transition: none; transform: none !important; }
     .vignette { transition: none; }
     .panel:hover .vignette { transform: none; }
+    .vault-legend .dot.stories { animation: none; }
+    .lab-card { transition: none; }
   }
 
   /* ---------- marquee pause on hover ---------- */
@@ -924,6 +1137,7 @@
     <li><a href="#night">Night</a></li>
     <li><a href="#method">Method</a></li>
     <li><a href="#vault">Vault</a></li>
+    <li><a href="#lab">Lab</a></li>
     <li><a href="resume.html">Résumé</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -932,12 +1146,24 @@
 <main>
 
   <section class="hero container">
-    <div class="birds-flock" aria-hidden="true">
-      <svg class="bird b1" width="20" height="10" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird b2" width="16" height="8" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird b3" width="14" height="7" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird b4" width="18" height="9" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird b5" width="15" height="7.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+    <!-- D2: three independent flocks — near/top (L→R, 6 birds), mid (R→L, 4 birds), far/low (L→R, 2 birds) -->
+    <div class="birds-flock flock-near" aria-hidden="true">
+      <svg class="bird bn1" width="22" height="11" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird bn2" width="19" height="9.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird bn3" width="21" height="10.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird bn4" width="18" height="9" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird bn5" width="20" height="10" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird bn6" width="17" height="8.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <div class="birds-flock flock-mid" aria-hidden="true">
+      <svg class="bird bm1" width="14" height="7" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird bm2" width="13" height="6.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird bm3" width="15" height="7.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird bm4" width="12" height="6" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+    </div>
+    <div class="birds-flock flock-far" aria-hidden="true">
+      <svg class="bird bf1" width="9" height="4.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+      <svg class="bird bf2" width="8" height="4" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
     </div>
     <span class="eyebrow mono">Dallas–Fort Worth, TX · Payments &amp; AI Product</span>
     <h1 class="hero-heading" id="hero-heading">
@@ -954,6 +1180,23 @@
 
   <div class="horizon-strip horizon-day reveal">
     <img src="assets/horizon-day.webp" alt="Painted silhouette of the Dallas skyline" decoding="async">
+  </div>
+
+  <!-- D4: NOW strip — editable "now" data. Keep honest and curated, no fake live counters. -->
+  <div class="now-strip reveal">
+    <div class="now-strip-inner container">
+      <span class="now-eyebrow mono">Now</span>
+      <ul class="now-items">
+        <li class="mono">Shipping FocusDown growth experiments — creator program at 10 signed</li>
+        <li class="mono">Scaling Throwda past the ₦35M+/month pilot</li>
+        <li class="mono">Leading a 30–40M-record timezone migration at LineLeader</li>
+      </ul>
+      <a class="now-commit mono" href="https://github.com/godfreystorm" target="_blank" rel="noopener">
+        Commit log
+        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        github.com/godfreystorm
+      </a>
+    </div>
   </div>
 
   <div class="marquee-wrap" aria-hidden="true">
@@ -1045,7 +1288,7 @@
             <span>510 solo commits</span>
           </div>
           <p class="panel-copy">Built the whole monetization funnel (StoreKit + RevenueCat + Superwall) and a 20+ step Mixpanel onboarding funnel — found and fixed the #1 drop-off (22.6%).</p>
-          <a class="panel-link" href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener">
+          <a class="panel-link" href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener" aria-label="FocusDown on the App Store">
             On the App Store
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -1067,7 +1310,7 @@
             <span>75+ test files</span>
             <span>0 stored value</span>
           </div>
-          <a class="panel-link" href="https://throwda.com" target="_blank" rel="noopener">
+          <a class="panel-link" href="https://throwda.com" target="_blank" rel="noopener" aria-label="Throwda — throwda.com">
             throwda.com
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -1131,9 +1374,68 @@
     </div>
     <p class="lede vault-lede-wrap reveal">I live in an Obsidian vault and ship with an agent fleet. This is what the inside looks like — every node is real. Drag them. Click the bright ones.</p>
 
+    <!-- D3: legend row — teaches the color code and the click affordance before anyone touches the canvas -->
+    <div class="vault-legend mono reveal">
+      <span><span class="dot stories" aria-hidden="true"></span>Stories — click</span>
+      <span><span class="dot skills" aria-hidden="true"></span>Skills</span>
+      <span><span class="dot context" aria-hidden="true"></span>Context</span>
+      <span>Drag anything</span>
+    </div>
+
     <div class="vault-canvas-wrap reveal">
-      <canvas id="vault-canvas" aria-label="Interactive graph of Godfrey's projects, skills, and facts"></canvas>
-      <span class="vault-hint mono" id="vault-hint">Drag nodes · hover to trace connections · click bright nodes for detail</span>
+      <canvas id="vault-canvas" tabindex="0" aria-label="Interactive graph of Godfrey's projects, skills, and facts"></canvas>
+      <span class="vault-hint mono" id="vault-hint">Drag to play — ringed nodes open stories</span>
+    </div>
+  </section>
+
+  <section id="lab" class="container">
+    <div class="section-head reveal">
+      <span class="big-num" aria-hidden="true">05</span>
+      <h2>The Lab</h2>
+      <span class="eyebrow mono">Experiments · The Stuff That Didn't Make The Headline</span>
+    </div>
+    <p class="lede reveal">Not everything ships to the App Store. Everything teaches something.</p>
+
+    <div class="lab-grid">
+      <div class="lab-card reveal">
+        <h3>Content Machine</h3>
+        <p>AI pipeline that generates and posts daily short-form content on its own.</p>
+        <span class="mono lab-tag">AI Agents</span>
+      </div>
+      <div class="lab-card reveal">
+        <h3>Route Optimizer</h3>
+        <p>AI multi-stop delivery routing desktop tool built at RHD Industries.</p>
+        <span class="mono lab-tag">Python</span>
+      </div>
+      <div class="lab-card reveal">
+        <h3>Elevator OS</h3>
+        <p>Elevator scheduler with an optimized round-robin algorithm.</p>
+        <span class="mono lab-tag">C++</span>
+      </div>
+      <div class="lab-card reveal">
+        <h3>Language-Teaching Chatbot</h3>
+        <p>NLP + OpenAI chatbot for interactive language learning.</p>
+        <span class="mono lab-tag">Python</span>
+      </div>
+      <div class="lab-card reveal">
+        <h3>Algorithm Visualizer</h3>
+        <p>Pathfinding and sorting, animated with pygame.</p>
+        <span class="mono lab-tag">Python</span>
+      </div>
+      <div class="lab-card reveal">
+        <h3>BFS Maze Solver</h3>
+        <p>Breadth-first search maze solver.</p>
+        <span class="mono lab-tag">Python</span>
+      </div>
+      <div class="lab-card reveal">
+        <h3>Finances Dashboard</h3>
+        <p>Personal finance dashboard for my own money.</p>
+        <span class="mono lab-tag">HTML/JS</span>
+      </div>
+      <a class="lab-card lab-card-more reveal" href="https://github.com/godfreystorm" target="_blank" rel="noopener">
+        <p>…and a dozen more half-finished experiments on GitHub.</p>
+        <span class="mono lab-tag">github.com/godfreystorm →</span>
+      </a>
     </div>
   </section>
 
@@ -1483,6 +1785,7 @@
 
   /* -------- per-letter hero name -------- */
   (function heroLetters() {
+    var heroHeading = document.getElementById('hero-heading');
     var lines = document.querySelectorAll('#hero-heading .line');
     var globalIndex = 0;
     var allLetters = [];
@@ -1499,6 +1802,15 @@
         globalIndex++;
       });
     });
+    /* D1: swap the clip window (overflow:hidden, needed to hide the rise-in
+       animation) for overflow:visible once every letter has finished rising,
+       so Fraunces descenders (g/y) render fully afterward. */
+    if (reduceMotion) {
+      heroHeading.classList.add('entered');
+    } else {
+      var lastDelay = (globalIndex - 1) * 30;
+      setTimeout(function() { heroHeading.classList.add('entered'); }, lastDelay + 720);
+    }
     if (!reduceMotion) {
       allLetters.forEach(function(letterEl, idx) {
         letterEl.addEventListener('mouseenter', function() {
@@ -1739,6 +2051,57 @@
       kids.forEach(function(k) { size += subtreeSize(k); });
       return size;
     }
+
+    /* ---- D3: cluster homes — spatial organization by category ----
+       Every node gets a 'cluster' so it can be pulled toward a fixed anchor
+       region (GODFREY center; DAY SHIFT upper-right; FOCUSDOWN lower-left;
+       THROWDA lower-right; METHOD upper-left; meta nodes ring near center),
+       and so edges/repulsion can be tuned tighter within a cluster and
+       looser between clusters — the thing that makes clusters read as
+       distinct constellations instead of one clustered blob. */
+    var CLUSTER_ROOTS = { 'day-shift': 'day', 'focusdown': 'focusdown', 'throwda': 'throwda', 'method': 'method' };
+    var META_IDS = ['dfw', 'texas-tech', 'raidersoul', 'alchemist'];
+    var CLUSTER_LABELS = { day: 'DAY SHIFT', focusdown: 'FOCUSDOWN', throwda: 'THROWDA', method: 'METHOD' };
+    function assignClusters() {
+      nodes.forEach(function(n) { n.cluster = 'center'; });
+      Object.keys(CLUSTER_ROOTS).forEach(function(rootId) {
+        var cluster = CLUSTER_ROOTS[rootId];
+        var stack = [rootId];
+        while (stack.length) {
+          var id = stack.pop();
+          nodeById[id].cluster = cluster;
+          (childrenMap[id] || []).forEach(function(k) { stack.push(k); });
+        }
+      });
+      META_IDS.forEach(function(id) { nodeById[id].cluster = 'meta'; });
+      nodeById['godfrey'].cluster = 'center';
+      nodeById['night-shift'].cluster = 'center';
+    }
+    assignClusters();
+
+    var clusterAnchors = {};
+    function computeClusterAnchors() {
+      var spreadX = W * 0.27;
+      var spreadY = H * (isMobile ? 0.16 : 0.26);
+      clusterAnchors = {
+        center: { x: cx, y: cy },
+        day: { x: cx + spreadX, y: cy - spreadY },
+        focusdown: { x: cx - spreadX, y: cy + spreadY },
+        throwda: { x: cx + spreadX, y: cy + spreadY },
+        method: { x: cx - spreadX, y: cy - spreadY }
+      };
+      nodes.forEach(function(n) {
+        if (n.cluster === 'meta') return; /* placed on a ring below */
+        n.anchor = clusterAnchors[n.cluster] || clusterAnchors.center;
+      });
+      var metaNodes = nodes.filter(function(n) { return n.cluster === 'meta'; });
+      var metaR = Math.min(W, H) * 0.15;
+      metaNodes.forEach(function(n, i) {
+        var angle = (i / metaNodes.length) * Math.PI * 2 + Math.PI / 6;
+        n.anchor = { x: cx + Math.cos(angle) * metaR, y: cy + Math.sin(angle) * metaR };
+      });
+    }
+
     var W, H, cx, cy, layoutR;
     function placeRadial(id, depth, angleStart, angleEnd) {
       var node = nodeById[id];
@@ -1768,21 +2131,32 @@
       W = rect.width; H = rect.height;
       cx = W / 2; cy = H / 2;
       layoutR = Math.min(W, H) * 0.92;
+      computeClusterAnchors();
       placeRadial('godfrey', 0, 0, Math.PI * 2);
       nodes.forEach(function(n) {
+        /* start each node near its cluster anchor rather than pure radial-tree
+           angle, so the very first frames already read as separated clusters */
+        if (n.anchor) {
+          n.x = n.x * 0.4 + n.anchor.x * 0.6;
+          n.y = n.y * 0.4 + n.anchor.y * 0.6;
+        }
         n.x += (Math.random() - 0.5) * 14;
         n.y += (Math.random() - 0.5) * 14;
         n.vx = 0; n.vy = 0;
         n.pulsePhase = Math.random() * Math.PI * 2;
+        n.nudgePhase = Math.random() * Math.PI * 2;
       });
     }
 
     /* ---- physics ---- */
     var DAMPING = 0.90;
     var REPULSION = 900;
+    var INTER_CLUSTER_REPULSION_MULT = 2.1; /* D3: push different-cluster nodes apart harder */
     var SPRING_K = 0.02;
-    var SPRING_LEN = 46;
-    var GRAVITY_K = 0.0012;
+    var SPRING_LEN = 40;                    /* D3: shorter within a cluster */
+    var SPRING_LEN_INTER = 118;             /* D3: longer between clusters, so edges bridge visible gaps */
+    var GRAVITY_K = 0.0003;                 /* D3: mostly superseded by per-cluster anchor spring below */
+    var ANCHOR_K = 0.0026;                  /* D3: weak per-node spring toward its cluster's anchor point */
     var DRIFT_AMP = reduceMotion ? 0 : 0.045;
 
     function physicsStep(tGlobal, includeDrift) {
@@ -1799,6 +2173,7 @@
           var minDist = a.r + b.r + 30;
           if (dist < minDist * 4) {
             var force = REPULSION / distSq;
+            if (a.cluster !== b.cluster) force *= INTER_CLUSTER_REPULSION_MULT;
             var nx = dx / dist, ny = dy / dist;
             fx[a.id] += nx * force; fy[a.id] += ny * force;
             fx[b.id] -= nx * force; fy[b.id] -= ny * force;
@@ -1810,7 +2185,8 @@
         var a = nodeById[e[0]], b = nodeById[e[1]];
         var dx = b.x - a.x, dy = b.y - a.y;
         var dist = Math.sqrt(dx * dx + dy * dy) || 0.001;
-        var rest = SPRING_LEN + a.r + b.r;
+        var sameCluster = a.cluster === b.cluster;
+        var rest = (sameCluster ? SPRING_LEN : SPRING_LEN_INTER) + a.r + b.r;
         var stretch = dist - rest;
         var force = stretch * SPRING_K;
         var nx = dx / dist, ny = dy / dist;
@@ -1821,6 +2197,10 @@
       nodes.forEach(function(n) {
         fx[n.id] += (cx - n.x) * GRAVITY_K;
         fy[n.id] += (cy - n.y) * GRAVITY_K;
+        if (n.anchor) {
+          fx[n.id] += (n.anchor.x - n.x) * ANCHOR_K;
+          fy[n.id] += (n.anchor.y - n.y) * ANCHOR_K;
+        }
         if (includeDrift && DRIFT_AMP > 0) {
           fx[n.id] += Math.sin(tGlobal * 0.0009 + n.pulsePhase) * DRIFT_AMP;
           fy[n.id] += Math.cos(tGlobal * 0.0011 + n.pulsePhase * 1.3) * DRIFT_AMP;
@@ -1876,6 +2256,23 @@
       return null;
     }
 
+    /* D3: rounded-rect helper for label backdrop pills (roundRect isn't
+       available on every canvas implementation we care about, so draw it
+       manually rather than depend on ctx.roundRect). */
+    function roundRectPath(ctx2, x, y, w, h, r) {
+      ctx2.beginPath();
+      ctx2.moveTo(x + r, y);
+      ctx2.arcTo(x + w, y, x + w, y + h, r);
+      ctx2.arcTo(x + w, y + h, x, y + h, r);
+      ctx2.arcTo(x, y + h, x, y, r);
+      ctx2.arcTo(x, y, x + w, y, r);
+      ctx2.closePath();
+    }
+
+    /* D3: first-view nudge state — 1.5s after the graph first enters the
+       viewport, briefly pulse every clickable (major) ring brighter once. */
+    var nudgeStart = null; /* performance.now() timestamp once armed */
+
     function render(tGlobal) {
       vctx.clearRect(0, 0, W, H);
       var tangerineHex = themeColor('tangerine');
@@ -1885,6 +2282,22 @@
 
       var hovered = hoveredNode;
       var hset = highlightSet;
+
+      /* D3: cluster region labels — faint watermark caption behind each
+         cluster's nodes, so the constellations read as named regions even
+         before anyone hovers. Drawn first so nodes/edges sit on top. */
+      vctx.save();
+      vctx.textAlign = 'center';
+      vctx.textBaseline = 'middle';
+      var clusterFontSize = Math.max(24, Math.min(36, H * 0.05));
+      vctx.font = '700 ' + clusterFontSize.toFixed(0) + 'px "JetBrains Mono", monospace';
+      vctx.fillStyle = rgbaFromHex(creamHex, 0.07);
+      Object.keys(CLUSTER_LABELS).forEach(function(key) {
+        var a = clusterAnchors[key];
+        if (!a) return;
+        vctx.fillText(CLUSTER_LABELS[key], a.x, a.y);
+      });
+      vctx.restore();
 
       /* edges */
       allEdges.forEach(function(e) {
@@ -1904,6 +2317,17 @@
         vctx.stroke();
       });
 
+      /* D3: first-view nudge multiplier — arms once via nudgeStart (set by the
+         IntersectionObserver below), ramps the ring brightness up and back
+         down over ~900ms starting 1.5s after the graph first appears. */
+      var nudgeBoost = 0;
+      if (nudgeStart !== null && !reduceMotion) {
+        var nudgeElapsed = tGlobal - nudgeStart;
+        if (nudgeElapsed >= 0 && nudgeElapsed <= 900) {
+          nudgeBoost = Math.sin((nudgeElapsed / 900) * Math.PI);
+        }
+      }
+
       /* nodes */
       nodes.forEach(function(n) {
         var isHi = !hovered || (hset && hset.has(n.id));
@@ -1911,6 +2335,19 @@
         var pulse = n.hub && !reduceMotion ? (Math.sin(tGlobal * 0.0016 + n.pulsePhase) * 0.35 + 1) : 1;
         var rr = n.r * pulse;
         var hex = colorHex[n.color];
+
+        /* D3: click affordance — clickable (major) nodes get a slow pulsing
+           outer ring so there's a visible clue before anyone hovers. */
+        if (n.major) {
+          var breathe = reduceMotion ? 0.5 : (Math.sin(tGlobal * (Math.PI * 2 / 2000) + n.pulsePhase) * 0.5 + 0.5);
+          var ringAlpha = (0.16 + breathe * 0.22 + nudgeBoost * 0.4) * alpha;
+          var ringR = rr + 6 + breathe * 3 + nudgeBoost * 2;
+          vctx.beginPath();
+          vctx.arc(n.x, n.y, ringR, 0, Math.PI * 2);
+          vctx.strokeStyle = rgbaFromHex(tangerineHex, Math.min(0.85, ringAlpha));
+          vctx.lineWidth = 1.4;
+          vctx.stroke();
+        }
 
         /* glow */
         var glowR = rr * (n.hub ? 3.4 : n.major ? 2.6 : 2);
@@ -1933,16 +2370,46 @@
           vctx.stroke();
         }
 
-        /* label */
+        /* D3: label legibility — hub/major labels get a stronger backdrop
+           pill (0.78 alpha), minor labels a lighter one (0.55 alpha), so text
+           always reads over edges/stars/the milky way. Never draw text
+           without its pill. */
         var showLabel = n.hub || n.major || (!isMobile);
         if (!showLabel) return;
-        var baseLabelAlpha = (n.hub || n.major) ? 0.85 : 0.3;
+        var isHubMajor = n.hub || n.major;
+        var baseLabelAlpha = isHubMajor ? 0.95 : 0.6;
         var labelAlpha = hovered ? (isHi ? 1 : 0.12) : baseLabelAlpha;
         if (n === hoveredNode) labelAlpha = 1;
-        vctx.font = (n.hub ? '600 11px' : '500 10px') + ' "JetBrains Mono", monospace';
-        vctx.fillStyle = rgbaFromHex(n.hub || n.major ? tangerineHex : creamHex, labelAlpha);
+        var fontSize = isHubMajor ? 12.5 : 10.2;
+        vctx.font = (isHubMajor ? '600 ' : '500 ') + fontSize + 'px "JetBrains Mono", monospace';
         vctx.textBaseline = 'middle';
-        vctx.fillText(n.label, n.x + rr + 7, n.y);
+        var labelX = n.x + rr + 9;
+        var labelY = n.y;
+        var textW = vctx.measureText(n.label).width;
+        var padX = isHubMajor ? 6 : 4, padY = isHubMajor ? 5 : 4;
+        var pillBaseAlpha = isHubMajor ? 0.78 : 0.55;
+        var pillAlpha = pillBaseAlpha * Math.max(labelAlpha, 0.12);
+        vctx.fillStyle = 'rgba(10,9,18,' + pillAlpha.toFixed(3) + ')';
+        roundRectPath(vctx, labelX - padX, labelY - fontSize / 2 - padY, textW + padX * 2, fontSize + padY * 2, 4);
+        vctx.fill();
+        vctx.fillStyle = rgbaFromHex(isHubMajor ? tangerineHex : creamHex, labelAlpha);
+        vctx.fillText(n.label, labelX, labelY);
+
+        /* D3: hover affordance — small "OPEN" tag near clickable nodes on hover */
+        if (n === hoveredNode && n.major && !dragNode) {
+          var tag = 'OPEN';
+          vctx.font = '600 9px "JetBrains Mono", monospace';
+          var tagW = vctx.measureText(tag).width;
+          var tagX = n.x - tagW / 2;
+          var tagY = n.y - glowR - 13;
+          roundRectPath(vctx, tagX - 5, tagY - 8, tagW + 10, 16, 8);
+          vctx.fillStyle = rgbaFromHex(tangerineHex, 0.92);
+          vctx.fill();
+          vctx.fillStyle = '#0E0D16';
+          vctx.textAlign = 'center';
+          vctx.fillText(tag, n.x, tagY);
+          vctx.textAlign = 'left';
+        }
       });
     }
 
@@ -1980,7 +2447,9 @@
       var n = nodeAtPoint(p.x, p.y);
       if (n !== hoveredNode) {
         updateHighlight(n);
-        canvas.style.cursor = n ? 'grab' : 'grab';
+        /* D3: pointer cursor over clickable (major) nodes — the affordance
+           the ring hints at visually, confirmed by the cursor. */
+        canvas.style.cursor = n && n.major ? 'pointer' : 'grab';
       }
       if (reduceMotion) render(performance.now());
     });
@@ -2064,6 +2533,8 @@
       canvas.style.height = rect.height + 'px';
       vctx.setTransform(dpr, 0, 0, dpr, 0, 0);
       W = rect.width; H = rect.height; cx = W / 2; cy = H / 2;
+      isMobile = window.innerWidth <= 640;
+      computeClusterAnchors();
     }
 
     /* ---- run loop with offscreen pause ---- */
@@ -2103,14 +2574,36 @@
       for (var w = 0; w < 90; w++) physicsStep(w, false);
     }
 
+    var hasArmedNudge = false;
     var io = new IntersectionObserver(function(entries) {
       entries.forEach(function(entry) {
+        if (entry.isIntersecting && !hasArmedNudge && !reduceMotion) {
+          /* D3: first-view nudge — 1.5s after the graph first enters the
+             viewport, briefly pulse every clickable ring brighter once. */
+          hasArmedNudge = true;
+          setTimeout(function() { nudgeStart = performance.now(); }, 1500);
+        }
         if (reduceMotion) return;
         if (entry.isIntersecting) startLoop();
         else stopLoop();
       });
     }, { threshold: 0.05 });
     io.observe(wrap);
+
+    /* exposed for verification only (mean intra- vs inter-cluster distance checks, etc.) */
+    window.__vaultDebug = {
+      nodes: nodes,
+      clusterAnchors: clusterAnchors,
+      allEdges: allEdges,
+      reflow: function(steps) {
+        resizeVault();
+        initLayout();
+        var n = steps || 220;
+        for (var i = 0; i < n; i++) physicsStep(i * 16, !reduceMotion);
+        render(performance.now());
+      },
+      render: render
+    };
   })();
 
 })();

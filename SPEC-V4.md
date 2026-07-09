@@ -48,5 +48,8 @@ Cards: 1px themed border, hover lift, reveal stagger. Add "Lab" to nav if it fit
 - Stat labels under count-ups: bump size/contrast one notch.
 - Focus-visible: every link/button/canvas gets a clear tangerine outline.
 
+## D8. Fully clickable project panels
+Make the two Night Shift project panels clickable as a whole — clicking anywhere on the FocusDown panel opens https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778 and the Throwda panel opens https://throwda.com (target=_blank rel=noopener). Use the accessible stretched-link pattern: the panel's existing outbound anchor gets `::after { position:absolute; inset:0 }` with `position:relative` on the panel — one link in the tab order, natural screen-reader announcement, aria-label like "FocusDown on the App Store". Any other interactive elements inside a panel need position:relative + higher z-index to remain independently clickable. cursor:pointer on the panel; the hover lift/glow should clearly read as "this is a button".
+
 ## D7. Verify
 Real constraint set as before (375/1440, no overflow, zero console errors, reduced-motion paths, 60fps). For the Vault specifically: confirm clusters are visually separated (measure mean intra- vs inter-cluster node distance), labels all have pills, pulsing rings render, legend present.
