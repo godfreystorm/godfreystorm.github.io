@@ -354,46 +354,58 @@
     50% { opacity: 1; }
   }
 
-  /* ---------- D4: now strip ---------- */
-  .now-strip {
-    border-top: 1px solid var(--border);
-    border-bottom: 1px solid var(--border);
-    padding: var(--space-3) 0;
+  /* ---------- G4: hero NOW line ----------
+     Moved from the old standalone D4 "now strip" band into the hero,
+     directly under the sub-lede. A single compact, left-aligned line:
+     tangerine mono "Now" chip-label, then one item at a time (cycled via
+     JS — see HERO_NOW_ITEMS below), then a small "Commit log" chip link.
+     Visible at t=0 (not a .reveal — no fade-in delay hiding it initially).
+     Item copy is unchanged from the old strip, just restructured. */
+  .hero-now {
+    /* normal inline flow (not flexbox rows) so the eyebrow, the rotating
+       item text, and the commit chip all wrap together as one paragraph —
+       this keeps it to as few lines as the text allows instead of forcing
+       each part onto its own row */
+    margin-top: var(--space-3);
+    max-width: 65ch;
+    line-height: 1.7;
   }
-  .now-strip-inner {
-    display: flex;
-    align-items: center;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-  }
-  .now-eyebrow {
+  .hero-now-eyebrow {
     color: var(--tangerine);
-    font-size: 0.72rem;
-    flex-shrink: 0;
+    font-size: 0.68rem;
+    margin-right: 0.9em;
   }
-  .now-items {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    gap: var(--space-4);
-    flex-wrap: wrap;
-    flex: 1;
-  }
-  .now-items li {
+  .hero-now-item {
     font-size: 0.7rem;
     letter-spacing: 0.06em;
     color: var(--ink-fade);
-    max-width: 30ch;
-    line-height: 1.4;
+    transition: opacity 0.4s ease;
   }
-  .now-commit {
-    margin-left: auto;
-    flex-shrink: 0;
+  .hero-now-item.is-fading { opacity: 0; }
+  .hero-now-commit {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.64rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    text-decoration: none;
+    color: color-mix(in oklab, var(--tangerine), black 15%);
+    margin-left: 0.9em;
+    vertical-align: middle;
+    transition: transform 0.25s cubic-bezier(0.22,1,0.36,1);
   }
-  @media (max-width: 900px) {
-    .now-strip-inner { flex-direction: column; align-items: flex-start; }
-    .now-commit { margin-left: 0; }
+  .hero-now-commit svg { flex-shrink: 0; transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
+  .hero-now-commit:hover,
+  .hero-now-commit:focus-visible {
+    color: var(--tangerine);
+    transform: translateY(-1px);
+  }
+  .hero-now-commit:hover svg,
+  .hero-now-commit:focus-visible svg { transform: translate(2px, -2px); }
+  @media (max-width: 640px) {
+    .hero-now { line-height: 1.6; }
   }
 
   /* ---------- marquee ---------- */
@@ -868,25 +880,30 @@
     gap: 0.6em;
   }
 
-  /* ---------- F1: bird migration ----------
+  /* ---------- F1/G1: bird migration ----------
      The sky stays alive continuously — 8 skeins (5 rigid V-formations of
      6–9, 3 lone/duo/trio stragglers), mixed L→R / R→L, spread across
-     altitudes 8%–58vh, each on its own duration (20–34s) and entry stagger
-     (0.3s/1.5s/3s, then +1.5s per additional skein) so the first bird is
-     on-screen within ~0.3s of load and a new arrival is always close behind.
-     Per-skein entry/exit coordinates are parameterized via --x0/--y0/--x1/--y1
-     custom properties consumed by the two shared keyframes below (these are
-     static per instance, not animated, so substitution is safe). Individual
-     birds get a static V-position offset (the independent `translate`
-     property, so it composes cleanly with the position-moving `transform`
-     used for wing flap on the nested SVG) plus a staggered bob and flap.
-     Day-only via (1 − --nite); reduced-motion removes the whole layer. */
+     altitudes ~5vh–85vh so the flock populates the whole viewport height,
+     each on its own duration (20–34s). The layer is fixed + full-viewport
+     (like the sky/stars layers below it in z-index) so skeins are visible
+     at ANY scroll position, not just within the hero. Three skeins
+     (a/c/e) use a NEGATIVE animation-delay so their crossing is already
+     mid-flight at t=0 — geometry guarantees a bird on-screen within 0.5s
+     of load (see G1 notes at the skein rules below), no timing luck
+     required. Per-skein entry/exit coordinates are parameterized via
+     --x0/--y0/--x1/--y1 custom properties consumed by the two shared
+     keyframes below (these are static per instance, not animated, so
+     substitution is safe). Individual birds get a static V-position
+     offset (the independent `translate` property, so it composes cleanly
+     with the position-moving `transform` used for wing flap on the nested
+     SVG) plus a staggered bob and flap. Day-only via (1 − --nite);
+     reduced-motion removes the whole layer. */
   .migration {
-    position: absolute;
+    position: fixed;
     inset: 0;
     overflow: hidden;
     pointer-events: none;
-    z-index: 0;
+    z-index: 1;
     opacity: calc(1 - var(--nite));
   }
   .skein {
@@ -896,21 +913,28 @@
     animation-timing-function: linear;
     animation-iteration-count: infinite;
   }
-  .skein-a { animation-name: migrate-lr; animation-duration: 22s; animation-delay: 0.3s; --x0: -18vw; --y0: 55vh; --x1: 120vw; --y1: 12vh; }
+  /* G1: skeins a/c/e carry negative delays sized against their own
+     duration so that, given the linear 0%→84% translate + 2%→82% opacity
+     window in the shared keyframes below, each is already ~35–65% through
+     its crossing at t=0 — i.e. its x position lands well inside 0–100vw
+     (roughly 12–42vw here) and its opacity is already 1, not fading in.
+     E.g. skein-a: 22s duration, -9s delay → f0 = 9/22 = 0.41 (inside the
+     0.02–0.82 visible window) → x = -18vw + 138vw·(0.41/0.84) ≈ 42vw. */
+  .skein-a { animation-name: migrate-lr; animation-duration: 22s; animation-delay: -9s; --x0: -18vw; --y0: 8vh; --x1: 120vw; --y1: 62vh; }
   .skein-a .bird-wing { width: 26px; height: 13px; }
-  .skein-b { animation-name: migrate-lr; animation-duration: 27s; animation-delay: 1.5s; --x0: -18vw; --y0: 38vh; --x1: 120vw; --y1: 20vh; }
+  .skein-b { animation-name: migrate-lr; animation-duration: 27s; animation-delay: 1.5s; --x0: -18vw; --y0: 28vh; --x1: 120vw; --y1: 14vh; }
   .skein-b .bird-wing { width: 19px; height: 9.5px; opacity: 0.9; }
-  .skein-c { animation-name: migrate-rl; animation-duration: 31s; animation-delay: 3s; --x0: 120vw; --y0: 18vh; --x1: -20vw; --y1: 45vh; }
+  .skein-c { animation-name: migrate-rl; animation-duration: 31s; animation-delay: -15s; --x0: 120vw; --y0: 55vh; --x1: -20vw; --y1: 84vh; }
   .skein-c .bird-wing { width: 12px; height: 6px; opacity: 0.6; }
-  .skein-d { animation-name: migrate-lr; animation-duration: 25s; animation-delay: 4.5s; --x0: -18vw; --y0: 50vh; --x1: 120vw; --y1: 30vh; }
+  .skein-d { animation-name: migrate-lr; animation-duration: 25s; animation-delay: 4.5s; --x0: -18vw; --y0: 46vh; --x1: 120vw; --y1: 22vh; }
   .skein-d .bird-wing { width: 16px; height: 8px; opacity: 0.75; }
-  .skein-e { animation-name: migrate-rl; animation-duration: 34s; animation-delay: 6s; --x0: 120vw; --y0: 25vh; --x1: -20vw; --y1: 8vh; }
+  .skein-e { animation-name: migrate-rl; animation-duration: 34s; animation-delay: -22s; --x0: 120vw; --y0: 74vh; --x1: -20vw; --y1: 34vh; }
   .skein-e .bird-wing { width: 23px; height: 11.5px; }
-  .skein-f { animation-name: migrate-lr; animation-duration: 20s; animation-delay: 7.5s; --x0: -18vw; --y0: 42vh; --x1: 120vw; --y1: 15vh; }
+  .skein-f { animation-name: migrate-lr; animation-duration: 20s; animation-delay: 7.5s; --x0: -18vw; --y0: 16vh; --x1: 120vw; --y1: 48vh; }
   .skein-f .bird-wing { width: 11px; height: 5.5px; opacity: 0.55; }
-  .skein-g { animation-name: migrate-rl; animation-duration: 29s; animation-delay: 9s; --x0: 120vw; --y0: 12vh; --x1: -20vw; --y1: 50vh; }
+  .skein-g { animation-name: migrate-rl; animation-duration: 29s; animation-delay: 9s; --x0: 120vw; --y0: 62vh; --x1: -20vw; --y1: 6vh; }
   .skein-g .bird-wing { width: 17px; height: 8.5px; opacity: 0.8; }
-  .skein-h { animation-name: migrate-lr; animation-duration: 24s; animation-delay: 10.5s; --x0: -18vw; --y0: 58vh; --x1: 120vw; --y1: 18vh; }
+  .skein-h { animation-name: migrate-lr; animation-duration: 24s; animation-delay: 10.5s; --x0: -18vw; --y0: 36vh; --x1: 120vw; --y1: 80vh; }
   .skein-h .bird-wing { width: 22px; height: 11px; }
 
   /* crossing occupies ~84% of the cycle, off-screen hold ~16% — short enough
@@ -963,8 +987,9 @@
     100%     { transform: scaleY(1); }
   }
 
-  /* F3: cap the flock on small screens — hide the busier/mid skeins, keep
-     a,c,g,h visible (21 birds total, within the ≤~24 mobile budget) */
+  /* F3/G1: cap the flock on small screens — hide the busier/mid skeins, keep
+     a,c,g,h visible (21 birds total, within the ≤~24 mobile budget). The
+     surviving skeins still use the fixed full-viewport .migration layer. */
   @media (max-width: 640px) {
     .skein-b, .skein-d, .skein-e, .skein-f { display: none; }
   }
@@ -1283,31 +1308,14 @@
 <div class="sky-layer sky-day" id="sky-day" aria-hidden="true"></div>
 <div class="sky-layer sky-dusk" id="sky-dusk" aria-hidden="true"></div>
 <div class="sky-layer sky-night" id="sky-night" aria-hidden="true"></div>
-<div class="grain"></div>
 
-<canvas id="stars" aria-hidden="true"></canvas>
-
-<header class="site-nav">
-  <a href="#" class="nav-mono">G.O.</a>
-  <ul class="nav-links">
-    <li class="nav-key"><a href="#day">Day</a></li>
-    <li class="nav-key"><a href="#night">Night</a></li>
-    <li><a href="#method">Method</a></li>
-    <li class="nav-key"><a href="#vault">Vault</a></li>
-    <li><a href="#lab">Lab</a></li>
-    <li class="nav-key"><a href="resume.html">Résumé</a></li>
-    <li><a href="#contact">Contact</a></li>
-  </ul>
-</header>
-
-<main>
-
-  <section class="hero container">
-    <!-- F1: bird migration — 8 skeins (5 V-formations of 6-9, 3 lone/
-         duo/trio stragglers), mixed L->R / R->L, 46 birds total, each on
-         its own duration/altitude/stagger. Each .bird-slot's --vx/--vy is
-         its static V-offset from the leader. -->
-    <div class="migration" aria-hidden="true" id="migration">
+<!-- G1: bird migration — fixed full-viewport layer (moved out of the hero so
+     skeins cross the screen at any scroll position, not just the hero band).
+     8 skeins (5 V-formations of 6-9, 3 lone/duo/trio stragglers), mixed
+     L->R / R->L, 46 birds total, each on its own duration/altitude/stagger,
+     spread across ~5vh-85vh. Each .bird-slot's --vx/--vy is its static
+     V-offset from the leader. -->
+<div class="migration" aria-hidden="true" id="migration">
       <div class="skein skein-a">
       <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0s;--bob-delay:0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
       <span class="bird-slot" style="--vx:-20px;--vy:-12px;--flap-delay:0.04s;--bob-delay:0.17s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
@@ -1371,13 +1379,48 @@
       <span class="bird-slot" style="--vx:-20px;--vy:12px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
       </div>
     </div>
+<div class="grain"></div>
+
+<canvas id="stars" aria-hidden="true"></canvas>
+
+<header class="site-nav">
+  <a href="#" class="nav-mono">G.O.</a>
+  <ul class="nav-links">
+    <li class="nav-key"><a href="#day">Day</a></li>
+    <li class="nav-key"><a href="#night">Night</a></li>
+    <li><a href="#method">Method</a></li>
+    <li class="nav-key"><a href="#vault">Vault</a></li>
+    <li><a href="#lab">Lab</a></li>
+    <li class="nav-key"><a href="resume.html">Résumé</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+</header>
+
+<main>
+
+  <section class="hero container">
     <span class="eyebrow mono">Dallas–Fort Worth, TX · Payments &amp; AI Product</span>
     <h1 class="hero-heading" id="hero-heading">
       <span class="line" data-word="Godfrey">Godfrey</span>
       <span class="line" data-word="Osagiede">Osagiede</span>
     </h1>
     <p class="hero-tagline reveal">Payments engineer by day. <span class="accent">Founder by night.</span></p>
-    <p class="hero-sub reveal">I own Adyen payment operations across 8,000+ stores in production — then go home and ship revenue-generating products end-to-end: an iOS app with 10,000+ customers and a Nigerian WhatsApp fintech moving ₦35M+ a month.</p>
+    <p class="hero-sub reveal">I own Adyen payment operations across 8,000+ stores in production — then go home and ship revenue-generating products end-to-end: an iOS app with 10,000+ customers and a production-grade WhatsApp fintech built for Nigeria, ready for launch.</p>
+
+    <!-- G4: NOW — moved from the old standalone band into the hero, right
+         under the sub-lede. Editable "now" data lives in HERO_NOW_ITEMS
+         (see script below) — keep honest and curated, no fake live
+         counters. #hero-now-item's starting text mirrors HERO_NOW_ITEMS[0]
+         so it's correct even before the rotation script runs. -->
+    <div class="hero-now" id="hero-now">
+      <span class="hero-now-eyebrow mono">Now</span>
+      <span class="hero-now-item mono" id="hero-now-item">Shipping FocusDown growth experiments — creator program at 10 signed</span>
+      <a class="hero-now-commit" href="https://github.com/godfreystorm" target="_blank" rel="noopener" aria-label="Commit log — github.com/godfreystorm">
+        Commit log
+        <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
     <div class="scroll-cue">
       <div class="line"></div>
       <span class="mono">Scroll — the sun is setting</span>
@@ -1386,22 +1429,6 @@
 
   <div class="horizon-strip horizon-day reveal">
     <img src="assets/horizon-day.webp" alt="Painted silhouette of the Dallas skyline" decoding="async">
-  </div>
-
-  <!-- D4: NOW strip — editable "now" data. Keep honest and curated, no fake live counters. -->
-  <div class="now-strip reveal">
-    <div class="now-strip-inner container">
-      <span class="now-eyebrow mono">Now</span>
-      <ul class="now-items">
-        <li class="mono">Shipping FocusDown growth experiments — creator program at 10 signed</li>
-        <li class="mono">Scaling Throwda past the ₦35M+/month pilot</li>
-        <li class="mono">Leading a 30–40M-record timezone migration at LineLeader</li>
-      </ul>
-      <a class="now-commit chip-btn" href="https://github.com/godfreystorm" target="_blank" rel="noopener" aria-label="Commit log — github.com/godfreystorm">
-        Commit log
-        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-    </div>
   </div>
 
   <div class="marquee-wrap" aria-hidden="true">
@@ -1470,7 +1497,7 @@
     <p class="dusk-line mono-off" id="dusk-line">
       <span class="word">Then</span> <span class="word">the</span> <span class="word">sun</span> <span class="word">goes</span> <span class="word">down.</span>
     </p>
-    <p class="dusk-sub mono">Raidersoul LLC · Founded 2025 · Two products in production</p>
+    <p class="dusk-sub mono">Raidersoul LLC · Founded 2025 · Two products built solo</p>
   </section>
 
   <section id="night" class="container">
@@ -1505,12 +1532,12 @@
 
       <article class="panel reveal">
         <div class="panel-content">
-          <span class="eyebrow mono">Fintech · TypeScript · Supabase/Postgres · Paystack · In production</span>
+          <span class="eyebrow mono">Fintech · TypeScript · Supabase/Postgres · Paystack · Pre-launch</span>
           <h3 class="panel-title">Throwda</h3>
-          <p class="panel-copy">Bill payments, P2P, and community collections entirely inside WhatsApp. Live pilot with a Lagos church processing ₦35M+/month. Double-entry bookkeeping with DB-enforced balanced journals, bank reconciliation from real bank statements, ~45K-LOC dashboard with 75+ test files.</p>
+          <p class="panel-copy">Bill payments, P2P, and community collections entirely inside WhatsApp. Production-grade and pre-launch — the launch-partner dashboard is seeded with a Lagos church's real 84-account chart of accounts. Double-entry bookkeeping with DB-enforced balanced journals, bank reconciliation from real bank statements, ~45K-LOC dashboard with 75+ test files.</p>
           <p class="panel-callout">Designed a direct-charge architecture (zero stored value) that legally sidestepped a ₦100M PSSP licensing requirement.</p>
           <div class="panel-stats">
-            <span>₦35M+/month</span>
+            <span>84-account CoA</span>
             <span>45K LOC</span>
             <span>75+ test files</span>
             <span>0 stored value</span>
@@ -1730,7 +1757,7 @@
   } catch (e) { /* ignore */ }
 
   /* -------- marquee content -------- */
-  var marqueeItems = ["ADYEN","8,000+ STORES","TYPESCRIPT","SWIFT","MONGODB","POSTGRES","REACT NATIVE","SUPABASE","PAYSTACK","REVENUECAT","CLAUDE CODE","MCP","DOUBLE-ENTRY LEDGERS","₦35M+/MONTH","10,000+ CUSTOMERS"];
+  var marqueeItems = ["ADYEN","8,000+ STORES","TYPESCRIPT","SWIFT","MONGODB","POSTGRES","REACT NATIVE","SUPABASE","PAYSTACK","REVENUECAT","CLAUDE CODE","MCP","DOUBLE-ENTRY LEDGERS","WHATSAPP FINTECH","10,000+ CUSTOMERS"];
   var diamond = '<svg width="7" height="7" viewBox="0 0 8 8" aria-hidden="true"><path d="M4 0L8 4L4 8L0 4Z" fill="currentColor" opacity="0.6"/></svg>';
   function buildMarquee() {
     var out = '';
@@ -1912,45 +1939,116 @@
   var t = 0;
 
   /* -------- shooting stars --------
-     F2: cadence 2.5-6s while night is visible, occasional (~25%) double
-     streak 300-600ms after the first on a different path. Paths cover the
+     G2: base cadence 0.8-2.5s while night is visible. Doubles ~35%/triples
+     ~12% of base spawns, staggered 200-500ms apart on independent paths.
+     A separate burst timer fires a "meteor shower" every 25-45s: 5-8
+     streaks over ~2.5s radiating from a shared origin (±80px) at a similar
+     angle. ~8% of individual streaks roll as a slow, bright "fireball"
+     (1.4x length, 1.5x duration, brighter head/trail). Paths cover the
      whole upper 2/3 of the sky in both diagonal directions; length/speed/
-     brightness vary per streak so no two look identical. */
+     brightness still vary per streak so no two look identical. Perf cap:
+     never more than MAX_CONCURRENT_STREAKS alive (checked in spawnStreak,
+     so both the base cadence and burst paths respect it for free). All
+     spawn paths re-check reduceMotion/nite before firing so nothing spawns
+     once night fades or reduced-motion is honored. */
   var shootingStars = [];
+  var MAX_CONCURRENT_STREAKS = 10;
   var nextShootAt = performance.now() + 800 + Math.random() * 1200;
+  var nextBurstAt = performance.now() + 25000 + Math.random() * 20000;
 
-  function spawnStreak(now) {
-    var dir = Math.random() < 0.5 ? 1 : -1; /* 1 = down-right, -1 = down-left */
-    var startX = dir === 1
+  function nightStillActive() {
+    if (reduceMotion) return false;
+    var nite2 = parseFloat(getComputedStyle(root).getPropertyValue('--nite')) || 0;
+    return nite2 >= 0.05;
+  }
+
+  function spawnStreak(now, opts) {
+    if (shootingStars.length >= MAX_CONCURRENT_STREAKS) return;
+    opts = opts || {};
+    var dir = opts.dir !== undefined ? opts.dir : (Math.random() < 0.5 ? 1 : -1); /* 1 = down-right, -1 = down-left */
+    var startX = opts.startX !== undefined ? opts.startX : (dir === 1
       ? Math.random() * window.innerWidth * 0.55 + window.innerWidth * 0.05
-      : Math.random() * window.innerWidth * 0.55 + window.innerWidth * 0.4;
-    var startY = Math.random() * window.innerHeight * 0.5; /* upper 2/3 of sky */
-    var baseAngle = (Math.PI / 4) + (Math.random() * 0.3 - 0.15);
+      : Math.random() * window.innerWidth * 0.55 + window.innerWidth * 0.4);
+    var startY = opts.startY !== undefined ? opts.startY : Math.random() * window.innerHeight * 0.5; /* upper 2/3 of sky */
+    var angleJitter = opts.angleJitter !== undefined ? opts.angleJitter : 0.15;
+    var baseAngle = (Math.PI / 4) + (Math.random() * angleJitter * 2 - angleJitter);
     var angle = dir === 1 ? baseAngle : (Math.PI - baseAngle);
-    var dist = 140 + Math.random() * 140; /* varies streak length */
-    var brightness = 0.55 + Math.random() * 0.45; /* varies streak brightness */
+    var isFireball = opts.fireball !== undefined ? opts.fireball : Math.random() < 0.08; /* rare slow bright streak */
+    var dist = (140 + Math.random() * 140) * (isFireball ? 1.4 : 1); /* varies streak length */
+    var brightness = Math.min(1, (0.55 + Math.random() * 0.45) * (isFireball ? 1.25 : 1)); /* varies streak brightness */
+    var duration = (450 + Math.random() * 350) * (isFireball ? 1.5 : 1); /* varies streak speed */
     shootingStars.push({
       x1: startX, y1: startY,
       x2: startX + Math.cos(angle) * dist,
       y2: startY + Math.sin(angle) * dist,
       start: now,
-      duration: 450 + Math.random() * 350, /* varies streak speed */
-      brightness: brightness
+      duration: duration,
+      brightness: brightness,
+      fireball: isFireball
     });
+  }
+
+  /* G2: meteor-shower burst — 5-8 streaks staggered 200-500ms apart over
+     ~2.5s, all radiating from roughly the same sky region/angle. */
+  function fireMeteorShower(now) {
+    var count = 5 + Math.floor(Math.random() * 4); /* 5-8 */
+    var dir = Math.random() < 0.5 ? 1 : -1;
+    var originX = dir === 1
+      ? Math.random() * window.innerWidth * 0.5 + window.innerWidth * 0.1
+      : Math.random() * window.innerWidth * 0.5 + window.innerWidth * 0.35;
+    var originY = Math.random() * window.innerHeight * 0.35;
+    var elapsed = 0;
+    for (var i = 0; i < count; i++) {
+      elapsed += 200 + Math.random() * 300; /* 200-500ms apart, ~2.5s total across 5-8 streaks */
+      (function(delay) {
+        setTimeout(function() {
+          if (!nightStillActive()) return;
+          spawnStreak(performance.now(), {
+            dir: dir,
+            startX: originX + (Math.random() * 160 - 80),
+            startY: originY + (Math.random() * 160 - 80),
+            angleJitter: 0.08,
+            fireball: false
+          });
+        }, delay);
+      })(elapsed);
+    }
   }
 
   function maybeSpawnShootingStar(now, nite) {
     if (reduceMotion || nite < 0.05) return;
+    if (now >= nextBurstAt) {
+      nextBurstAt = now + 25000 + Math.random() * 20000;
+      fireMeteorShower(now);
+    }
     if (now < nextShootAt) return;
-    nextShootAt = now + 2500 + Math.random() * 3500;
+    nextShootAt = now + 800 + Math.random() * 1700;
     spawnStreak(now);
-    if (Math.random() < 0.25) {
-      var doubleDelay = 300 + Math.random() * 300;
-      setTimeout(function() {
-        if (!reduceMotion) spawnStreak(performance.now());
-      }, doubleDelay);
+    var r = Math.random();
+    if (r < 0.12) {
+      /* triple: two more staggered follow-ups on independent paths */
+      var d1 = 200 + Math.random() * 300;
+      var d2 = d1 + 200 + Math.random() * 300;
+      setTimeout(function() { if (nightStillActive()) spawnStreak(performance.now()); }, d1);
+      setTimeout(function() { if (nightStillActive()) spawnStreak(performance.now()); }, d2);
+    } else if (r < 0.12 + 0.35) {
+      /* double: one staggered follow-up on an independent path */
+      var doubleDelay = 200 + Math.random() * 300;
+      setTimeout(function() { if (nightStillActive()) spawnStreak(performance.now()); }, doubleDelay);
     }
   }
+
+  /* test-only: exposed so G2's cadence/burst/cap behavior can be verified
+     with a synthetic clock instead of waiting on real wall-clock timers. */
+  window.__starsDebug = {
+    shootingStars: shootingStars,
+    spawnStreak: spawnStreak,
+    maybeSpawnShootingStar: maybeSpawnShootingStar,
+    MAX_CONCURRENT_STREAKS: MAX_CONCURRENT_STREAKS,
+    getNextBurstAt: function() { return nextBurstAt; },
+    getNextShootAt: function() { return nextShootAt; }
+  };
+
   function drawShootingStars(now) {
     for (var i = shootingStars.length - 1; i >= 0; i--) {
       var s = shootingStars[i];
@@ -2058,6 +2156,32 @@
         });
       });
     }
+  })();
+
+  /* -------- G4: hero NOW rotation --------
+     Editable "now" data — same 3 items as the old standalone NOW band, kept
+     honest and curated, no fake live counters. Cycles one item at a time
+     with a gentle 5s fade rotation; static (first item only, no rotation)
+     under reduced-motion. */
+  var HERO_NOW_ITEMS = [
+    'Shipping FocusDown growth experiments — creator program at 10 signed',
+    'Preparing Throwda for launch with a Lagos church launch partner',
+    'Leading a 30–40M-record timezone migration at LineLeader'
+  ];
+  (function heroNow() {
+    var itemEl = document.getElementById('hero-now-item');
+    if (!itemEl || !HERO_NOW_ITEMS.length) return;
+    itemEl.textContent = HERO_NOW_ITEMS[0]; /* visible immediately, t=0 */
+    if (reduceMotion || HERO_NOW_ITEMS.length < 2) return;
+    var idx = 0;
+    setInterval(function() {
+      itemEl.classList.add('is-fading');
+      setTimeout(function() {
+        idx = (idx + 1) % HERO_NOW_ITEMS.length;
+        itemEl.textContent = HERO_NOW_ITEMS[idx];
+        itemEl.classList.remove('is-fading');
+      }, 400);
+    }, 5000);
   })();
 
   /* -------- shared pointer position + custom cursor -------- */
@@ -2171,7 +2295,7 @@
         meta: 'IOS · LAUNCHED FEB 2026', story: 'A focus timer with a travel mascot that journeys the world as you complete sessions. React Native plus ~8,000 lines of native Swift for Screen Time blocking, WidgetKit, Live Activities, and Dynamic Island. 10,000+ customers, 4.8★.',
         link: 'https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778', linkLabel: 'On the App Store' },
       { id: 'throwda', label: 'THROWDA', color: 'tangerine', r: N.MAJOR + 1, major: true,
-        meta: 'FINTECH · IN PRODUCTION', story: 'WhatsApp-native bill payments, P2P, and community collections for Nigeria. A Lagos church pilot processes ₦35M+/month on a ~45K-LOC codebase with 75+ test files and DB-enforced double-entry bookkeeping.',
+        meta: 'FINTECH · PRE-LAUNCH', story: 'WhatsApp-native bill payments, P2P, and community collections for Nigeria. Production-grade and pre-launch — the launch-partner dashboard is seeded with a Lagos church’s real 84-account chart of accounts, on a ~45K-LOC codebase with 75+ test files and DB-enforced double-entry bookkeeping.',
         link: 'https://throwda.com', linkLabel: 'throwda.com' },
 
       { id: 'swift', label: 'SWIFT', color: 'amber', r: N.MAJOR, major: true,
@@ -2196,9 +2320,9 @@
 
       { id: 'whatsapp', label: 'WHATSAPP', color: 'amber', r: N.MINOR, major: false },
       { id: 'nigeria', label: 'NIGERIA', color: 'cream', r: N.MINOR, major: false },
-      { id: 'lagos-pilot', label: 'LAGOS PILOT', color: 'cream', r: N.MINOR + 1, major: false },
-      { id: 'naira-35m', label: '₦35M+/MONTH', color: 'cream', r: N.MAJOR, major: true,
-        meta: 'LAGOS PILOT · MONTHLY VOLUME', story: 'The monthly transaction volume Throwda’s live pilot — a Lagos church — processes entirely inside WhatsApp.' },
+      { id: 'lagos-pilot', label: 'LAGOS CHURCH', color: 'cream', r: N.MINOR + 1, major: false },
+      { id: 'naira-35m', label: 'LAUNCH PARTNER', color: 'cream', r: N.MAJOR, major: true,
+        meta: 'LAGOS CHURCH · LAUNCH PARTNER', story: 'Throwda’s launch-partner dashboard — a Lagos church — is seeded with its own real 84-account chart of accounts, ready to go live entirely inside WhatsApp.' },
       { id: 'paystack', label: 'PAYSTACK', color: 'amber', r: N.MINOR, major: false },
       { id: 'double-entry', label: 'DOUBLE-ENTRY LEDGER', color: 'amber', r: N.MAJOR, major: true,
         meta: 'THROWDA LEDGER CORE', story: 'Every Throwda transaction posts as a DB-enforced balanced journal entry, reconciled against real bank statements — accounting-grade bookkeeping for a WhatsApp fintech.' },
@@ -2225,7 +2349,7 @@
       { id: 'texas-tech', label: 'TEXAS TECH', color: 'cream', r: N.MAJOR, major: true,
         meta: 'B.S. COMPUTER SCIENCE · 2024', story: 'Texas Tech University, class of 2024 — where the CS foundation for all of this was built.' },
       { id: 'raidersoul', label: 'RAIDERSOUL LLC', color: 'cream', r: N.MAJOR, major: true,
-        meta: 'FOUNDED 2025', story: 'Godfrey’s company. Home to two products in production: FocusDown and Throwda.' },
+        meta: 'FOUNDED 2025', story: 'Godfrey’s company. Home to two products built solo: FocusDown and Throwda.' },
       { id: 'alchemist', label: 'THE ALCHEMIST', color: 'cream', r: N.MAJOR, major: true,
         meta: 'THE BOOK THAT STUCK', story: 'Solo founder, trust the process, follow the Personal Legend.' }
     ];
@@ -2842,8 +2966,15 @@
       for (var w = 0; w < 90; w++) physicsStep(w, false);
     }
 
+    /* G3: first-view nudge + auto-open must each fire at most ONCE per page
+       load (hasArmedNudge is a closure var that lives for the page's
+       lifetime — this IIFE runs exactly once, the observer is never
+       recreated, and this is the only place openVaultPanel is scheduled
+       automatically), and must be skipped entirely if the user already
+       interacted with the graph (drag/click) before the first-view timers
+       fire (checked at fire-time via userInteracted, set on pointerdown). */
     var hasArmedNudge = false;
-    var io = new IntersectionObserver(function(entries) {
+    function handleVaultIntersect(entries) {
       entries.forEach(function(entry) {
         if (entry.isIntersecting && !hasArmedNudge && !reduceMotion) {
           /* D3: first-view nudge — 1.5s after the graph first enters the
@@ -2866,7 +2997,8 @@
         if (entry.isIntersecting) startLoop();
         else stopLoop();
       });
-    }, { threshold: 0.05 });
+    }
+    var io = new IntersectionObserver(handleVaultIntersect, { threshold: 0.05 });
     io.observe(wrap);
 
     /* exposed for verification only (mean intra- vs inter-cluster distance checks, etc.) */
@@ -2874,6 +3006,16 @@
       nodes: nodes,
       clusterAnchors: clusterAnchors,
       allEdges: allEdges,
+      hasArmedNudge: function() { return hasArmedNudge; },
+      userInteracted: function() { return userInteracted; },
+      isPanelOpen: function() { return panel.classList.contains('open'); },
+      /* test-only: manually replay the IntersectionObserver callback (the
+         real IO doesn't fire in every automated/background test harness),
+         so the once-per-load + interaction-suppression guards can still be
+         exercised deterministically. */
+      simulateVaultIntersect: function(isIntersecting) {
+        handleVaultIntersect([{ isIntersecting: isIntersecting !== false }]);
+      },
       reflow: function(steps) {
         resizeVault();
         initLayout();
