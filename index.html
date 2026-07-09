@@ -367,12 +367,32 @@
        this keeps it to as few lines as the text allows instead of forcing
        each part onto its own row.
        Sits at the very TOP of the hero (first thing read after the nav):
-       hairline underline sets it apart from the identity eyebrow below. */
+       H5a — reads as a live status bar: a tinted chip band (not a hairline)
+       so it can't be scanned past. background/border colors come from the
+       --nite-driven --tangerine chain, so only the (non-paint) box-shadow-free
+       properties are set inline/statically — no transition on them. */
+    display: inline-block;
     margin-bottom: var(--space-4);
-    padding-bottom: var(--space-2);
-    border-bottom: 1px solid var(--border);
+    padding: 0.6em 1em;
+    background: color-mix(in oklab, var(--tangerine), transparent 93%);
+    border: 1px solid color-mix(in oklab, var(--tangerine), transparent 75%);
+    border-radius: 8px;
     max-width: 65ch;
     line-height: 1.7;
+  }
+  .hero-now-dot {
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--tangerine);
+    margin-right: 0.6em;
+    vertical-align: middle;
+    animation: hero-now-pulse 2s ease-in-out infinite;
+  }
+  @keyframes hero-now-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
   }
   .hero-now-eyebrow {
     color: var(--tangerine);
@@ -380,9 +400,10 @@
     margin-right: 0.9em;
   }
   .hero-now-item {
-    font-size: 0.7rem;
+    font-size: 0.75rem;
+    font-weight: 500;
     letter-spacing: 0.06em;
-    color: var(--ink-fade);
+    color: var(--ink);
     transition: opacity 0.4s ease;
   }
   .hero-now-item.is-fading { opacity: 0; }
@@ -679,7 +700,7 @@
     margin-bottom: var(--space-3);
     color: var(--ink);
   }
-  .panel-stats span { white-space: nowrap; }
+  .panel-stats span { white-space: nowrap; color: var(--tangerine); font-weight: 600; }
   .panel-callout {
     border-left: 2px solid var(--tangerine);
     padding-left: var(--space-3);
@@ -719,6 +740,48 @@
     transition: transform 0.9s cubic-bezier(0.22,1,0.36,1);
   }
   .panel:hover .vignette { transform: scale(1.03); }
+
+  /* ---------- H2: real product imagery — polaroid / browser cards ---------- */
+  .product-shot {
+    border-radius: 16px;
+    border: 1px solid rgba(253,248,243,0.12);
+    box-shadow: 0 30px 70px -24px rgba(0,0,0,0.55);
+    background: #FDF8F3;
+    transition: transform 0.5s cubic-bezier(0.22,1,0.36,1);
+  }
+  .shot-phone {
+    width: 100%;
+    max-width: 340px;
+    height: auto;
+    padding: 10px;
+    object-fit: contain;
+    transform: rotate(-2deg);
+  }
+  .panel:hover .shot-phone { transform: rotate(0deg) scale(1.03); }
+  .shot-browser {
+    width: 100%;
+    max-width: 460px;
+    overflow: hidden;
+    transform: rotate(2deg);
+  }
+  .panel:hover .shot-browser { transform: rotate(0deg) scale(1.03); }
+  .browser-bar {
+    display: flex;
+    gap: 6px;
+    padding: 0.6em 0.8em;
+    border-bottom: 1px solid rgba(0,0,0,0.08);
+  }
+  .browser-bar span {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: rgba(0,0,0,0.18);
+  }
+  .shot-browser-img {
+    width: 100%;
+    height: auto;
+    display: block;
+  }
 
   /* ---------- painted horizon strips ---------- */
   .horizon-strip {
@@ -771,60 +834,6 @@
     margin-top: var(--space-2);
     font-size: 0.92rem;
     color: var(--ink-fade);
-  }
-
-  /* ---------- D5: the lab ---------- */
-  .lab-grid {
-    display: grid;
-    grid-template-columns: repeat(3, 1fr);
-    gap: 1px;
-    background: var(--border);
-    border: 1px solid var(--border);
-  }
-  .lab-card {
-    background: var(--card-bg);
-    padding: var(--space-4);
-    display: block;
-    text-decoration: none;
-    color: inherit;
-    transition: transform 0.35s cubic-bezier(0.22,1,0.36,1); /* border-color excluded: --nite-driven color-mix */
-  }
-  .lab-card:hover { transform: translateY(-4px); }
-  .lab-card h3 {
-    font-size: 1.05rem;
-    font-weight: 600;
-    letter-spacing: -0.005em;
-    margin-bottom: var(--space-2);
-  }
-  .lab-card p {
-    font-size: 0.86rem;
-    line-height: 1.55;
-    color: var(--ink-fade);
-    margin: 0 0 var(--space-2);
-  }
-  .lab-tag {
-    font-size: 0.62rem;
-    color: var(--tangerine);
-  }
-  .lab-card-more {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    cursor: pointer;
-  }
-  .lab-card-more p {
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    color: var(--ink);
-    font-size: 0.98rem;
-    margin-bottom: var(--space-2);
-  }
-  .lab-more-chip {
-    font-size: 0.66rem;
-    align-self: flex-start;
-  }
-  @media (max-width: 900px) {
-    .lab-grid { grid-template-columns: 1fr; }
   }
 
   /* ---------- contact ---------- */
@@ -1284,6 +1293,8 @@
     .panel, .panel:nth-child(even) { grid-template-columns: 1fr; }
     .panel .panel-visual, .panel:nth-child(even) .panel-visual { order: -1; min-height: 160px; }
     .vignette { max-width: 320px; } /* F3: cap image size so cards don't get too tall */
+    .shot-phone { max-width: 260px; }
+    .shot-browser { max-width: 100%; }
     .principle-grid { grid-template-columns: 1fr; }
     .pipeline-track { flex-wrap: wrap; row-gap: var(--space-4); }
     .pipeline-track::before { display: none; }
@@ -1319,10 +1330,12 @@
     .magnetic { transition: none; transform: none !important; }
     .vignette { transition: none; }
     .panel:hover .vignette { transform: none; }
+    .product-shot { transition: none; }
+    .panel:hover .shot-phone, .panel:hover .shot-browser { transform: rotate(0deg); }
     .vault-legend .dot.stories { animation: none; }
-    .lab-card { transition: none; }
     .vault-hint-badge { animation: none; transition: none; }
     .chip-btn { transition: none; }
+    .hero-now-dot { animation: none; opacity: 1; }
   }
 
   /* ---------- marquee pause on hover ---------- */
@@ -1416,7 +1429,6 @@
     <li class="nav-key"><a href="#night">Night</a></li>
     <li><a href="#method">Method</a></li>
     <li class="nav-key"><a href="#vault">Vault</a></li>
-    <li><a href="#lab">Lab</a></li>
     <li class="nav-key"><a href="resume.html">Résumé</a></li>
     <li><a href="#contact">Contact</a></li>
   </ul>
@@ -1426,6 +1438,7 @@
 
   <section class="hero container">
     <div class="hero-now" id="hero-now">
+      <span class="hero-now-dot" aria-hidden="true"></span>
       <span class="hero-now-eyebrow mono">Now</span>
       <span class="hero-now-item mono" id="hero-now-item">Leading a 30–40M-record timezone migration at LineLeader</span>
       <a class="hero-now-commit" href="https://github.com/godfreystorm" target="_blank" rel="noopener" aria-label="Commit log — github.com/godfreystorm">
@@ -1440,7 +1453,7 @@
       <span class="line" data-word="Osagiede">Osagiede</span>
     </h1>
     <p class="hero-tagline reveal">Payments engineer by day. <span class="accent">Founder by night.</span></p>
-    <p class="hero-sub reveal">I own Adyen payment operations across 8,000+ stores in production — then go home and ship revenue-generating products end-to-end: an iOS app with 10,000+ customers and a production-grade WhatsApp fintech built for Nigeria, ready for launch.</p>
+    <p class="hero-sub reveal">By day I run the payment rails behind 8,000+ stores and the TypeScript, MongoDB, and MySQL systems underneath them. By night I build my own: an iOS app with 10,000+ customers, and a WhatsApp fintech built for Nigeria, ready to launch.</p>
 
     <!-- G4: NOW — moved from the old standalone band into the hero, right
          under the sub-lede. Editable "now" data lives in HERO_NOW_ITEMS
@@ -1519,7 +1532,6 @@
     <p class="dusk-line mono-off" id="dusk-line">
       <span class="word">Then</span> <span class="word">the</span> <span class="word">sun</span> <span class="word">goes</span> <span class="word">down.</span>
     </p>
-    <p class="dusk-sub mono">Raidersoul LLC · Founded 2025 · Two products built solo</p>
   </section>
 
   <section id="night" class="container">
@@ -1532,51 +1544,54 @@
     <div class="panels">
       <article class="panel reveal">
         <div class="panel-content">
-          <span class="eyebrow mono">iOS · React Native + ~8K lines native Swift · Launched Feb 2026</span>
+          <span class="eyebrow mono">iOS · ~8K lines native Swift · Launched Feb 2026</span>
           <h3 class="panel-title">FocusDown</h3>
-          <p class="panel-copy">A focus timer with a travel mascot that journeys around the world as you complete sessions. Screen Time (Family Controls) app blocking, WidgetKit widgets, Live Activities &amp; Dynamic Island — all native Swift.</p>
+          <div class="stack-tags" aria-label="FocusDown tech stack">
+            <span style="--tag:#3178C6">TypeScript</span><span class="lt" style="--tag:#61DAFB">React Native</span><span style="--tag:#4630EB">Expo</span><span style="--tag:#F05138">Swift</span><span style="--tag:#0D96F6">WidgetKit</span><span style="--tag:#0D96F6">Live Activities</span><span style="--tag:#0D96F6">Screen Time API</span><span class="lt" style="--tag:#3FCF8E">Supabase</span><span style="--tag:#0D96F6">StoreKit</span><span style="--tag:#F2545B">RevenueCat</span><span style="--tag:#E8621A">Superwall</span><span style="--tag:#7856FF">Mixpanel</span><span style="--tag:#D97757">Claude Code</span>
+          </div>
           <div class="panel-stats">
             <span>10,000+ customers</span>
             <span>4.8★ App Store</span>
             <span>~1,500 MAU</span>
             <span>510 solo commits</span>
           </div>
+          <p class="panel-copy">A focus timer with a travel mascot that journeys around the world as you complete sessions. Screen Time (Family Controls) app blocking, WidgetKit widgets, Live Activities &amp; Dynamic Island — all native Swift.</p>
           <p class="panel-copy">Built the whole monetization funnel (StoreKit + RevenueCat + Superwall) and a 20+ step Mixpanel onboarding funnel — found and fixed the #1 drop-off (22.6%).</p>
-          <div class="stack-tags" aria-label="FocusDown tech stack">
-            <span style="--tag:#3178C6">TypeScript</span><span class="lt" style="--tag:#61DAFB">React Native</span><span style="--tag:#4630EB">Expo</span><span style="--tag:#F05138">Swift</span><span style="--tag:#0D96F6">WidgetKit</span><span style="--tag:#0D96F6">Live Activities</span><span style="--tag:#0D96F6">Screen Time API</span><span class="lt" style="--tag:#3FCF8E">Supabase</span><span style="--tag:#0D96F6">StoreKit</span><span style="--tag:#F2545B">RevenueCat</span><span style="--tag:#E8621A">Superwall</span><span style="--tag:#7856FF">Mixpanel</span><span style="--tag:#D97757">Claude Code</span>
-          </div>
           <a class="panel-link chip-btn" href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener" aria-label="FocusDown on the App Store">
             On the App Store
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
         </div>
         <div class="panel-visual" aria-hidden="true">
-          <img class="vignette" src="assets/vignette-focusdown.webp" alt="" width="1020" height="1020" loading="lazy" decoding="async">
+          <img class="product-shot shot-phone" src="assets/shot-focusdown.webp" alt="FocusDown running on an iPhone, mascot in front" width="720" height="977" loading="lazy" decoding="async">
         </div>
       </article>
 
       <article class="panel reveal">
         <div class="panel-content">
-          <span class="eyebrow mono">Fintech · TypeScript · Supabase/Postgres · Paystack · Pre-launch</span>
+          <span class="eyebrow mono">Fintech · Zero stored value · Pre-launch</span>
           <h3 class="panel-title">Throwda</h3>
-          <p class="panel-copy">Bill payments, P2P, and community collections entirely inside WhatsApp. Production-grade and pre-launch — the launch-partner dashboard is seeded with a Lagos church's real 84-account chart of accounts. Double-entry bookkeeping with DB-enforced balanced journals, bank reconciliation from real bank statements, ~45K-LOC dashboard with 75+ test files.</p>
-          <p class="panel-callout">Designed a direct-charge architecture (zero stored value) that legally sidestepped a ₦100M PSSP licensing requirement.</p>
+          <div class="stack-tags" aria-label="Throwda tech stack">
+            <span style="--tag:#3178C6">TypeScript</span><span style="--tag:#339933">Node.js</span><span style="--tag:#444450">Next.js</span><span style="--tag:#25D366">WhatsApp Business API</span><span class="lt" style="--tag:#3FCF8E">Supabase</span><span style="--tag:#4169E1">Postgres</span><span class="lt" style="--tag:#00C3F7">Paystack</span><span style="--tag:#6e6e73">VTPass / eBills</span><span style="--tag:#6E9F18">Vitest</span><span style="--tag:#2EAD33">Playwright</span><span style="--tag:#6e6e73">Railway</span><span style="--tag:#D97757">Claude Code</span>
+          </div>
           <div class="panel-stats">
             <span>84-account CoA</span>
             <span>45K LOC</span>
             <span>75+ test files</span>
             <span>0 stored value</span>
           </div>
-          <div class="stack-tags" aria-label="Throwda tech stack">
-            <span style="--tag:#3178C6">TypeScript</span><span style="--tag:#339933">Node.js</span><span style="--tag:#444450">Next.js</span><span style="--tag:#25D366">WhatsApp Business API</span><span class="lt" style="--tag:#3FCF8E">Supabase</span><span style="--tag:#4169E1">Postgres</span><span class="lt" style="--tag:#00C3F7">Paystack</span><span style="--tag:#6e6e73">VTPass / eBills</span><span style="--tag:#6E9F18">Vitest</span><span style="--tag:#2EAD33">Playwright</span><span style="--tag:#6e6e73">Railway</span><span style="--tag:#D97757">Claude Code</span>
-          </div>
+          <p class="panel-copy">Bill payments, P2P, and community collections entirely inside WhatsApp. Production-grade and pre-launch — the launch-partner dashboard is seeded with a Lagos church's real 84-account chart of accounts. Double-entry bookkeeping with DB-enforced balanced journals, bank reconciliation from real bank statements, ~45K-LOC dashboard with 75+ test files.</p>
+          <p class="panel-callout">Designed a direct-charge architecture (zero stored value) that legally sidestepped a ₦100M PSSP licensing requirement.</p>
           <a class="panel-link chip-btn" href="https://throwda.com" target="_blank" rel="noopener" aria-label="Throwda — throwda.com">
             throwda.com
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
         </div>
         <div class="panel-visual" aria-hidden="true">
-          <img class="vignette" src="assets/vignette-throwda.webp" alt="" width="1020" height="1020" loading="lazy" decoding="async">
+          <div class="product-shot shot-browser">
+            <div class="browser-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+            <img class="shot-browser-img" src="assets/shot-throwda.webp" alt="Throwda admin dashboard — collections and trends" width="900" height="534" loading="lazy" decoding="async">
+          </div>
         </div>
       </article>
     </div>
@@ -1649,59 +1664,6 @@
     </div>
   </section>
 
-  <section id="lab" class="container">
-    <div class="section-head reveal">
-      <span class="big-num" aria-hidden="true">05</span>
-      <h2>The Lab</h2>
-      <span class="eyebrow mono">Experiments · The Stuff That Didn't Make The Headline</span>
-    </div>
-    <p class="lede reveal">Not everything ships to the App Store. Everything teaches something.</p>
-
-    <div class="lab-grid">
-      <div class="lab-card reveal">
-        <h3>Content Machine</h3>
-        <p>AI pipeline that generates and posts daily short-form content on its own.</p>
-        <span class="mono lab-tag">AI Agents</span>
-      </div>
-      <div class="lab-card reveal">
-        <h3>Route Optimizer</h3>
-        <p>AI multi-stop delivery routing desktop tool built at RHD Industries.</p>
-        <span class="mono lab-tag">Python</span>
-      </div>
-      <div class="lab-card reveal">
-        <h3>Elevator OS</h3>
-        <p>Elevator scheduler with an optimized round-robin algorithm.</p>
-        <span class="mono lab-tag">C++</span>
-      </div>
-      <div class="lab-card reveal">
-        <h3>Language-Teaching Chatbot</h3>
-        <p>NLP + OpenAI chatbot for interactive language learning.</p>
-        <span class="mono lab-tag">Python</span>
-      </div>
-      <div class="lab-card reveal">
-        <h3>Algorithm Visualizer</h3>
-        <p>Pathfinding and sorting, animated with pygame.</p>
-        <span class="mono lab-tag">Python</span>
-      </div>
-      <div class="lab-card reveal">
-        <h3>BFS Maze Solver</h3>
-        <p>Breadth-first search maze solver.</p>
-        <span class="mono lab-tag">Python</span>
-      </div>
-      <div class="lab-card reveal">
-        <h3>Finances Dashboard</h3>
-        <p>Personal finance dashboard for my own money.</p>
-        <span class="mono lab-tag">HTML/JS</span>
-      </div>
-      <a class="lab-card lab-card-more reveal" href="https://github.com/godfreystorm" target="_blank" rel="noopener">
-        <p>…and a dozen more half-finished experiments on GitHub.</p>
-        <span class="chip-btn lab-more-chip" aria-hidden="true">
-          github.com/godfreystorm
-          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        </span>
-      </a>
-    </div>
-  </section>
 
   <section id="contact" class="container contact-section">
     <p class="dusk-line contact-line reveal">The sun comes up, and I do it again.</p>
@@ -3046,6 +3008,7 @@
       render: render
     };
   })();
+
 
 })();
 </script>
