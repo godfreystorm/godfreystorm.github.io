@@ -365,8 +365,12 @@
     /* normal inline flow (not flexbox rows) so the eyebrow, the rotating
        item text, and the commit chip all wrap together as one paragraph —
        this keeps it to as few lines as the text allows instead of forcing
-       each part onto its own row */
-    margin-top: var(--space-3);
+       each part onto its own row.
+       Sits at the very TOP of the hero (first thing read after the nav):
+       hairline underline sets it apart from the identity eyebrow below. */
+    margin-bottom: var(--space-4);
+    padding-bottom: var(--space-2);
+    border-bottom: 1px solid var(--border);
     max-width: 65ch;
     line-height: 1.7;
   }
@@ -1401,6 +1405,15 @@
 <main>
 
   <section class="hero container">
+    <div class="hero-now" id="hero-now">
+      <span class="hero-now-eyebrow mono">Now</span>
+      <span class="hero-now-item mono" id="hero-now-item">Leading a 30–40M-record timezone migration at LineLeader</span>
+      <a class="hero-now-commit" href="https://github.com/godfreystorm" target="_blank" rel="noopener" aria-label="Commit log — github.com/godfreystorm">
+        Commit log
+        <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </a>
+    </div>
+
     <span class="eyebrow mono">Dallas–Fort Worth, TX · Payments &amp; AI Product</span>
     <h1 class="hero-heading" id="hero-heading">
       <span class="line" data-word="Godfrey">Godfrey</span>
@@ -1414,24 +1427,11 @@
          (see script below) — keep honest and curated, no fake live
          counters. #hero-now-item's starting text mirrors HERO_NOW_ITEMS[0]
          so it's correct even before the rotation script runs. -->
-    <div class="hero-now" id="hero-now">
-      <span class="hero-now-eyebrow mono">Now</span>
-      <span class="hero-now-item mono" id="hero-now-item">Shipping FocusDown growth experiments — creator program at 10 signed</span>
-      <a class="hero-now-commit" href="https://github.com/godfreystorm" target="_blank" rel="noopener" aria-label="Commit log — github.com/godfreystorm">
-        Commit log
-        <svg width="10" height="10" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-      </a>
-    </div>
-
     <div class="scroll-cue">
       <div class="line"></div>
       <span class="mono">Scroll — the sun is setting</span>
     </div>
   </section>
-
-  <div class="horizon-strip horizon-day reveal">
-    <img src="assets/horizon-day.webp" alt="Painted silhouette of the Dallas skyline" decoding="async">
-  </div>
 
   <div class="marquee-wrap" aria-hidden="true">
     <div class="marquee-track" id="marquee-track">
@@ -2166,9 +2166,9 @@
      with a gentle 5s fade rotation; static (first item only, no rotation)
      under reduced-motion. */
   var HERO_NOW_ITEMS = [
+    'Leading a 30–40M-record timezone migration at LineLeader',
     'Shipping FocusDown growth experiments — creator program at 10 signed',
-    'Preparing Throwda for launch with a Lagos church launch partner',
-    'Leading a 30–40M-record timezone migration at LineLeader'
+    'Preparing Throwda for launch with a Lagos church launch partner'
   ];
   (function heroNow() {
     var itemEl = document.getElementById('hero-now-item');
@@ -2983,17 +2983,9 @@
              viewport, briefly pulse every clickable ring brighter once. */
           hasArmedNudge = true;
           setTimeout(function() { nudgeStart = performance.now(); }, 1500);
-
-          /* E2.3: first-view demo — 900ms after the graph first enters the
-             viewport, auto-open the GODFREY story panel once per page load,
-             as long as the user hasn't already started dragging/clicking or
-             opened a panel themselves. Closing it is the lesson. Skipped
-             entirely under reduced-motion (nothing auto-opens). */
-          setTimeout(function() {
-            if (!userInteracted && !panel.classList.contains('open')) {
-              openVaultPanel(nodeById['godfrey']);
-            }
-          }, 900);
+          /* (the old first-view auto-open demo was removed — it read as a bug
+             when the graph scrolled by; the chip labels, rings, and hint
+             badge carry the affordance now) */
         }
         if (reduceMotion) return;
         if (entry.isIntersecting) startLoop();
