@@ -79,6 +79,54 @@
     text-transform: uppercase;
   }
 
+  /* ---------- E1: chip button — the one clickable-affordance idiom ----------
+     Used everywhere an outbound action exists. background/border-color/color
+     intentionally excluded from the transition list: they resolve through
+     var(--tangerine)/var(--night-ink), which are --nite-driven color-mix()
+     chains, and putting them in a transition wedges the paint (see the sky
+     background-color note above). Only transform gets a transition; the
+     hover color swap is instant. */
+  .chip-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.74rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    text-decoration: none;
+    /* AA: raw --tangerine-on-bg measures ~3.2:1 (day) / ~7.4:1 (night) at
+       this small mono size — a 15%-black mix keeps the tangerine family but
+       clears 4.5:1 on both themes (verified ~4.8:1 day / ~4.9:1 night). */
+    color: color-mix(in oklab, var(--tangerine), black 15%);
+    background: transparent;
+    border: 1px solid color-mix(in oklab, var(--tangerine), black 15%);
+    border-radius: 999px;
+    padding: 0.55em 1.1em;
+    cursor: pointer;
+    line-height: 1;
+    white-space: nowrap;
+    transition: transform 0.25s cubic-bezier(0.22,1,0.36,1);
+  }
+  .chip-btn svg {
+    flex-shrink: 0;
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1);
+  }
+  .chip-btn:hover,
+  .chip-btn:focus-visible {
+    /* a 30%-black mix keeps cream-on-tangerine at ~5.3–6.5:1 on both themes
+       (raw --tangerine-fill + cream text only reached ~2.3–2.9:1) */
+    background: color-mix(in oklab, var(--tangerine), black 30%);
+    color: var(--night-ink);
+    transform: translateY(-1px);
+  }
+  .chip-btn:hover svg,
+  .chip-btn:focus-visible svg { transform: translate(2px, -2px); }
+  .chip-btn:focus-visible {
+    outline: 2px solid var(--tangerine);
+    outline-offset: 3px;
+  }
+
   .container {
     max-width: var(--container);
     margin: 0 auto;
@@ -312,15 +360,7 @@
   .now-commit {
     margin-left: auto;
     flex-shrink: 0;
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
-    font-size: 0.68rem;
-    color: var(--tangerine);
-    text-decoration: none;
   }
-  .now-commit svg { transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
-  .now-commit:hover svg { transform: translateX(4px); }
   @media (max-width: 900px) {
     .now-strip-inner { flex-direction: column; align-items: flex-start; }
     .now-commit { margin-left: 0; }
@@ -583,16 +623,8 @@
     font-size: 1.05rem;
   }
   .panel-link {
-    display: inline-flex;
-    align-items: center;
-    gap: 0.5em;
     margin-top: var(--space-2);
-    font-family: 'JetBrains Mono', monospace;
-    font-size: 0.78rem;
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    text-decoration: none;
-    color: var(--tangerine);
+    /* stays position:static — see D8 note below */
   }
   /* D8: stretched-link — makes the whole panel one clickable target while
      keeping a single link in the tab order and natural screen-reader
@@ -604,8 +636,6 @@
     inset: 0;
     z-index: 1;
   }
-  .panel-link svg { transition: transform 0.3s cubic-bezier(0.22,1,0.36,1); }
-  .panel-link:hover svg { transform: translateX(6px); }
   .panel-visual {
     display: flex;
     align-items: center;
@@ -721,6 +751,11 @@
     font-style: italic;
     color: var(--ink);
     font-size: 0.98rem;
+    margin-bottom: var(--space-2);
+  }
+  .lab-more-chip {
+    font-size: 0.66rem;
+    align-self: flex-start;
   }
   @media (max-width: 900px) {
     .lab-grid { grid-template-columns: 1fr; }
@@ -744,6 +779,10 @@
     display: inline-block;
     position: relative;
     word-break: break-word;
+  }
+  .email-chip {
+    display: inline-flex;
+    margin-top: var(--space-3);
   }
   .email-link::after {
     content: '';
@@ -799,8 +838,15 @@
     gap: 0.6em;
   }
 
-  /* ---------- birds (D2: three independent flocks, different altitude/scale/direction) ---------- */
-  .birds-flock {
+  /* ---------- E3: bird migration ----------
+     A single migration "moment" sweeping the full hero diagonally, then long
+     quiet gaps before it recurs. Three skeins (2 L→R, 1 R→L), each a rigid
+     V-formation (.skein moves as one unit along the diagonal); individual
+     birds get a static V-position offset (the independent `translate`
+     property, so it composes cleanly with the position-moving `transform`
+     used for wing flap on the nested SVG) plus a staggered bob and flap.
+     Day-only via (1 − --nite); reduced-motion removes the whole layer. */
+  .migration {
     position: absolute;
     inset: 0;
     overflow: hidden;
@@ -808,56 +854,74 @@
     z-index: 0;
     opacity: calc(1 - var(--nite));
   }
-  .bird {
+  .skein {
     position: absolute;
     left: 0;
+    top: 0;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+  }
+  .skein-a { animation-name: migrate-lr; animation-duration: 54s; animation-delay: 2s; }
+  .skein-b { animation-name: migrate-lr; animation-duration: 60s; animation-delay: 2.6s; }
+  .skein-c { animation-name: migrate-rl; animation-duration: 68s; animation-delay: 3.4s; }
+
+  /* enter lower-left ~55% height, exit upper-right ~12% — flight occupies the
+     first 35% of the cycle (≈19–21s here), the rest is the quiet gap */
+  @keyframes migrate-lr {
+    0%   { transform: translate(-18vw, 55vh); opacity: 0; }
+    3%   { opacity: 1; }
+    32%  { opacity: 1; }
+    35%  { transform: translate(120vw, 12vh); opacity: 0; }
+    100% { transform: translate(120vw, 12vh); opacity: 0; }
+  }
+  /* opposite direction, different altitude: enters upper-right-ish, exits
+     lower-left — reads as a separate skein, not a mirrored twin */
+  @keyframes migrate-rl {
+    0%   { transform: translate(120vw, 40vh); opacity: 0; }
+    3%   { opacity: 1; }
+    32%  { opacity: 1; }
+    35%  { transform: translate(-20vw, 15vh); opacity: 0; }
+    100% { transform: translate(-20vw, 15vh); opacity: 0; }
+  }
+
+  /* per-bird V-position: static `translate` (independent of `transform`, so
+     it never fights the flap/bob animations below) */
+  .bird-slot {
+    position: absolute;
+    left: 0;
+    top: 0;
+    translate: var(--vx, 0px) var(--vy, 0px);
+    animation: bird-bob 3.3s ease-in-out infinite;
+    animation-delay: var(--bob-delay, 0s);
+  }
+  @keyframes bird-bob {
+    0%, 100% { margin-top: 0; }
+    50% { margin-top: 3px; }
+  }
+  .bird-wing {
+    max-width: none; /* the global img,svg{max-width:100%} collapses shrink-to-fit absolute wrappers to 0 */
+    display: block;
     color: var(--ink-faint);
+    transform-origin: center;
+    animation: wing-flap 0.5s linear infinite;
+    animation-delay: var(--flap-delay, 0s);
   }
-  .bird path { stroke: currentColor; }
-
-  /* near flock: top ~8%, largest/fastest, left → right, 6 birds */
-  .flock-near .bird { top: 8%; animation-name: fly-near; animation-timing-function: linear; animation-iteration-count: infinite; }
-  .bird.bn1 { top: 6%;  animation-duration: 66s; animation-delay: 0s; }
-  .bird.bn2 { top: 8%;  animation-duration: 70s; animation-delay: 2.4s; }
-  .bird.bn3 { top: 5%;  animation-duration: 63s; animation-delay: 4.8s; }
-  .bird.bn4 { top: 9.5%; animation-duration: 74s; animation-delay: 1.2s; }
-  .bird.bn5 { top: 7%;  animation-duration: 68s; animation-delay: 3.6s; }
-  .bird.bn6 { top: 10%; animation-duration: 71s; animation-delay: 6s; }
-  @keyframes fly-near {
-    0%   { transform: translate(-10vw, 0); }
-    18%  { transform: translate(20vw, -1.4vh); }
-    32%  { transform: translate(58vw, 1.2vh); }
-    46%  { transform: translate(90vw, -0.8vh); }
-    50%  { transform: translate(122vw, 1.2vh); }
-    100% { transform: translate(122vw, 1.2vh); }
+  .bird-wing path { stroke: currentColor; }
+  /* two static frames (open/closed) — the transform only moves between
+     adjacent keyframe stops that share a value, so it snaps rather than
+     eases, giving a crisp 2-frame flap without a steps() timing function */
+  @keyframes wing-flap {
+    0%, 46%  { transform: scaleY(1); }
+    50%, 96% { transform: scaleY(0.4); }
+    100%     { transform: scaleY(1); }
   }
 
-  /* mid flock: top ~22%, medium, right → left, 4 birds */
-  .flock-mid .bird { top: 22%; animation-name: fly-mid; animation-timing-function: linear; animation-iteration-count: infinite; }
-  .bird.bm1 { top: 20%;   animation-duration: 82s; animation-delay: 24s; }
-  .bird.bm2 { top: 23%;   animation-duration: 86s; animation-delay: 26.5s; }
-  .bird.bm3 { top: 21.5%; animation-duration: 79s; animation-delay: 29s; }
-  .bird.bm4 { top: 24.5%; animation-duration: 90s; animation-delay: 22s; }
-  @keyframes fly-mid {
-    0%   { transform: translate(108vw, 0); }
-    22%  { transform: translate(70vw, 1.3vh); }
-    38%  { transform: translate(30vw, -1vh); }
-    52%  { transform: translate(-8vw, 0.8vh); }
-    56%  { transform: translate(-14vw, 0.8vh); }
-    100% { transform: translate(-14vw, 0.8vh); }
-  }
-
-  /* far flock: top ~38%, smallest/slowest/faintest, left → right, 2 birds */
-  .flock-far .bird { top: 38%; animation-name: fly-far; animation-timing-function: linear; animation-iteration-count: infinite; opacity: 0.55; }
-  .bird.bf1 { top: 36%; animation-duration: 108s; animation-delay: 52s; }
-  .bird.bf2 { top: 40%; animation-duration: 116s; animation-delay: 58s; }
-  @keyframes fly-far {
-    0%   { transform: translate(-6vw, 0); }
-    30%  { transform: translate(45vw, 0.9vh); }
-    48%  { transform: translate(92vw, -0.6vh); }
-    56%  { transform: translate(118vw, 0.6vh); }
-    100% { transform: translate(118vw, 0.6vh); }
-  }
+  /* near skein (a): largest, first to arrive */
+  .skein-a .bird-wing { width: 26px; height: 13px; }
+  /* mid skein (b): medium */
+  .skein-b .bird-wing { width: 18px; height: 9px; }
+  /* far skein (c): smallest + faintest, opposite direction */
+  .skein-c .bird-wing { width: 12px; height: 6px; opacity: 0.6; }
 
   /* ---------- per-letter hero name ---------- */
   .hero-heading .line {
@@ -965,6 +1029,33 @@
     color: var(--ink-faint);
     pointer-events: none;
     z-index: 2;
+  }
+
+  /* ---------- E2.2: vault corner hint badge ----------
+     Persistent, HTML (not canvas-drawn) so it reads crisply over the graph.
+     Pulses via @keyframes (not a transition) on a var(--tangerine) box-shadow
+     — same pattern already used by .vault-legend .dot.stories, safe because
+     it's a keyframe animation, not a transition, of a --nite-driven value.
+     Fades out permanently for this page load on the first real node click. */
+  .vault-hint-badge {
+    position: absolute;
+    top: var(--space-3);
+    right: var(--space-3);
+    z-index: 3;
+    pointer-events: none;
+    font-size: 0.64rem;
+    padding: 0.5em 0.9em;
+    animation: vault-hint-pulse 2s ease-in-out infinite;
+    opacity: 1;
+    transition: opacity 0.6s ease;
+  }
+  .vault-hint-badge.hint-hidden { opacity: 0; }
+  @keyframes vault-hint-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 color-mix(in oklab, var(--tangerine), transparent 70%); }
+    50% { box-shadow: 0 0 0 6px color-mix(in oklab, var(--tangerine), transparent 90%); }
+  }
+  @media (max-width: 640px) {
+    .vault-hint-badge { font-size: 0.58rem; padding: 0.45em 0.75em; }
   }
 
   /* ---------- D3: vault legend ---------- */
@@ -1108,13 +1199,15 @@
     .scroll-cue .line::after, .scroll-cue span { animation: none; }
     .panel, .principle-card { transition: none; }
     .dusk-line .word { transition: none; }
-    .bird { animation: none; display: none; }
+    .migration { display: none; }
     .cursor-dot, .cursor-ring { display: none; }
     .magnetic { transition: none; transform: none !important; }
     .vignette { transition: none; }
     .panel:hover .vignette { transform: none; }
     .vault-legend .dot.stories { animation: none; }
     .lab-card { transition: none; }
+    .vault-hint-badge { animation: none; transition: none; }
+    .chip-btn { transition: none; }
   }
 
   /* ---------- marquee pause on hover ---------- */
@@ -1146,24 +1239,33 @@
 <main>
 
   <section class="hero container">
-    <!-- D2: three independent flocks — near/top (L→R, 6 birds), mid (R→L, 4 birds), far/low (L→R, 2 birds) -->
-    <div class="birds-flock flock-near" aria-hidden="true">
-      <svg class="bird bn1" width="22" height="11" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird bn2" width="19" height="9.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird bn3" width="21" height="10.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird bn4" width="18" height="9" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird bn5" width="20" height="10" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird bn6" width="17" height="8.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-    </div>
-    <div class="birds-flock flock-mid" aria-hidden="true">
-      <svg class="bird bm1" width="14" height="7" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird bm2" width="13" height="6.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird bm3" width="15" height="7.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird bm4" width="12" height="6" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-    </div>
-    <div class="birds-flock flock-far" aria-hidden="true">
-      <svg class="bird bf1" width="9" height="4.5" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
-      <svg class="bird bf2" width="8" height="4" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg>
+    <!-- E3: bird migration — 3 V-formation skeins (2 L→R, 1 R→L), 17 birds
+         total, moving as rigid formations along a full-hero diagonal. Each
+         .bird-slot's --vx/--vy is its static V-offset from the leader. -->
+    <div class="migration" aria-hidden="true" id="migration">
+      <div class="skein skein-a">
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0.0s;--bob-delay:0.0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:-12px;--flap-delay:0.06s;--bob-delay:0.28s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-20px;--vy:12px;--flap-delay:0.12s;--bob-delay:0.56s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-40px;--vy:-24px;--flap-delay:0.18s;--bob-delay:0.84s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-40px;--vy:24px;--flap-delay:0.24s;--bob-delay:1.12s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-60px;--vy:-36px;--flap-delay:0.3s;--bob-delay:1.4s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      </div>
+      <div class="skein skein-b">
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0.0s;--bob-delay:0.0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-14px;--vy:-9px;--flap-delay:0.05s;--bob-delay:0.25s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-14px;--vy:9px;--flap-delay:0.1s;--bob-delay:0.5s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-28px;--vy:-18px;--flap-delay:0.15s;--bob-delay:0.75s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-28px;--vy:18px;--flap-delay:0.2s;--bob-delay:1.0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:-42px;--vy:-27px;--flap-delay:0.25s;--bob-delay:1.25s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      </div>
+      <div class="skein skein-c">
+      <span class="bird-slot" style="--vx:0px;--vy:0px;--flap-delay:0.0s;--bob-delay:0.0s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:12px;--vy:-7px;--flap-delay:0.07s;--bob-delay:0.3s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:12px;--vy:7px;--flap-delay:0.14s;--bob-delay:0.6s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:24px;--vy:-14px;--flap-delay:0.21s;--bob-delay:0.9s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      <span class="bird-slot" style="--vx:24px;--vy:14px;--flap-delay:0.28s;--bob-delay:1.2s;"><svg class="bird-wing" viewBox="0 0 20 10" fill="none"><path d="M1 6C4 1 7 1 10 5C13 1 16 1 19 6" stroke-width="1.3" stroke-linecap="round" fill="none"/></svg></span>
+      </div>
     </div>
     <span class="eyebrow mono">Dallas–Fort Worth, TX · Payments &amp; AI Product</span>
     <h1 class="hero-heading" id="hero-heading">
@@ -1191,10 +1293,9 @@
         <li class="mono">Scaling Throwda past the ₦35M+/month pilot</li>
         <li class="mono">Leading a 30–40M-record timezone migration at LineLeader</li>
       </ul>
-      <a class="now-commit mono" href="https://github.com/godfreystorm" target="_blank" rel="noopener">
+      <a class="now-commit chip-btn" href="https://github.com/godfreystorm" target="_blank" rel="noopener" aria-label="Commit log — github.com/godfreystorm">
         Commit log
-        <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
-        github.com/godfreystorm
+        <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
       </a>
     </div>
   </div>
@@ -1288,7 +1389,7 @@
             <span>510 solo commits</span>
           </div>
           <p class="panel-copy">Built the whole monetization funnel (StoreKit + RevenueCat + Superwall) and a 20+ step Mixpanel onboarding funnel — found and fixed the #1 drop-off (22.6%).</p>
-          <a class="panel-link" href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener" aria-label="FocusDown on the App Store">
+          <a class="panel-link chip-btn" href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener" aria-label="FocusDown on the App Store">
             On the App Store
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -1310,7 +1411,7 @@
             <span>75+ test files</span>
             <span>0 stored value</span>
           </div>
-          <a class="panel-link" href="https://throwda.com" target="_blank" rel="noopener" aria-label="Throwda — throwda.com">
+          <a class="panel-link chip-btn" href="https://throwda.com" target="_blank" rel="noopener" aria-label="Throwda — throwda.com">
             throwda.com
             <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
           </a>
@@ -1385,6 +1486,7 @@
     <div class="vault-canvas-wrap reveal">
       <canvas id="vault-canvas" tabindex="0" aria-label="Interactive graph of Godfrey's projects, skills, and facts"></canvas>
       <span class="vault-hint mono" id="vault-hint">Drag to play — ringed nodes open stories</span>
+      <div class="vault-hint-badge chip-btn mono" id="vault-hint-badge" aria-hidden="true">Click the orange chips</div>
     </div>
   </section>
 
@@ -1434,7 +1536,10 @@
       </div>
       <a class="lab-card lab-card-more reveal" href="https://github.com/godfreystorm" target="_blank" rel="noopener">
         <p>…and a dozen more half-finished experiments on GitHub.</p>
-        <span class="mono lab-tag">github.com/godfreystorm →</span>
+        <span class="chip-btn lab-more-chip" aria-hidden="true">
+          github.com/godfreystorm
+          <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </span>
       </a>
     </div>
   </section>
@@ -1442,6 +1547,10 @@
   <section id="contact" class="container contact-section">
     <p class="dusk-line contact-line reveal">The sun comes up, and I do it again.</p>
     <a class="email-link reveal" href="mailto:godfreystorm@gmail.com">godfreystorm@gmail.com</a>
+    <a class="chip-btn email-chip reveal" href="mailto:godfreystorm@gmail.com">
+      Email me
+      <svg width="12" height="12" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M3 13L13 3M13 3H5M13 3V11" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    </a>
 
     <div class="icon-links reveal">
       <a class="icon-link" href="https://github.com/godfreystorm" target="_blank" rel="noopener" aria-label="GitHub">
@@ -2228,6 +2337,9 @@
     var dragMoved = false;
     var pointerStart = { x: 0, y: 0 };
     var lastPointer = { x: -9999, y: -9999 };
+    /* E2.3: any real pointer interaction on the canvas cancels the pending
+       first-view auto-open demo, so it can't fire mid-drag/click. */
+    var userInteracted = false;
 
     /* Resolve themed custom properties (which are color-mix() expressions driven by
        --nite) into concrete colors. getComputedStyle().getPropertyValue('--x') on a
@@ -2373,7 +2485,11 @@
         /* D3: label legibility — hub/major labels get a stronger backdrop
            pill (0.78 alpha), minor labels a lighter one (0.55 alpha), so text
            always reads over edges/stars/the milky way. Never draw text
-           without its pill. */
+           without its pill.
+           E2.1: clickable (major) labels additionally get a 1px tangerine
+           stroke at 65% alpha and a trailing "+" glyph — the chip-label idiom
+           that makes "this one opens a story" legible at a glance, distinct
+           from plain hub/minor labels which stay unbordered. */
         var showLabel = n.hub || n.major || (!isMobile);
         if (!showLabel) return;
         var isHubMajor = n.hub || n.major;
@@ -2385,15 +2501,25 @@
         vctx.textBaseline = 'middle';
         var labelX = n.x + rr + 9;
         var labelY = n.y;
-        var textW = vctx.measureText(n.label).width;
+        var labelText = n.major ? (n.label + ' +') : n.label;
+        var textW = vctx.measureText(labelText).width;
         var padX = isHubMajor ? 6 : 4, padY = isHubMajor ? 5 : 4;
         var pillBaseAlpha = isHubMajor ? 0.78 : 0.55;
         var pillAlpha = pillBaseAlpha * Math.max(labelAlpha, 0.12);
+        var pillX = labelX - padX, pillY = labelY - fontSize / 2 - padY;
+        var pillW = textW + padX * 2, pillH = fontSize + padY * 2;
         vctx.fillStyle = 'rgba(10,9,18,' + pillAlpha.toFixed(3) + ')';
-        roundRectPath(vctx, labelX - padX, labelY - fontSize / 2 - padY, textW + padX * 2, fontSize + padY * 2, 4);
+        roundRectPath(vctx, pillX, pillY, pillW, pillH, 4);
         vctx.fill();
+        if (n.major) {
+          var chipStrokeAlpha = 0.65 * Math.max(labelAlpha, 0.12);
+          roundRectPath(vctx, pillX, pillY, pillW, pillH, 4);
+          vctx.strokeStyle = rgbaFromHex(tangerineHex, chipStrokeAlpha);
+          vctx.lineWidth = 1;
+          vctx.stroke();
+        }
         vctx.fillStyle = rgbaFromHex(isHubMajor ? tangerineHex : creamHex, labelAlpha);
-        vctx.fillText(n.label, labelX, labelY);
+        vctx.fillText(labelText, labelX, labelY);
 
         /* D3: hover affordance — small "OPEN" tag near clickable nodes on hover */
         if (n === hoveredNode && n.major && !dragNode) {
@@ -2455,6 +2581,7 @@
     });
 
     canvas.addEventListener('pointerdown', function(e) {
+      userInteracted = true;
       var p = localPoint(e);
       pointerStart = p;
       dragMoved = false;
@@ -2478,6 +2605,7 @@
         dragNode = null;
         if (!dragMoved && wasNode.major) {
           openVaultPanel(wasNode);
+          hideHintBadge();
         }
       }
     }
@@ -2522,6 +2650,16 @@
     document.addEventListener('keydown', function(e) {
       if (e.key === 'Escape') closeVaultPanel();
     });
+
+    /* ---- E2.2: corner hint badge — fades permanently (this page load) on
+       the first real node click. ---- */
+    var hintBadge = document.getElementById('vault-hint-badge');
+    var hintHidden = false;
+    function hideHintBadge() {
+      if (hintHidden || !hintBadge) return;
+      hintHidden = true;
+      hintBadge.classList.add('hint-hidden');
+    }
 
     /* ---- resize ---- */
     function resizeVault() {
@@ -2582,6 +2720,17 @@
              viewport, briefly pulse every clickable ring brighter once. */
           hasArmedNudge = true;
           setTimeout(function() { nudgeStart = performance.now(); }, 1500);
+
+          /* E2.3: first-view demo — 900ms after the graph first enters the
+             viewport, auto-open the GODFREY story panel once per page load,
+             as long as the user hasn't already started dragging/clicking or
+             opened a panel themselves. Closing it is the lesson. Skipped
+             entirely under reduced-motion (nothing auto-opens). */
+          setTimeout(function() {
+            if (!userInteracted && !panel.classList.contains('open')) {
+              openVaultPanel(nodeById['godfrey']);
+            }
+          }, 900);
         }
         if (reduceMotion) return;
         if (entry.isIntersecting) startLoop();

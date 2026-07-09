@@ -116,22 +116,31 @@
     transition: transform 0.25s ease, color 0.25s ease;
   }
   .nav-back:hover { color: var(--tangerine); transform: translateX(-3px); }
+  /* E1: aligned to index.html's ".chip-btn" idiom — mono pill, tangerine
+     border, tangerine-fill + cream-text on hover. resume.html has no --nite
+     chain, so (unlike index.html) transitioning background/border-color here
+     is safe. */
   .print-btn {
     font-family: 'JetBrains Mono', monospace;
-    font-size: 0.7rem;
-    letter-spacing: 0.14em;
+    font-size: 0.72rem;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     background: transparent;
-    color: var(--ink);
-    border: 1px solid var(--border);
-    padding: 0.6em 1.1em;
+    /* AA: raw tangerine-on-cream is ~3.2:1 at this size; a 15%-black mix
+       clears 4.5:1 while staying in the tangerine family (matches index.html). */
+    color: color-mix(in oklab, var(--tangerine), black 15%);
+    border: 1px solid color-mix(in oklab, var(--tangerine), black 15%);
+    border-radius: 999px;
+    padding: 0.55em 1.1em;
     cursor: pointer;
     display: inline-flex;
     align-items: center;
-    gap: 0.6em;
-    transition: border-color 0.25s ease, color 0.25s ease, transform 0.25s ease;
+    gap: 0.5em;
+    line-height: 1;
+    transition: background 0.25s ease, color 0.25s ease, transform 0.25s ease;
   }
-  .print-btn:hover { border-color: var(--tangerine); color: var(--tangerine); transform: translateY(-1px); }
+  .print-btn:hover,
+  .print-btn:focus-visible { background: color-mix(in oklab, var(--tangerine), black 30%); color: #FDF8F3; transform: translateY(-1px); }
   .print-btn svg { flex-shrink: 0; }
 
   main { position: relative; z-index: 1; padding-top: 5.5rem; padding-bottom: var(--space-5); }
