@@ -658,14 +658,16 @@
   .stack-tags span {
     font-family: 'JetBrains Mono', monospace;
     font-size: 0.62rem;
+    font-weight: 600;
     letter-spacing: 0.08em;
     text-transform: uppercase;
-    color: var(--ink-fade);
-    border: 1px solid var(--border);
-    border-radius: 999px;
-    padding: 0.35em 0.8em;
+    color: #FDF8F3;
+    background: var(--tag, #6e6e73);
+    border-radius: 4px;
+    padding: 0.4em 0.85em;
     white-space: nowrap;
   }
+  .stack-tags span.lt { color: #0E0D16; }
   .panel-stats {
     display: flex;
     flex-wrap: wrap;
@@ -1541,7 +1543,7 @@
           </div>
           <p class="panel-copy">Built the whole monetization funnel (StoreKit + RevenueCat + Superwall) and a 20+ step Mixpanel onboarding funnel — found and fixed the #1 drop-off (22.6%).</p>
           <div class="stack-tags" aria-label="FocusDown tech stack">
-            <span>TypeScript</span><span>React Native</span><span>Expo</span><span>Swift</span><span>WidgetKit</span><span>Live Activities</span><span>Screen Time API</span><span>Supabase</span><span>StoreKit</span><span>RevenueCat</span><span>Superwall</span><span>Mixpanel</span><span>Claude Code</span>
+            <span style="--tag:#3178C6">TypeScript</span><span class="lt" style="--tag:#61DAFB">React Native</span><span style="--tag:#4630EB">Expo</span><span style="--tag:#F05138">Swift</span><span style="--tag:#0D96F6">WidgetKit</span><span style="--tag:#0D96F6">Live Activities</span><span style="--tag:#0D96F6">Screen Time API</span><span class="lt" style="--tag:#3FCF8E">Supabase</span><span style="--tag:#0D96F6">StoreKit</span><span style="--tag:#F2545B">RevenueCat</span><span style="--tag:#E8621A">Superwall</span><span style="--tag:#7856FF">Mixpanel</span><span style="--tag:#D97757">Claude Code</span>
           </div>
           <a class="panel-link chip-btn" href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener" aria-label="FocusDown on the App Store">
             On the App Store
@@ -1566,7 +1568,7 @@
             <span>0 stored value</span>
           </div>
           <div class="stack-tags" aria-label="Throwda tech stack">
-            <span>TypeScript</span><span>Node.js</span><span>Next.js</span><span>WhatsApp Business API</span><span>Supabase</span><span>Postgres</span><span>Paystack</span><span>VTPass / eBills</span><span>Vitest</span><span>Playwright</span><span>Railway</span><span>Claude Code</span>
+            <span style="--tag:#3178C6">TypeScript</span><span style="--tag:#339933">Node.js</span><span style="--tag:#444450">Next.js</span><span style="--tag:#25D366">WhatsApp Business API</span><span class="lt" style="--tag:#3FCF8E">Supabase</span><span style="--tag:#4169E1">Postgres</span><span class="lt" style="--tag:#00C3F7">Paystack</span><span style="--tag:#6e6e73">VTPass / eBills</span><span style="--tag:#6E9F18">Vitest</span><span style="--tag:#2EAD33">Playwright</span><span style="--tag:#6e6e73">Railway</span><span style="--tag:#D97757">Claude Code</span>
           </div>
           <a class="panel-link chip-btn" href="https://throwda.com" target="_blank" rel="noopener" aria-label="Throwda — throwda.com">
             throwda.com
