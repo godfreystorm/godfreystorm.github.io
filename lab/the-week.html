@@ -21,7 +21,7 @@
   :root {
     --bg: #0E0D16; --ink: #F4EEE4; --tangerine: #FF7A33; --amber: #f5a35c;
     --ink-fade: color-mix(in oklab, var(--ink), transparent 38%);
-    --ink-faint: color-mix(in oklab, var(--ink), transparent 55%);
+    --ink-faint: color-mix(in oklab, var(--ink), transparent 46%);
     --card-bg: color-mix(in oklab, var(--bg), var(--ink) 6%);
     --border: color-mix(in oklab, var(--ink), transparent 85%);
     --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
@@ -29,7 +29,7 @@
   }
   * { box-sizing: border-box; }
   body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', sans-serif; font-size: 16px; line-height: 1.68; overflow-x: hidden; }
-  ::selection { background: var(--amber); color: #0E0D16; }
+  ::selection { background: var(--amber); color: var(--bg); }
   a { color: inherit; }
   h1, h2, h3 { font-family: 'Fraunces', serif; margin: 0; }
   .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }
@@ -102,7 +102,122 @@
   .to-top-btn.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
   .to-top-btn:hover { border-color: var(--amber); }
   @media (prefers-reduced-motion: reduce) { .to-top-btn { transition: opacity 0.2s ease; } }
+
+  /* ============ DAY / NIGHT ============================================
+     Night is the baseline (:root). Day is warm paper — same amber family,
+     darkened so it stays ink on stock. Dark-plate artwork (headers,
+     artifacts, the self-contained chart SVGs, video) gets a mat + shadow in
+     day so it reads as a mounted photo rather than a hole in the page.
+     Default follows the OS; the header toggle overrides and persists. */
+  :root {
+    --plate-bg: #12101c;
+    --plate-pad: 0px;
+    --plate-ring: transparent;
+    --plate-shadow: none;
+    --grain-blend: overlay;
+    --grain-opacity: 0.028;
+    --sun-display: block;
+    --moon-display: none;
+  }
+  @media (prefers-color-scheme: light) {
+    :root:not([data-theme="dark"]) {
+    /* paper: printed lab notes — same amber family, darkened for ink on stock */
+    --bg: #F4EEE4;
+    --ink: #1B1620;
+    --tangerine: color-mix(in oklab, #FF7A33, black 30%);
+    --amber: color-mix(in oklab, #f5a35c, black 42%);
+    --ink-fade: color-mix(in oklab, var(--ink), transparent 30%);
+    --ink-faint: color-mix(in oklab, var(--ink), transparent 36%);
+    --card-bg: color-mix(in oklab, var(--bg), #8a6a3e 10%);
+    --border: color-mix(in oklab, var(--ink), transparent 78%);
+    --plate-pad: 10px;
+    --plate-ring: color-mix(in oklab, #12101c, transparent 80%);
+    --plate-shadow: 0 3px 12px rgba(46, 32, 14, 0.16), 0 1px 3px rgba(46, 32, 14, 0.12);
+    --grain-blend: multiply;
+    --grain-opacity: 0.055;
+    --sun-display: none;
+    --moon-display: block;
+    }
+  }
+  :root[data-theme="light"] {
+    /* paper: printed lab notes — same amber family, darkened for ink on stock */
+    --bg: #F4EEE4;
+    --ink: #1B1620;
+    --tangerine: color-mix(in oklab, #FF7A33, black 30%);
+    --amber: color-mix(in oklab, #f5a35c, black 42%);
+    --ink-fade: color-mix(in oklab, var(--ink), transparent 30%);
+    --ink-faint: color-mix(in oklab, var(--ink), transparent 36%);
+    --card-bg: color-mix(in oklab, var(--bg), #8a6a3e 10%);
+    --border: color-mix(in oklab, var(--ink), transparent 78%);
+    --plate-pad: 10px;
+    --plate-ring: color-mix(in oklab, #12101c, transparent 80%);
+    --plate-shadow: 0 3px 12px rgba(46, 32, 14, 0.16), 0 1px 3px rgba(46, 32, 14, 0.12);
+    --grain-blend: multiply;
+    --grain-opacity: 0.055;
+    --sun-display: none;
+    --moon-display: block;
+  }
+
+  .grain { mix-blend-mode: var(--grain-blend); opacity: var(--grain-opacity); }
+
+  .lab-header-img,
+  .lab-clip {
+    background: var(--plate-bg);
+    padding: var(--plate-pad);
+    box-shadow: var(--plate-shadow);
+  }
+  .lab-chart-svg {
+    background: var(--plate-bg);
+    padding: var(--plate-pad);
+    border: 1px solid var(--plate-ring);
+    border-radius: 10px;
+    box-shadow: var(--plate-shadow);
+  }
+
+  /* ---------- theme toggle ---------- */
+  .nav-right { display: inline-flex; align-items: center; gap: var(--space-2); }
+  .theme-toggle {
+    display: inline-flex; align-items: center; justify-content: center;
+    width: 30px; height: 30px; padding: 0;
+    border-radius: 50%;
+    border: 1px solid var(--border);
+    background: color-mix(in oklab, var(--bg), transparent 40%);
+    color: var(--amber);
+    cursor: pointer;
+    transition: border-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+  }
+  .theme-toggle:hover { border-color: var(--amber); transform: translateY(-1px); }
+  .theme-toggle .ico-sun { display: var(--sun-display); }
+  .theme-toggle .ico-moon { display: var(--moon-display); }
+  @media (prefers-reduced-motion: reduce) { .theme-toggle { transition: none; } }
+
+  /* ---------- top identity / receipts strip ---------- */
+  .lab-topstrip {
+    display: flex; justify-content: space-between; flex-wrap: wrap;
+    gap: 0.35em 1.5em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.6rem;
+    letter-spacing: 0.06em;
+    color: var(--ink-faint);
+    margin: 0 0 var(--space-2);
+    padding-bottom: 0.7em;
+    border-bottom: 1px solid var(--border);
+  }
+  .lab-topstrip a { color: var(--ink-fade); text-decoration: underline; text-underline-offset: 2px; }
+  .lab-topstrip a:hover { color: var(--amber); }
+  @media (max-width: 480px) { .lab-topstrip { font-size: 0.56rem; } .lab-topstrip .ts-right { width: 100%; } }
 </style>
+<meta name="theme-color" content="#F4EEE4" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0E0D16" media="(prefers-color-scheme: dark)">
+<script>
+/* Apply the stored Lab Notes theme before first paint (no flash). */
+(function () {
+  try {
+    var t = localStorage.getItem('gs-lab-theme');
+    if (t === 'light' || t === 'dark') { document.documentElement.setAttribute('data-theme', t); }
+  } catch (e) {}
+})();
+</script>
 </head>
 <body>
 
@@ -113,13 +228,22 @@
     <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
     <span>G.O.</span>
   </a>
-  <a href="index.html" class="nav-lab-label mono">Lab Notes</a>
+  <div class="nav-right"><a href="index.html" class="nav-lab-label mono">Lab Notes</a>
+    <button class="theme-toggle" id="themeToggle" type="button" aria-label="Toggle day / night" title="Toggle day / night">
+      <svg class="ico-sun" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="12" r="4.2" stroke="currentColor" stroke-width="1.7"/><path d="M12 2.4v2.4M12 19.2v2.4M2.4 12h2.4M19.2 12h2.4M5.3 5.3l1.7 1.7M17 17l1.7 1.7M18.7 5.3L17 7M7 17l-1.7 1.7" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <svg class="ico-moon" width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M20.6 14.7A8.7 8.7 0 0 1 9.3 3.4a8.7 8.7 0 1 0 11.3 11.3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+    </button></div>
 </header>
 
 <main>
   <div class="container">
 
     <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Article 0</p>
+
+    <div class="lab-topstrip reveal">
+      <span>Godfrey Osagiede &middot; Lab Notes</span>
+      <span class="ts-right">raw receipts: <a href="https://github.com/godfreystorm/ratchet-lab">github.com/godfreystorm/ratchet-lab</a></span>
+    </div>
 
     <div class="article-head reveal">
       <span class="run-eyebrow mono">Ratchet Lab · Article 0</span>
@@ -317,6 +441,35 @@
     var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
   });
+})();
+</script>
+
+
+<script>
+/* Day/Night toggle — one key shared across every Lab Notes page. */
+(function () {
+  var KEY = 'gs-lab-theme';
+  var root = document.documentElement;
+  var btn = document.getElementById('themeToggle');
+  if (!btn) return;
+  function current() {
+    var set = root.getAttribute('data-theme');
+    if (set === 'light' || set === 'dark') return set;
+    return window.matchMedia('(prefers-color-scheme: light)').matches ? 'light' : 'dark';
+  }
+  function label() {
+    btn.setAttribute('aria-label', current() === 'light' ? 'Switch to night mode' : 'Switch to day mode');
+  }
+  label();
+  btn.addEventListener('click', function () {
+    var next = current() === 'light' ? 'dark' : 'light';
+    root.setAttribute('data-theme', next);
+    try { localStorage.setItem(KEY, next); } catch (e) {}
+    label();
+  });
+  try {
+    window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', label);
+  } catch (e) {}
 })();
 </script>
 
