@@ -240,7 +240,7 @@
 <main>
   <div class="container">
 
-    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 1 of 7</p>
+    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 1 of 8</p>
 
     <div class="lab-topstrip reveal">
       <span>Godfrey Osagiede &middot; Lab Notes</span>
@@ -310,6 +310,13 @@
     <section class="block reveal">
       <span class="block-head mono">Next</span>
       <p>Stop attributing results to a mechanism I hadn't isolated. The only honest next move is a proper ablation: run the exact same setup with the tool library surgically removed, and see if the gap disappears.</p>
+    </section>
+
+
+    <section class="block reveal" id="cost-strip">
+      <span class="block-head mono">What this run cost</span>
+      <p><span class="num">109</span> API calls · <span class="num">~$1.13</span> (Haiku 4.5 via Anthropic API, <em>reconstructed</em>).</p>
+      <p class="fade">Series through Run 1: <span class="num">109</span> calls · <span class="num">~$1.13</span>. Call counts are exact — they come straight from each run's metrics file. Dollar figures are measured only from Run 8 onward, where token usage is recorded per generation in <code>spend.json</code>; earlier runs are reconstructed by applying Run 8b's measured per-call token profile (3,642 in / 1,348 out) to those exact call counts, because the provider's usage field was discarded before it was ever written down. A reconstruction is not a measurement, so it is marked as one.</p>
     </section>
 
     <div class="run-nav mono reveal">

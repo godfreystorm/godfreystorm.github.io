@@ -240,7 +240,7 @@
 <main>
   <div class="container">
 
-    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 6 of 7</p>
+    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 6 of 8</p>
 
     <div class="lab-topstrip reveal">
       <span>Godfrey Osagiede &middot; Lab Notes</span>
@@ -303,6 +303,13 @@
       <span class="block-head mono">Next</span>
       <p>The honest ledger says the epistemology has a cost, not just a benefit, and 100 generations barely gives a 5-sighting-threshold, trial-gated system room to move. The real question this hands off: does science actually win, given enough time? That needs a much longer run — and a real credulous control to compare it against.</p>
       <p class="fade">In one line: a colony that went machine (Run 0) → mind (Run 3) → memory (Run 4) → religion (Run 5) → science (Run 6).</p>
+    </section>
+
+
+    <section class="block reveal" id="cost-strip">
+      <span class="block-head mono">What this run cost</span>
+      <p><span class="num">152</span> API calls · <span class="num">~$0.21</span> (gpt-oss-120b via Groq, <em>reconstructed</em>).</p>
+      <p class="fade">Series through Run 6: <span class="num">967</span> calls · <span class="num">~$4.48</span>. Call counts are exact — they come straight from each run's metrics file. Dollar figures are measured only from Run 8 onward, where token usage is recorded per generation in <code>spend.json</code>; earlier runs are reconstructed by applying Run 8b's measured per-call token profile (3,642 in / 1,348 out) to those exact call counts, because the provider's usage field was discarded before it was ever written down. A reconstruction is not a measurement, so it is marked as one.</p>
     </section>
 
     <div class="run-nav mono reveal">

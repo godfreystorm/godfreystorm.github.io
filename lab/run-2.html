@@ -240,7 +240,7 @@
 <main>
   <div class="container">
 
-    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 2 of 7</p>
+    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 2 of 8</p>
 
     <div class="lab-topstrip reveal">
       <span>Godfrey Osagiede &middot; Lab Notes</span>
@@ -318,6 +318,13 @@
     <section class="block reveal">
       <span class="block-head mono">Next</span>
       <p>Rewrite the mutation prompt to be bold and theory-primed instead of conservative, and give the library an actual fair shot. Also move bulk experimentation off the subscription CLI's session limits onto a free, fast engine so more runs fit in a day.</p>
+    </section>
+
+
+    <section class="block reveal" id="cost-strip">
+      <span class="block-head mono">What this run cost</span>
+      <p><span class="num">304</span> API calls · <span class="num">~$2.60</span> (Haiku 4.5 via Anthropic API, <em>reconstructed</em>).</p>
+      <p class="fade">Series through Run 2: <span class="num">413</span> calls · <span class="num">~$3.73</span>. Call counts are exact — they come straight from each run's metrics file. Dollar figures are measured only from Run 8 onward, where token usage is recorded per generation in <code>spend.json</code>; earlier runs are reconstructed by applying Run 8b's measured per-call token profile (3,642 in / 1,348 out) to those exact call counts, because the provider's usage field was discarded before it was ever written down. A reconstruction is not a measurement, so it is marked as one.</p>
     </section>
 
     <div class="run-nav mono reveal">

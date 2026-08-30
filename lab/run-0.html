@@ -269,7 +269,7 @@
 <main>
   <div class="container">
 
-    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 0 of 7</p>
+    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 0 of 8</p>
 
     <div class="lab-topstrip reveal">
       <span>Godfrey Osagiede &middot; Lab Notes</span>
@@ -339,6 +339,13 @@
     <section class="block reveal">
       <span class="block-head mono">Next</span>
       <p>Build in honest failure handling — a loud abort instead of a silent fallback — an era-spread replay picker, and treat the raw API-call count as the one number in every report that can't lie. Then spend the first real dollar on Run 1.</p>
+    </section>
+
+
+    <section class="block reveal" id="cost-strip">
+      <span class="block-head mono">What this run cost</span>
+      <p>This run made <span class="num">no API calls at all</span> — it ran on the free deterministic mock mutator.</p>
+      <p class="fade">Series through Run 0: <span class="num">0</span> calls · <span class="num">~$0.00</span>. Call counts are exact — they come straight from each run's metrics file. Dollar figures are measured only from Run 8 onward, where token usage is recorded per generation in <code>spend.json</code>; earlier runs are reconstructed by applying Run 8b's measured per-call token profile (3,642 in / 1,348 out) to those exact call counts, because the provider's usage field was discarded before it was ever written down. A reconstruction is not a measurement, so it is marked as one.</p>
     </section>
 
     <div class="run-nav mono reveal">
