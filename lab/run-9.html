@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Run 3 — Bold Mutator on Groq — Lab Notes</title>
-<meta name="description" content="Ratchet Lab Run 3: a bolder prompt makes tool adoption explode, then the complexity death spiral collapses champion quality.">
-<meta property="og:title" content="Run 3 — Bold Mutator on Groq — Lab Notes">
-<meta property="og:description" content="Ratchet Lab Run 3: a bolder prompt makes tool adoption explode, then the complexity death spiral collapses champion quality.">
+<title>Run 9 — What the Colony Threw Away — Lab Notes</title>
+<meta name="description" content="Ratchet Lab Run 9: a pre-registered test across 14 colonies confirms the lessons work — and shows the colony's own gate correctly rejected almost every one of them.">
+<meta property="og:title" content="Run 9 — What the Colony Threw Away — Lab Notes">
+<meta property="og:description" content="Ratchet Lab Run 9: a pre-registered test across 14 colonies confirms the lessons work — and shows the colony's own gate correctly rejected almost every one of them.">
 <meta property="og:type" content="article">
-<meta property="og:image" content="https://godfreystorm.github.io/lab/img/h-run-3.webp">
+<meta property="og:image" content="https://godfreystorm.github.io/lab/img/h-run-9.webp">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Run 3 — Bold Mutator on Groq — Lab Notes">
-<meta name="twitter:description" content="Ratchet Lab Run 3: a bolder prompt makes tool adoption explode, then the complexity death spiral collapses champion quality.">
-<meta name="twitter:image" content="https://godfreystorm.github.io/lab/img/h-run-3.webp">
+<meta name="twitter:title" content="Run 9 — What the Colony Threw Away — Lab Notes">
+<meta name="twitter:description" content="Ratchet Lab Run 9: a pre-registered test across 14 colonies confirms the lessons work — and shows the colony's own gate correctly rejected almost every one of them.">
+<meta name="twitter:image" content="https://godfreystorm.github.io/lab/img/h-run-9.webp">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,6 +73,7 @@
   .data-table th, .data-table td { text-align: left; padding: 0.6em 0.9em; border-bottom: 1px solid var(--border); white-space: nowrap; }
   .data-table th { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
   .data-table tr.highlight td { color: var(--amber); font-weight: 600; }
+  .quote-block { border-left: 2px solid var(--amber); padding-left: var(--space-3); margin: var(--space-3) 0; font-family: 'Fraunces', serif; font-style: italic; font-size: 1.15rem; color: var(--ink); }
   .clip-note, .chart-placeholder { border: 1px dashed var(--border); border-radius: 10px; padding: var(--space-3); color: var(--ink-faint); font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; text-align: center; margin: var(--space-3) 0; }
   .run-nav { display: flex; justify-content: space-between; gap: var(--space-2); margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--border); font-size: 0.78rem; }
   .run-nav a { text-decoration: none; color: var(--ink-fade); transition: color 0.2s ease; }
@@ -240,7 +241,7 @@
 <main>
   <div class="container">
 
-    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 3 of 9</p>
+    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 9 of 9</p>
 
     <div class="lab-topstrip reveal">
       <span>Godfrey Osagiede &middot; Lab Notes</span>
@@ -248,80 +249,192 @@
     </div>
 
     <div class="run-nav-top mono reveal">
-      <a href="run-2.html"><span class="lbl">Previous</span>← Run 2 — Three-Arm Ablation</a>
-      <a class="next" href="run-4.html"><span class="lbl">Next</span>Run 4 — Error Feedback →</a>
+      <a href="run-8.html"><span class="lbl">Previous</span>← Run 8 — The Trial Goes On Trial</a>
+      <a class="next" href="the-week.html"><span class="lbl">Next</span>Article 0 — The Week I Built an Evolution Lab →</a>
     </div>
 
     <div class="article-head reveal">
-      <span class="run-eyebrow mono">Ratchet Lab · Run 3 · gpt-oss-120b via Groq (free), 100 gens</span>
-      <h1 class="article-title">Bold Mutator on Groq</h1>
+      <span class="run-eyebrow mono">Ratchet Lab · Run 9 · gpt-oss-120b via Groq, 14 colonies, 174 trials, analysis locked before the data existed</span>
+      <h1 class="article-title">What the Colony Threw Away</h1>
       <p class="article-meta mono">
-        <span>Library ON</span>
-        <span class="sep">·</span>
-        <span>Bold, theory-primed prompt</span>
+        <span>The lessons worked. The colony rejected them anyway — and was right to.</span>
       </p>
     </div>
-
-    <img class="lab-header-img reveal" src="img/h-run-3.webp" alt="The battle arena schematic overlaid with jagged crack lines radiating diagonally across the grid, illustrating the runtime crashes triggered by the bold mutator." width="1600" height="800" loading="eager">
 
 
     <div class="hairline reveal" aria-hidden="true"></div>
 
     <section class="block reveal">
-      <span class="block-head mono">Hypothesis</span>
-      <p>Run 2 concluded the tool library never got a fair trial because the mutation prompt told the model to be conservative. If the prompt instead pushes bold, theory-primed mutations that explicitly reward using inherited tools, will the library finally show a real effect?</p>
+      <span class="block-head mono">The analysis was locked before the data existed</span>
+      <p>This is the only page in the series where that sentence is true, and it is the reason to trust the number at the bottom of it. On 2026-08-30, before a single Run 9 generation had been executed, a pre-registration was written into the vault fixing the hypothesis, the outcome measure, the exact statistical test, the sample size, the stopping rule, and the interpretation of every possible result. It also recorded a prediction, so the prediction could be scored rather than quietly revised afterwards.</p>
+      <p>Four things were nailed down in advance, each closing a door that had already swung open somewhere earlier in this series:</p>
+      <ul>
+        <li><strong>One-sided Fisher exact on the pooled 2×2, α = 0.05.</strong> Named before seeing anything, so no better-looking test could be substituted later.</li>
+        <li><strong>Fourteen colonies, not seven.</strong> Seven gives only 53% power against a 4-point effect — the size actually predicted. Registering seven would have been registering a coin flip.</li>
+        <li><strong>No stopping for significance.</strong> The halfway look was declared descriptive-only in advance, precisely because it would be tempting.</li>
+        <li><strong>Run 8b excluded from the primary.</strong> Its trials produced the estimate being tested; including them would have been testing a hypothesis on the data that generated it.</li>
+      </ul>
+      <p>No deviations occurred. What follows is what was registered.</p>
+    </section>
+
+    <section class="badge win mono reveal" style="display:inline-block">Result — 14 colonies, 174 trials, 3,480 children per arm</section>
+
+    <section class="block reveal">
+      <span class="block-head mono">The lessons work</span>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Measure</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Crash rate <em>without</em> a lesson injected</td><td class="num">59.7%</td></tr>
+            <tr class="highlight"><td>Crash rate <em>with</em> a lesson injected</td><td class="num">53.8%</td></tr>
+            <tr><td>Absolute reduction</td><td class="num">5.89 points</td></tr>
+            <tr><td>95% confidence interval</td><td class="num">[3.57, 8.21]</td></tr>
+            <tr><td>One-sided Fisher exact</td><td class="num">p &lt; 0.0001</td></tr>
+            <tr><td>Per-trial direction</td><td class="num">94 helped · 12 tied · 68 hurt</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p><strong>Run 7's published conclusion that prompt-injected lessons were "largely placebo for this model" is hereby retracted.</strong> They reduce the crash rate by about six points, and the effect is not marginal.</p>
     </section>
 
     <section class="block reveal">
-      <span class="block-head mono">Setup</span>
-      <p>Two changes at once, a known confound I accepted for speed: (1) the mutation prompt was rewritten to explicitly ask for "cumulative invention," using inherited tools "like a craftsman," hybrids welcome; (2) the engine switched from the slow subscription CLI to a free, fast model — <code>gpt-oss-120b</code> on Groq — so runs took minutes instead of hours, at zero cost.</p>
+      <span class="block-head mono">It survives the obvious attack</span>
+      <p>174 trials drawn from 14 colonies are not 174 independent observations. Trials inside one colony share a tool library, a lineage, and a drifting model state, so a pooled test that treats all 3,480 children as independent overstates its own certainty. That objection deserves an answer before the result is believed, not after someone raises it.</p>
+      <p>Re-analysed with <strong>the colony as the unit of independence</strong> — fourteen numbers instead of 3,480:</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Clustered analysis (post-hoc, not pre-registered)</th><th>Value</th></tr></thead>
+          <tbody>
+            <tr><td>Mean colony-level reduction</td><td class="num">7.05 points</td></tr>
+            <tr><td>One-sample t (df = 13)</td><td class="num">5.49</td></tr>
+            <tr><td>One-sided p</td><td class="num">0.0001</td></tr>
+            <tr class="highlight"><td>Colonies with a positive effect</td><td class="num">13 of 14</td></tr>
+            <tr><td>Sign test</td><td class="num">p = 0.0009</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <svg class="lab-chart-svg" viewBox="0 0 860 320" width="100%" height="320" role="img" aria-label="Per-colony crash-rate reduction from injected lessons across 14 independent colonies; thirteen are positive, one is zero, none are negative.">
+<rect x="0" y="0" width="860" height="320" fill="#12151c" rx="8"/>
+<text x="52" y="20" font-size="13" fill="#c7cdd9" font-family="ui-sans-serif,system-ui">Crash-rate reduction per colony (percentage points) — 14 independent colonies</text>
+<text x="52" y="38" font-size="11" fill="#9aa4b2" font-family="ui-sans-serif,system-ui">bar height = how much less often children crashed when a lesson was injected. above zero = the lesson helped.</text>
+<line x1="52" y1="251.1" x2="844" y2="251.1" stroke="#2a2f3a" stroke-width="1"/>
+<text x="46" y="255.1" font-size="10" fill="#9aa4b2" text-anchor="end">0</text>
+<line x1="52" y1="201.3" x2="844" y2="201.3" stroke="#2a2f3a" stroke-width="1"/>
+<text x="46" y="205.3" font-size="10" fill="#9aa4b2" text-anchor="end">4</text>
+<line x1="52" y1="151.6" x2="844" y2="151.6" stroke="#2a2f3a" stroke-width="1"/>
+<text x="46" y="155.6" font-size="10" fill="#9aa4b2" text-anchor="end">8</text>
+<line x1="52" y1="101.8" x2="844" y2="101.8" stroke="#2a2f3a" stroke-width="1"/>
+<text x="46" y="105.8" font-size="10" fill="#9aa4b2" text-anchor="end">12</text>
+<line x1="52" y1="52.0" x2="844" y2="52.0" stroke="#2a2f3a" stroke-width="1"/>
+<text x="46" y="56.0" font-size="10" fill="#9aa4b2" text-anchor="end">16</text>
+<line x1="52" y1="251.1" x2="844" y2="251.1" stroke="#5b6472" stroke-width="1.5"/>
+<rect x="62.7" y="73.3" width="35.1" height="177.8" fill="#f5a35c" rx="2"/>
+<text x="80.3" y="68.3" font-size="9" fill="#e6e9ef" text-anchor="middle">14.3</text>
+<text x="80.3" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">1</text>
+<text x="80.3" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">7t</text>
+<rect x="119.3" y="70.7" width="35.1" height="180.4" fill="#f5a35c" rx="2"/>
+<text x="136.9" y="65.7" font-size="9" fill="#e6e9ef" text-anchor="middle">14.5</text>
+<text x="136.9" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">2</text>
+<text x="136.9" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">10t</text>
+<rect x="175.9" y="197.8" width="35.1" height="53.3" fill="#f5a35c" rx="2"/>
+<text x="193.4" y="192.8" font-size="9" fill="#e6e9ef" text-anchor="middle">4.3</text>
+<text x="193.4" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">3</text>
+<text x="193.4" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">7t</text>
+<rect x="232.5" y="191.0" width="35.1" height="60.1" fill="#f5a35c" rx="2"/>
+<text x="250.0" y="186.0" font-size="9" fill="#e6e9ef" text-anchor="middle">4.8</text>
+<text x="250.0" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">4</text>
+<text x="250.0" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">29t</text>
+<rect x="289.0" y="235.6" width="35.1" height="15.6" fill="#f5a35c" rx="2"/>
+<text x="306.6" y="230.6" font-size="9" fill="#e6e9ef" text-anchor="middle">1.2</text>
+<text x="306.6" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">5</text>
+<text x="306.6" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">24t</text>
+<rect x="345.6" y="209.6" width="35.1" height="41.5" fill="#f5a35c" rx="2"/>
+<text x="363.1" y="204.6" font-size="9" fill="#e6e9ef" text-anchor="middle">3.3</text>
+<text x="363.1" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">6</text>
+<text x="363.1" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">3t</text>
+<rect x="402.2" y="157.8" width="35.1" height="93.3" fill="#f5a35c" rx="2"/>
+<text x="419.7" y="152.8" font-size="9" fill="#e6e9ef" text-anchor="middle">7.5</text>
+<text x="419.7" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">7</text>
+<text x="419.7" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">8t</text>
+<rect x="458.7" y="151.6" width="35.1" height="99.6" fill="#f5a35c" rx="2"/>
+<text x="476.3" y="146.6" font-size="9" fill="#e6e9ef" text-anchor="middle">8.0</text>
+<text x="476.3" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">8</text>
+<text x="476.3" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">5t</text>
+<rect x="515.3" y="80.0" width="35.1" height="171.1" fill="#f5a35c" rx="2"/>
+<text x="532.9" y="75.0" font-size="9" fill="#e6e9ef" text-anchor="middle">13.8</text>
+<text x="532.9" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">9</text>
+<text x="532.9" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">4t</text>
+<rect x="571.9" y="230.4" width="35.1" height="20.7" fill="#f5a35c" rx="2"/>
+<text x="589.4" y="225.4" font-size="9" fill="#e6e9ef" text-anchor="middle">1.7</text>
+<text x="589.4" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">10</text>
+<text x="589.4" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">12t</text>
+<rect x="628.5" y="251.1" width="35.1" height="1.5" fill="#5b6472" rx="2"/>
+<text x="646.0" y="246.1" font-size="9" fill="#e6e9ef" text-anchor="middle">0.0</text>
+<text x="646.0" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">11</text>
+<text x="646.0" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">18t</text>
+<rect x="685.0" y="150.9" width="35.1" height="100.2" fill="#f5a35c" rx="2"/>
+<text x="702.6" y="145.9" font-size="9" fill="#e6e9ef" text-anchor="middle">8.1</text>
+<text x="702.6" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">12</text>
+<text x="702.6" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">18t</text>
+<rect x="741.6" y="153.3" width="35.1" height="97.8" fill="#f5a35c" rx="2"/>
+<text x="759.1" y="148.3" font-size="9" fill="#e6e9ef" text-anchor="middle">7.9</text>
+<text x="759.1" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">13</text>
+<text x="759.1" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">14t</text>
+<rect x="798.2" y="135.0" width="35.1" height="116.1" fill="#f5a35c" rx="2"/>
+<text x="815.7" y="130.0" font-size="9" fill="#e6e9ef" text-anchor="middle">9.3</text>
+<text x="815.7" y="294.0" font-size="9" fill="#9aa4b2" text-anchor="middle">14</text>
+<text x="815.7" y="306.0" font-size="8" fill="#6b7482" text-anchor="middle">15t</text>
+<text x="52" y="317" font-size="9" fill="#6b7482">colony (trials below)</text>
+<line x1="52" y1="163.4" x2="844" y2="163.4" stroke="#5ad1a4" stroke-width="1.2" stroke-dasharray="5 4"/>
+<text x="840" y="157.4" font-size="10" fill="#5ad1a4" text-anchor="end">mean 7.05 pts</text>
+</svg>
+      <p class="fade">Thirteen colonies positive, one exactly zero, none negative. The clustered estimate is <em>larger</em> than the pooled one because the two highest-trial colonies — 4 and 5, together 30% of all trials — also carried the highest baseline crash rates and the smallest effects, and they dominate any count-weighted pool. Equal-weighting the colonies removes that pull.</p>
     </section>
 
     <section class="block reveal">
-      <span class="block-head mono">What changed</span>
-      <p>Prompt tone (conservative → bold) and inference engine (Haiku CLI → free Groq model), together.</p>
+      <span class="badge fail mono">The prediction, scored</span>
+      <p>The pre-registration recorded a forecast: 60% that the effect would hold and reach significance <em>but regress to 3–5 points</em>, on the reasoning that Run 8b's 5.6-point estimate came from only 180 children per arm and was probably inflated.</p>
+      <p><strong>Direction and significance: correct. Magnitude: wrong.</strong> The effect did not regress. It came in at 5.89 pooled and 7.05 clustered — at or above the original estimate. The noisy little number from Run 8b was accurate all along, and the regression-to-the-mean reasoning applied to it was the part that needed correcting. Recorded here because a prediction that only gets graded when it is right is not a prediction.</p>
     </section>
 
     <section class="block reveal">
-      <span class="block-head mono">What was measured</span>
-      <p>Coverage, best and mean Elo, tool count, and — new for this run — how many times bots actually called inherited tools during evaluation matches.</p>
+      <span class="block-head mono">The finding that actually matters</span>
+      <p>The colony canonized almost none of these lessons. Across Run 8b and Run 9 together, the gate looked at 183 candidate doctrines and adopted a vanishing handful — and every one of those rejections was <em>correct by its own standard</em>. A single trial at twenty children per arm simply cannot resolve a six-point effect; doing so takes roughly 1,200 children per arm. Every individual verdict was properly calibrated. The aggregate of those verdicts threw away something real.</p>
+      <p class="quote-block">Individually-rational skepticism produces collectively-irrational rejection when true effects are small relative to the evidence available per decision.</p>
+      <p>This is not a bug in the gate, and tightening or loosening α would not fix it. It is structural. A culture that only adopts what any single member can personally prove will correctly reject nearly everything, and will sit on a genuine transmissible advantage while doing so. The knowledge was available in the aggregate the whole time; no participant was ever in a position to see it.</p>
+      <p>The series now holds both failure modes, produced by the same lab under the same conditions. <strong>Run 5's colony believed everything it was told and died of superstition</strong>, canonizing a law about <code>state.arena.walls</code> that pointed at a field which does not exist. <strong>Run 9's colony believed nothing it could not personally verify and discarded something true.</strong> Neither colony was irrational. Each was defeated by the amount of evidence a single decision could carry.</p>
     </section>
 
     <section class="block reveal">
-      <span class="block-head mono">Result</span>
-      <p>Coverage landed at <span class="num">61.1%</span>, mean Elo 976, 7 tools extracted, 107 mutation calls. But the headline is adoption: prior arms barely touched the library (one tool, <code>manhattanDist</code>, sat at zero uses). This run, tool calls exploded — <code>manhattanDistance</code> alone was called <span class="num">621,818</span> times, <code>lineOfSight</code> 45,381 times, roughly <span class="num">726,000</span> inherited-tool calls total. Telling the model the theory behind the library, not just giving it access, was the actual adoption lever — this arm hit the best exploration of any evolved run so far, closing in on cold sampling's 69.4%.</p>
+      <span class="block-head mono">What this cost, and what it bought</span>
+      <p>Fourteen colonies, 4,200 generations, 13,061 API calls, three hours and twenty-one minutes unattended. Every colony verified at exactly 300 generations from its metrics file rather than from the run checkpoint — the checkpoint lags asynchronous completion, and trusting it reported colonies as unfinished that had in fact finished, which on a re-run would have re-executed thirteen of the fourteen and spent the money twice. That bug was found by checking, and is fixed.</p>
+      <p>Eight runs of argument about whether the colony's lessons meant anything, settled for about the price of lunch.</p>
     </section>
 
     <section class="block reveal">
-      <span class="badge fail mono">What failed</span>
-      <p><strong>Champion quality collapsed.</strong> Best Elo landed at <span class="num">1029</span> — the worst champion of any arm run so far. Generations 51 through 100 were roughly 90% pure corpses: bots that went 0 wins–24 losses–0 draws because their code threw an error at runtime and forfeited every match. Autopsy of the replays found the real cause: bold mutations of already-complex, 100-line parents produce runtime-fragile children — <em>the complexity death spiral</em>. Once most children in a generation are crashing, selection has nothing left to select from. A live reproduction confirmed it: 1 in 5 fresh mutations crashed even against an empty library, ruling out a poisoned tool as the cause.</p>
-      <p class="fade">Ops gap found the same run: the run's abort tripwire watched for API failures, not for a streak of crashed bots — 50 calls were burned producing invalid bots with no warning raised.</p>
+      <span class="block-head mono">What's next</span>
+      <p>The obvious continuation is a cheaper one. <code>gpt-oss-20b</code> costs half of what this run used per token and runs twice as fast, which puts a Run-9-scale experiment near seven dollars. It cannot be pooled with anything here — a different model is a different crash profile and a different baseline — but that is the point rather than the problem. If the lesson effect survives on a weaker model, it is a property of the method. If it disappears, it was a property of this particular model, and that is worth knowing before anyone generalises a word of this page.</p>
+      <p>Two older items still stand: hold a lesson accountable for the whole crash budget rather than only its own error signature, and gate tool extraction on whether a fresh model can re-derive the helper from its description alone.</p>
     </section>
-
-    <section class="block reveal">
-      <span class="block-head mono">Next</span>
-      <p>Boldness bought real exploration and real tool inheritance, at the cost of viability. The fix is the one idea I'd proposed right after Run 1 and finally had a reason to build: feed a bot's own runtime error back into the next mutation prompt — "your last child crashed with this error, fix that and keep the strategy." Information pressure, not less boldness.</p>
-    </section>
-
 
 
 
     <section class="block reveal" id="cost-strip">
       <span class="block-head mono">What this run cost</span>
-      <p><span class="num">107</span> API calls · <span class="num">$0.12–$0.14</span> (gpt-oss-120b via Groq).</p>
-      <p class="fade">Series through Run 3: <span class="num">520</span> calls · <span class="num">$3.24–$3.87</span>. Call counts are exact, straight from each run's metrics file. Costs are a <em>range</em> rather than a figure, for a reason worth stating: the provider bills cached input tokens at half price and does not report the cached fraction in the API response — it appears only in the console dashboard — so the upper bound prices every input token as uncached and the lower bound prices all of them as cache hits. A sampled dashboard minute showed 68% of input tokens were cache hits, which puts the truth nearer the bottom of each range. Token counts are measured exactly from Run 8 onward; earlier runs additionally reconstruct tokens from Run 8b's measured per-call profile (3,642 in / 1,348 out), because the usage field was discarded before it was ever written down. A bound is not a measurement and a reconstruction is neither, so both are labelled.</p>
+      <p><span class="num">13,061</span> API calls · <span class="num">$13.71–$17.20</span> (gpt-oss-120b via Groq). Token counts measured exactly; the range reflects the provider's undisclosed cached-input split.</p>
+      <p class="fade">Series through Run 9: <span class="num">16,679</span> calls · <span class="num">$20.13–$25.02</span>. Call counts are exact, straight from each run's metrics file. Costs are a range rather than a figure because the provider bills cached input tokens at half price and does not report the cached fraction in the API response — only in the console dashboard — so the upper bound prices every input token as uncached and the lower bound prices all of them as cache hits. Runs before Run 8 additionally reconstruct tokens from a measured per-call profile, because the usage field was discarded before it was ever written down. A bound is not a measurement and a reconstruction is neither, so both are labelled.</p>
     </section>
 
     <div class="run-nav mono reveal">
-      <a href="run-2.html"><span class="lbl">Previous</span>← Run 2 — Three-Arm Ablation</a>
-      <a class="next" href="run-4.html"><span class="lbl">Next</span>Run 4 — Error Feedback →</a>
+      <a href="run-8.html"><span class="lbl">Previous</span>← Run 8 — The Trial Goes On Trial</a>
+      <a class="next" href="the-week.html"><span class="lbl">Next</span>Article 0 — The Week I Built an Evolution Lab →</a>
     </div>
 
   </div>
 
   <footer class="lab-footer mono">
     <span>Godfrey Osagiede · Lab Notes</span>
-    <span>Ratchet Lab · Run 3</span>
+    <span>Ratchet Lab · Run 9</span>
   </footer>
   <p class="lab-receipts">Raw receipts — every archive, lessons ledger, metrics file, and match replay: <a href="https://github.com/godfreystorm/ratchet-lab">github.com/godfreystorm/ratchet-lab</a></p>
 
