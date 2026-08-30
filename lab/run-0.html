@@ -48,9 +48,9 @@
   a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 2px; }
 
   .site-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: var(--space-2) var(--space-4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: color-mix(in oklab, var(--bg), transparent 15%); border-bottom: 1px solid var(--border); }
-  .nav-back { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 1.15rem; text-decoration: none; letter-spacing: 0.01em; display: inline-flex; align-items: center; gap: 0.4em; transition: transform 0.25s ease, color 0.25s ease; }
-  .nav-back:hover { color: var(--amber); transform: translateX(-3px); }
-  .nav-lab-label { font-size: 0.68rem; color: var(--ink-fade); text-decoration: none; transition: color 0.2s ease; }
+  .nav-back { font-family: 'JetBrains Mono', monospace; font-size: 0.66rem; text-transform: uppercase; letter-spacing: 0.08em; text-decoration: none; color: var(--ink-fade); display: inline-flex; align-items: center; gap: 0.5em; padding: 0.5em 0.95em; border: 1px solid var(--border); border-radius: 999px; background: color-mix(in oklab, var(--bg), transparent 40%); transition: transform 0.25s ease, color 0.25s ease, border-color 0.25s ease; }
+  .nav-back:hover { color: var(--amber); border-color: var(--amber); transform: translateX(-3px); }
+  .nav-lab-label { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 0.85rem; color: var(--ink-faint); text-decoration: none; transition: color 0.2s ease; }
   .nav-lab-label:hover { color: var(--amber); }
 
   main { position: relative; z-index: 1; padding-top: 5.5rem; padding-bottom: var(--space-5); }
