@@ -441,12 +441,12 @@
       <p>Nine independent trials at twenty children per arm is 180 children per arm in total. Pooled as a single fixed-effect comparison, the crash rate is <span class="num">60.6%</span> without a lesson injected and <span class="num">55.0%</span> with one — a <span class="num">5.6</span>-point absolute reduction, at p&nbsp;=&nbsp;<span class="num">0.168</span>.</p>
       <p>Still not significant. But that number changes the conclusion of the entire series, because it is not the shape of a placebo. Run 7 concluded that prompt-injected lessons were <em>"largely placebo for this model"</em>, reasoning from the fact that almost every candidate failed its control. Run 8 already showed that rejection rate was mostly the accept rule's own output. Now the pooled data points the other way: there is a small, consistently-signed effect that nine trials at n=20 cannot resolve.</p>
       <p class="quote-block">The honest state of the question is not "placebo." It is "unresolved, effect small, and here is exactly how much data it would take."</p>
-      <p>To detect a 5.6-point difference at 80% power and p&nbsp;≤&nbsp;0.05 takes <span class="num">1,237</span> children per arm — 2,474 mutation calls per trial, about <span class="num">$3.35</span> a trial at the measured rate, roughly <span class="num">$30</span> for a nine-candidate run. That is the price of the answer. It is knowable now because the instrument finally reports effect sizes instead of verdicts.</p>
+      <p>To detect a 5.6-point difference at 80% power and p&nbsp;≤&nbsp;0.05 takes <span class="num">1,237</span> children per arm — 2,474 mutation calls per trial, about <span class="num">$3.35</span> a trial at the upper-bound rate, roughly <span class="num">$30</span> for a nine-candidate run. But that design tests one lesson at a time, and the series' actual claim is about lessons as a class — and pooled power depends on total sample size, not how it is split. Keeping the arms at twenty and pooling <span class="num">62</span> trials across about seven more 300-generation colonies reaches the same statistical power for roughly <span class="num">$7.60</span>, and yields seven extra colonies as a side effect rather than a cost. That is the run worth doing, and it is knowable now only because the instrument finally reports effect sizes instead of verdicts.</p>
     </section>
 
     <section class="block reveal">
       <span class="badge fail mono">What rigor cost</span>
-      <p>Run 8b spent <span class="num">814</span> calls and <span class="num">$1.08</span> — more calls than any single run in the series, and its nine trials consumed <span class="num">360</span> mutation calls, about <span class="num">44%</span> of the entire run's budget. Every one of those trials came back null, and every one was still roughly sixty times too small to resolve the effect it was measuring.</p>
+      <p>Run 8b spent <span class="num">814</span> calls and <span class="num">$0.86–$1.08</span> — more calls than any single run in the series, and its nine trials consumed <span class="num">360</span> mutation calls, about <span class="num">44%</span> of the entire run's budget. Every one of those trials came back null, and every one was still roughly sixty times too small to resolve the effect it was measuring.</p>
       <p>That is the real cost curve of epistemology in this lab: at n=4 the trials were free and meaningless; at n=20 they eat nearly half the run and are still meaningless; at n=1,237 they would cost thirty dollars and finally mean something. Rigor here is not expensive because the model is expensive. It is expensive because the effect is small.</p>
     </section>
 
@@ -469,15 +469,17 @@
 
     <section class="block reveal">
       <span class="block-head mono">What's next</span>
-      <p>The question the series has been circling since Run 5 is now a budget line rather than an argument: <span class="num">$30</span> and a properly-powered trial arm settles whether prompt-injected lessons help this model. That is the next run.</p>
+      <p>The question the series has been circling since Run 5 is now a budget line rather than an argument: roughly <span class="num">$8</span>, seven more colonies, and a pre-registered pooled test settles whether prompt-injected lessons help this model. That is the next run. Pooling nine different lessons answers "do lessons as a class help", not "does this particular lesson help" — a real limitation of the analysis above, and the reason the pooled test has to be declared before the runs rather than after.</p>
       <p>Two items the data has already earned alongside it. Hold a lesson accountable for the whole crash budget rather than only its own error signature, since a law that suppresses its own family while inducing a new one currently looks like a success forever. And gate tool extraction on whether a fresh model can re-derive the function from its description alone — <code>manhattanDistance</code> is 97% of Run 4's inherited call volume, and a three-line helper is sugar, not a ratchet.</p>
     </section>
 
 
+
+
     <section class="block reveal" id="cost-strip">
       <span class="block-head mono">What this run cost</span>
-      <p><span class="num">1,114</span> API calls · <span class="num">$1.26</span> (gpt-oss-120b via Groq, <em>measured</em>).</p>
-      <p class="fade">Series through Run 8: <span class="num">3,618</span> calls · <span class="num">~$7.82</span>. Call counts are exact — they come straight from each run's metrics file. Dollar figures are measured only from Run 8 onward, where token usage is recorded per generation in <code>spend.json</code>; earlier runs are reconstructed by applying Run 8b's measured per-call token profile (3,642 in / 1,348 out) to those exact call counts, because the provider's usage field was discarded before it was ever written down. A reconstruction is not a measurement, so it is marked as one.</p>
+      <p><span class="num">1,114</span> API calls · <span class="num">$1.03–$1.26</span> (gpt-oss-120b via Groq).</p>
+      <p class="fade">Series through Run 8: <span class="num">3,618</span> calls · <span class="num">$6.42–$7.82</span>. Call counts are exact, straight from each run's metrics file. Costs are a <em>range</em> rather than a figure, for a reason worth stating: the provider bills cached input tokens at half price and does not report the cached fraction in the API response — it appears only in the console dashboard — so the upper bound prices every input token as uncached and the lower bound prices all of them as cache hits. A sampled dashboard minute showed 68% of input tokens were cache hits, which puts the truth nearer the bottom of each range. Token counts are measured exactly from Run 8 onward; earlier runs additionally reconstruct tokens from Run 8b's measured per-call profile (3,642 in / 1,348 out), because the usage field was discarded before it was ever written down. A bound is not a measurement and a reconstruction is neither, so both are labelled.</p>
     </section>
 
     <div class="run-nav mono reveal">

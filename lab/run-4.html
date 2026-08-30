@@ -318,10 +318,12 @@
     </section>
 
 
+
+
     <section class="block reveal" id="cost-strip">
       <span class="block-head mono">What this run cost</span>
-      <p><span class="num">148</span> API calls · <span class="num">~$0.20</span> (gpt-oss-120b via Groq, <em>reconstructed</em>).</p>
-      <p class="fade">Series through Run 4: <span class="num">668</span> calls · <span class="num">~$4.07</span>. Call counts are exact — they come straight from each run's metrics file. Dollar figures are measured only from Run 8 onward, where token usage is recorded per generation in <code>spend.json</code>; earlier runs are reconstructed by applying Run 8b's measured per-call token profile (3,642 in / 1,348 out) to those exact call counts, because the provider's usage field was discarded before it was ever written down. A reconstruction is not a measurement, so it is marked as one.</p>
+      <p><span class="num">148</span> API calls · <span class="num">$0.16–$0.20</span> (gpt-oss-120b via Groq).</p>
+      <p class="fade">Series through Run 4: <span class="num">668</span> calls · <span class="num">$3.40–$4.07</span>. Call counts are exact, straight from each run's metrics file. Costs are a <em>range</em> rather than a figure, for a reason worth stating: the provider bills cached input tokens at half price and does not report the cached fraction in the API response — it appears only in the console dashboard — so the upper bound prices every input token as uncached and the lower bound prices all of them as cache hits. A sampled dashboard minute showed 68% of input tokens were cache hits, which puts the truth nearer the bottom of each range. Token counts are measured exactly from Run 8 onward; earlier runs additionally reconstruct tokens from Run 8b's measured per-call profile (3,642 in / 1,348 out), because the usage field was discarded before it was ever written down. A bound is not a measurement and a reconstruction is neither, so both are labelled.</p>
     </section>
 
     <div class="run-nav mono reveal">
