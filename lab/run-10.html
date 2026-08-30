@@ -3,16 +3,16 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Run 6 — Living Playbooks — Lab Notes</title>
-<meta name="description" content="Ratchet Lab Run 6: lessons must pass an A/B trial before canonization. A real superstition gets caught and rejected, on camera.">
-<meta property="og:title" content="Run 6 — Living Playbooks — Lab Notes">
-<meta property="og:description" content="Ratchet Lab Run 6: lessons must pass an A/B trial before canonization. A real superstition gets caught and rejected, on camera.">
+<title>Run 10 — The Receiver Problem — Lab Notes</title>
+<meta name="description" content="Ratchet Lab Run 10: the same lessons, replicated on a weaker model, do nothing at all — and the series closes on what that means for agent memory.">
+<meta property="og:title" content="Run 10 — The Receiver Problem — Lab Notes">
+<meta property="og:description" content="Ratchet Lab Run 10: the same lessons, replicated on a weaker model, do nothing at all — and the series closes on what that means for agent memory.">
 <meta property="og:type" content="article">
-<meta property="og:image" content="https://godfreystorm.github.io/lab/img/h-run-6.webp">
+<meta property="og:image" content="https://godfreystorm.github.io/lab/img/h-run-10.webp">
 <meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="Run 6 — Living Playbooks — Lab Notes">
-<meta name="twitter:description" content="Ratchet Lab Run 6: lessons must pass an A/B trial before canonization. A real superstition gets caught and rejected, on camera.">
-<meta name="twitter:image" content="https://godfreystorm.github.io/lab/img/h-run-6.webp">
+<meta name="twitter:title" content="Run 10 — The Receiver Problem — Lab Notes">
+<meta name="twitter:description" content="Ratchet Lab Run 10: the same lessons, replicated on a weaker model, do nothing at all — and the series closes on what that means for agent memory.">
+<meta name="twitter:image" content="https://godfreystorm.github.io/lab/img/h-run-10.webp">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -73,6 +73,7 @@
   .data-table th, .data-table td { text-align: left; padding: 0.6em 0.9em; border-bottom: 1px solid var(--border); white-space: nowrap; }
   .data-table th { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
   .data-table tr.highlight td { color: var(--amber); font-weight: 600; }
+  .quote-block { border-left: 2px solid var(--amber); padding-left: var(--space-3); margin: var(--space-3) 0; font-family: 'Fraunces', serif; font-style: italic; font-size: 1.15rem; color: var(--ink); }
   .clip-note, .chart-placeholder { border: 1px dashed var(--border); border-radius: 10px; padding: var(--space-3); color: var(--ink-faint); font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; text-align: center; margin: var(--space-3) 0; }
   .run-nav { display: flex; justify-content: space-between; gap: var(--space-2); margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--border); font-size: 0.78rem; }
   .run-nav a { text-decoration: none; color: var(--ink-fade); transition: color 0.2s ease; }
@@ -240,7 +241,7 @@
 <main>
   <div class="container">
 
-    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 6 of 10</p>
+    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 10 of 10</p>
 
     <div class="lab-topstrip reveal">
       <span>Godfrey Osagiede &middot; Lab Notes</span>
@@ -248,82 +249,179 @@
     </div>
 
     <div class="run-nav-top mono reveal">
-      <a href="run-5.html"><span class="lbl">Previous</span>← Run 5 — Lessons Library</a>
-      <a class="next" href="run-7.html"><span class="lbl">Next</span>Run 7 — The Long Game →</a>
+      <a href="run-9.html"><span class="lbl">Previous</span>← Run 9 — What the Colony Threw Away</a>
+      <a class="next" href="the-week.html"><span class="lbl">Next</span>Article 0 — The Week I Built an Evolution Lab →</a>
     </div>
 
     <div class="article-head reveal">
-      <span class="run-eyebrow mono">Ratchet Lab · Run 6 · gpt-oss-120b via Groq, verified-lessons pipeline, 100 gens</span>
-      <h1 class="article-title">Living Playbooks</h1>
+      <span class="run-eyebrow mono">Ratchet Lab · Run 10 · gpt-oss-20b via Groq, 14 colonies, the replication that failed — and the last run of the series</span>
+      <h1 class="article-title">The Receiver Problem</h1>
       <p class="article-meta mono">
-        <span>The colony gets an epistemology</span>
+        <span>The same knowledge, handed to a weaker student, is worth nothing</span>
       </p>
     </div>
 
-    <img class="lab-header-img reveal" src="img/h-run-6.webp" alt="A redacted lessons ledger page showing two candidate rules and their A/B trial results: one stamped ADOPTED at trial 2/4 vs 3/4, the other stamped REJECTED at trial 4/4 vs 3/4, ending with 'votes: 0.'" width="1600" height="800" loading="eager">
+
+    <img class="lab-header-img reveal" src="img/h-run-10.webp" alt="Two dark ledger pages side by side carrying the same handwritten rules in the same hand. The left page's result reads minus 5.9 in warm amber; the right page's reads minus 0.3 in faint blue-grey, almost illegible." width="1600" height="800" loading="eager">
 
 
     <div class="hairline reveal" aria-hidden="true"></div>
 
     <section class="block reveal">
-      <span class="block-head mono">Hypothesis</span>
-      <p>Run 5's failure had a clear cause: lessons were canonized without ever being tested. If a lesson has to survive an A/B trial before it's allowed into the culture — and can be demoted later if it stops earning its keep — will that stop the colony from inheriting false beliefs?</p>
+      <span class="block-head mono">Why this run exists</span>
+      <p>Run 9 established that injected lessons cut the child crash rate by about six points. Every number in it is a statement about one model. The honest form of that headline was always <em>"lessons work — in <code>gpt-oss-120b</code>."</em></p>
+      <p>So this run decides which sentence the series is entitled to publish. If the effect survives on a weaker model it is a property of the <strong>method</strong>. If it disappears it was a property of <strong>that model</strong>, and Run 9 needs the caveat in its first paragraph rather than buried in a footnote. Registered in advance, exactly as Run 9 was, with the clustered analysis declared up front this time instead of run afterwards.</p>
+      <p>One rule was written into the script rather than into a note: <strong>20b data is never pooled with 120b data.</strong> Different model, different crash profile, different baseline. The cross-model analysis block was physically deleted from <code>run10-20b.sh</code>, because a script that cannot make the mistake beats a comment asking nobody to.</p>
+    </section>
+
+    <section class="badge fail mono reveal" style="display:inline-block">Result — it does not replicate</section>
+
+    <section class="block reveal">
+      <span class="block-head mono">Nothing. Not a smaller effect — nothing.</span>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th></th><th>Run 9 · gpt-oss-120b</th><th>Run 10 · gpt-oss-20b</th></tr></thead>
+          <tbody>
+            <tr><td>trials</td><td class="num">174</td><td class="num">182</td></tr>
+            <tr><td>children per arm</td><td class="num">3,480</td><td class="num">3,640</td></tr>
+            <tr><td>baseline crash rate</td><td class="num">59.7%</td><td class="num">62.0%</td></tr>
+            <tr><td>with a lesson injected</td><td class="num">53.8%</td><td class="num">62.3%</td></tr>
+            <tr class="highlight"><td><strong>difference</strong></td><td class="num">+5.89 pts</td><td class="num">−0.30 pts</td></tr>
+            <tr><td>95% CI</td><td class="num">[+3.57, +8.21]</td><td class="num">[−2.53, +1.93]</td></tr>
+            <tr><td>one-sided Fisher exact</td><td class="num">p &lt; 0.0001</td><td class="num">p = 0.6141</td></tr>
+            <tr><td>clustered mean (n=14)</td><td class="num">+7.05</td><td class="num">−0.25</td></tr>
+            <tr><td>colonies positive</td><td class="num">13 / 14</td><td class="num">7 / 14</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <svg class="lab-chart-svg" viewBox="0 0 860 340" width="100%" height="340" role="img" aria-label="Per-colony crash-rate reduction for 14 gpt-oss-120b colonies and 14 gpt-oss-20b colonies. The 120b colonies are almost all positive; the 20b colonies scatter around zero.">
+<rect x="0" y="0" width="860" height="340" fill="#12151c" rx="8"/>
+<text x="56" y="20" font-size="13" fill="#c7cdd9" font-family="ui-sans-serif,system-ui">The same lessons, two models — crash-rate reduction per colony (percentage points)</text>
+<g transform="translate(56, 30)"><rect width="12" height="12" rx="2" fill="#f5a35c"/><text x="18" y="10" font-size="11" fill="#e6e9ef">gpt-oss-120b (Run 9) — 13 of 14 positive</text></g>
+<g transform="translate(386, 30)"><rect width="12" height="12" rx="2" fill="#6fb3ff"/><text x="18" y="10" font-size="11" fill="#e6e9ef">gpt-oss-20b (Run 10) — 7 of 14, i.e. a coin</text></g>
+<line x1="56" y1="279.0" x2="844" y2="279.0" stroke="#2a2f3a" stroke-width="1"/>
+<text x="50" y="283.0" font-size="10" fill="#9aa4b2" text-anchor="end">-8</text>
+<line x1="56" y1="242.8" x2="844" y2="242.8" stroke="#2a2f3a" stroke-width="1"/>
+<text x="50" y="246.8" font-size="10" fill="#9aa4b2" text-anchor="end">-4</text>
+<line x1="56" y1="206.6" x2="844" y2="206.6" stroke="#2a2f3a" stroke-width="1"/>
+<text x="50" y="210.6" font-size="10" fill="#9aa4b2" text-anchor="end">0</text>
+<line x1="56" y1="170.5" x2="844" y2="170.5" stroke="#2a2f3a" stroke-width="1"/>
+<text x="50" y="174.5" font-size="10" fill="#9aa4b2" text-anchor="end">4</text>
+<line x1="56" y1="134.3" x2="844" y2="134.3" stroke="#2a2f3a" stroke-width="1"/>
+<text x="50" y="138.3" font-size="10" fill="#9aa4b2" text-anchor="end">8</text>
+<line x1="56" y1="98.2" x2="844" y2="98.2" stroke="#2a2f3a" stroke-width="1"/>
+<text x="50" y="102.2" font-size="10" fill="#9aa4b2" text-anchor="end">12</text>
+<line x1="56" y1="62.0" x2="844" y2="62.0" stroke="#2a2f3a" stroke-width="1"/>
+<text x="50" y="66.0" font-size="10" fill="#9aa4b2" text-anchor="end">16</text>
+<line x1="56" y1="206.6" x2="844" y2="206.6" stroke="#6b7482" stroke-width="1.5"/>
+<rect x="63.9" y="77.5" width="19.3" height="129.1" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="85.1" y="180.3" width="19.3" height="26.4" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="84.1" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">1</text>
+<rect x="120.2" y="75.6" width="19.3" height="131.1" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="141.4" y="206.6" width="19.3" height="57.3" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="140.4" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">2</text>
+<rect x="176.5" y="167.9" width="19.3" height="38.7" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="197.7" y="199.1" width="19.3" height="7.5" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="196.7" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">3</text>
+<rect x="232.7" y="163.0" width="19.3" height="43.6" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="254.0" y="206.6" width="19.3" height="1.2" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="253.0" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">4</text>
+<rect x="289.0" y="195.3" width="19.3" height="11.3" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="310.3" y="206.6" width="19.3" height="18.1" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="309.3" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">5</text>
+<rect x="345.3" y="176.5" width="19.3" height="30.1" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="366.6" y="186.6" width="19.3" height="20.1" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="365.6" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">6</text>
+<rect x="401.6" y="138.8" width="19.3" height="67.8" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="422.9" y="206.6" width="19.3" height="1.2" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="421.9" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">7</text>
+<rect x="457.9" y="134.3" width="19.3" height="72.3" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="479.1" y="161.4" width="19.3" height="45.2" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="478.1" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">8</text>
+<rect x="514.2" y="82.3" width="19.3" height="124.3" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="535.4" y="150.1" width="19.3" height="56.5" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="534.4" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">9</text>
+<rect x="570.5" y="191.6" width="19.3" height="15.1" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="591.7" y="206.6" width="19.3" height="10.0" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="590.7" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">10</text>
+<rect x="626.7" y="206.6" width="19.3" height="1.2" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="648.0" y="197.6" width="19.3" height="9.0" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="647.0" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">11</text>
+<rect x="683.0" y="133.8" width="19.3" height="72.8" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="704.3" y="206.6" width="19.3" height="58.1" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="703.3" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">12</text>
+<rect x="739.3" y="135.6" width="19.3" height="71.0" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="760.6" y="206.6" width="19.3" height="83.9" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="759.6" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">13</text>
+<rect x="795.6" y="122.3" width="19.3" height="84.4" fill="#f5a35c" rx="1.5" opacity="1"/>
+<rect x="816.9" y="175.5" width="19.3" height="31.1" fill="#6fb3ff" rx="1.5" opacity="0.92"/>
+<text x="815.9" y="310.0" font-size="9" fill="#9aa4b2" text-anchor="middle">14</text>
+<line x1="56" y1="142.9" x2="844" y2="142.9" stroke="#f5a35c" stroke-width="1.1" stroke-dasharray="5 4" opacity="0.8"/>
+<text x="840" y="136.9" font-size="10" fill="#f5a35c" text-anchor="end">mean +7.05</text>
+<line x1="56" y1="208.9" x2="844" y2="208.9" stroke="#6fb3ff" stroke-width="1.1" stroke-dasharray="5 4" opacity="0.8"/>
+<text x="840" y="222.9" font-size="10" fill="#6fb3ff" text-anchor="end">mean -0.25</text>
+<text x="56" y="326" font-size="9" fill="#6b7482">colony (paired: same protocol, same arena, same lessons pipeline — only the model differs)</text>
+</svg>
+      <p class="fade">Twenty-eight colonies, one protocol, one arena, one lessons pipeline. The only thing that changes between the amber bars and the blue ones is which model wrote the bots.</p>
     </section>
 
     <section class="block reveal">
-      <span class="block-head mono">Setup</span>
-      <p>The lessons pipeline was rebuilt as a real epistemic process: observation → pattern → verified playbook → living document. A lesson candidate only forms after 5 or more instances of the same crash (not 2, as in Run 5). Each candidate is then trialed — 4 children with the lesson injected vs. 4 without, judged on survival — before it's canonized. Ties and losses are rejected outright. Canonized lessons carry an evidence counter and are retired if their crash-family rises again 5 times on their watch.</p>
+      <span class="block-head mono">This is a strong null, not a failed search</span>
+      <p>Two alternative explanations were named in the pre-registration before the data existed, so that neither could be reached for afterwards. Both are ruled out.</p>
+      <p><strong>It is not underpowered.</strong> Run 10's confidence interval is <em>tighter</em> than Run 9's, on slightly more data — and the two intervals do not overlap. Run 9's lower bound of +3.57 sits above Run 10's upper bound of +1.93. This run does not merely fail to find the effect; it excludes an effect the size Run 9 measured.</p>
+      <p><strong>It is not a ceiling artifact.</strong> The obvious objection to a null on a weaker model is that its crash rate is already so high there is no room to improve. The 20b baseline is 62.0% against 120b's 59.7% — 2.3 points apart. There is no ceiling. Seven of fourteen colonies positive is precisely what a coin produces.</p>
     </section>
 
     <section class="block reveal">
-      <span class="block-head mono">What changed</span>
-      <p>A full belief lifecycle: candidacy → trial → canonize-or-reject → retirement. Nothing about the arena, model, or engine changed from Run 5.</p>
+      <span class="block-head mono">What it means</span>
+      <p>The lessons are the same text. Distilled by the same code, injected into the same prompts, judged by the same gate, in the same arena. <code>gpt-oss-120b</code> can comply with <em>"never reference <code>lib</code> outside <code>act</code>"</em> when reminded. <code>gpt-oss-20b</code> cannot — its crashes are capability failures rather than attention failures, and no standing instruction reaches those.</p>
+      <p class="quote-block">Transmitted knowledge is worth nothing to a receiver who cannot act on it.</p>
+      <p>Put beside Run 9, the series closes on a matched pair rather than a single result. <strong>Run 9:</strong> a culture that only adopts what one member can personally prove will correctly reject nearly everything true. <strong>Run 10:</strong> even perfectly transmitted truth is inert if the members cannot execute it. Culture needs both — a mechanism able to accept small-effect truths, and members able to run them. Each failure was produced separately here, under identical protocol, for about twenty-three dollars.</p>
+      <p>It also retroactively vindicates the series' most-repeated tic. Every conclusion in these notes was written <em>"for this model."</em> Run 7's "largely placebo" was wrong for 120b — and, it turns out, literally correct for 20b.</p>
     </section>
 
     <section class="block reveal">
-      <span class="block-head mono">What was measured</span>
-      <p>Coverage, best Elo, tool count, total smoke crashes (compared directly against Run 5's 50), and how many candidate lessons were trialed, accepted, or rejected.</p>
-    </section>
-
-    <section class="badge win mono reveal" style="display:inline-block">The trial caught a bad law.</section>
-
-    <section class="block reveal">
-      <span class="block-head mono">Result</span>
-      <p>Coverage held at 58.3%, best Elo reached 1061, the library grew to <span class="num">9</span> tools — the most of any run — and total crashes fell to <span class="num">33</span>, down 34% from Run 5's 50. Only <strong>one</strong> lesson made it to canonization, versus Run 5's three.</p>
-      <p>Crash counts split into halves tell the real story: 15 in generations 1–50, 18 in 51–100 — essentially flat — against Run 5's accelerating 19 → 31. Total deaths were down by a third against the same model and the same base prompt.</p>
-      <p>The trial mechanism visibly did its job: a candidate lesson ("never reassign <code>wallSet</code>…") went to its A/B trial and children following it crashed <em>more</em> than the control group — 4 out of 4 versus 3 out of 4. It was rejected. Run 5's pipeline would have canonized that exact candidate into scripture. This is the precise failure mode from Run 5, caught by the exact mechanism its autopsy called for.</p>
+      <span class="badge fail mono">The prediction, scored — wrong twice, the same way</span>
+      <p>The registration predicted 50% that the effect would replicate smaller, 25% that it would hold at full size, <strong>20% null</strong>, 5% reversal. The 20% branch landed.</p>
+      <p>That is two for two on getting magnitude wrong. In Run 9 the argument was that a noisy estimate would regress, and it grew. Here the argument was that a weaker model would comply less but still comply somewhat, and it complied not at all. The error is identical both times: a confident mechanistic story about what <em>ought</em> to happen, allowed to set the estimate. The lab's own lesson applies to the person running it — <strong>a plausible mechanism is not evidence.</strong> Recorded because a prediction that only gets graded when it is right is not a prediction.</p>
     </section>
 
     <section class="block reveal">
-      <span class="badge fail mono">What failed</span>
-      <p>Performance didn't beat Run 4 — 58.3% coverage and 1061 Elo here, versus 66.7% and 1066 there. The living-playbook system bought safety and epistemic hygiene, not raw exploration. And no retirement fired this run — nothing was canonized early enough in the run to accumulate the strikes needed to trigger a demotion, so that half of the mechanism stayed untested in the wild.</p>
+      <span class="block-head mono">The ending: the loss is not in rejecting, it is in forgetting</span>
+      <p>Run 9's finding — that individually-correct skepticism discards collectively-true knowledge — reads like a tragedy with no way out. It is not, and the way out was obvious to the first person who looked at it without the statistics in the way. <em>Why does the colony delete what it rejects?</em></p>
+      <p>Because it did. A rejected lesson left behind exactly this:</p>
+      <pre style="overflow-x:auto;background:var(--card-bg);border:1px solid var(--border);border-radius:8px;padding:1em;font-size:0.8rem"><code>rejected: { "lib is not defined": 96 }</code></pre>
+      <p>A signature and a counter. The distilled knowledge itself — the sentence a bot had died to produce — was erased. Agent one finds something. Agent two tries it, it does not work for them, and agent two <em>burns the note</em> rather than writing "did not work for me" underneath it.</p>
+      <p>The half of Run 9's finding that is genuinely structural is small: one agent holding twenty samples cannot resolve a six-point effect. That is arithmetic, and no design fixes it. But <em>"therefore the knowledge is lost"</em> does not follow from it. That part is a choice, and this lab made the wrong one for nine runs.</p>
+      <p>The proof is embarrassing and sits in this repository. Run 9's entire finding was recoverable <strong>only</strong> because trial records started being kept partway through — a change made for statistical bookkeeping, not for this reason. Under the original design those verdicts were unrecoverable and the six-point effect would have been reported as non-existent. And Run 10 is the same argument in data: one lesson, two models, two opposite verdicts. Under delete-on-failure that is a contradiction and one verdict gets erased. Under keep-with-context it is the most interesting result in the series.</p>
+      <p>So the gate does not disappear. It moves.</p>
+      <ul>
+        <li><strong>"Should I remember this?"</strong> — always yes. Storage is cheap; deletion is irreversible; a rejection carries as much information as an acceptance.</li>
+        <li><strong>"Should I act on this yet?"</strong> — gated, revisable, and the answer changes as evidence accumulates across agents who each could not see it alone.</li>
+      </ul>
+      <p>Run 5 is why the second question still needs asking: a colony that keeps everything <em>and obeys it</em> canonized a law about <code>state.arena.walls</code>, a field which does not exist, and its bots died with "safety guard" comments in their source. Keeping is not believing.</p>
+      <p class="quote-block">The loss is not in rejecting. It is in forgetting. Keep every verdict with its context attached, gate action rather than memory, and the pooled truth reassembles itself for free.</p>
+      <p>Which is the practical finding for anyone building agent memory, and the note this series ends on. A self-validating memory that checks each entry on its own and deletes what fails will be honest, well-engineered, and will converge on an empty store — while the aggregate of what it discarded would have helped. Do not validate memories one at a time. Keep the rejections, keep who rejected them and under what conditions, and gate what you act on rather than what you retain.</p>
     </section>
-
-    <section class="block reveal">
-      <span class="block-head mono">Next</span>
-      <p>The honest ledger says the epistemology has a cost, not just a benefit, and 100 generations barely gives a 5-sighting-threshold, trial-gated system room to move. The real question this hands off: does science actually win, given enough time? That needs a much longer run — and a real credulous control to compare it against.</p>
-      <p class="fade">In one line: a colony that went machine (Run 0) → mind (Run 3) → memory (Run 4) → religion (Run 5) → science (Run 6).</p>
-    </section>
-
 
 
 
     <section class="block reveal" id="cost-strip">
       <span class="block-head mono">What this run cost</span>
-      <p><span class="num">152</span> API calls · <span class="num">$0.16–$0.21</span> (gpt-oss-120b via Groq).</p>
-      <p class="fade">Series through Run 6: <span class="num">967</span> calls · <span class="num">$3.73–$4.48</span>. Call counts are exact, straight from each run's metrics file. Costs are a <em>range</em> rather than a figure, for a reason worth stating: the provider bills cached input tokens at half price and does not report the cached fraction in the API response — it appears only in the console dashboard — so the upper bound prices every input token as uncached and the lower bound prices all of them as cache hits. A sampled dashboard minute showed 68% of input tokens were cache hits, which puts the truth nearer the bottom of each range. Token counts are measured exactly from Run 8 onward; earlier runs additionally reconstruct tokens from Run 8b's measured per-call profile (3,642 in / 1,348 out), because the usage field was discarded before it was ever written down. A bound is not a measurement and a reconstruction is neither, so both are labelled.</p>
+      <p><span class="num">14,047</span> API calls · <span class="num">$5.08–$6.43</span> (gpt-oss-20b via Groq — half the per-token rate of every earlier run, and twice the speed).</p>
+      <p class="fade">Series total, all ten runs: <span class="num">30,726</span> calls · <span class="num">$25.21–$31.45</span>. Call counts are exact, straight from each run's metrics file. Costs are a range because the provider bills cached input tokens at half price and does not report the cached fraction in the API response — only in the console dashboard — so the upper bound prices every input token as uncached and the lower bound prices all of them as cache hits. Runs before Run 8 additionally reconstruct tokens from a measured per-call profile, because the usage field was discarded before it was ever written down. A bound is not a measurement and a reconstruction is neither, so both are labelled.</p>
     </section>
 
     <div class="run-nav mono reveal">
-      <a href="run-5.html"><span class="lbl">Previous</span>← Run 5 — Lessons Library</a>
-      <a class="next" href="run-7.html"><span class="lbl">Next</span>Run 7 — The Long Game →</a>
+      <a href="run-9.html"><span class="lbl">Previous</span>← Run 9 — What the Colony Threw Away</a>
+      <a class="next" href="the-week.html"><span class="lbl">Next</span>Article 0 — The Week I Built an Evolution Lab →</a>
     </div>
 
   </div>
 
   <footer class="lab-footer mono">
     <span>Godfrey Osagiede · Lab Notes</span>
-    <span>Ratchet Lab · Run 6</span>
+    <span>Ratchet Lab · Run 10</span>
   </footer>
   <p class="lab-receipts">Raw receipts — every archive, lessons ledger, metrics file, and match replay: <a href="https://github.com/godfreystorm/ratchet-lab">github.com/godfreystorm/ratchet-lab</a></p>
 

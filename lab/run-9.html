@@ -241,7 +241,7 @@
 <main>
   <div class="container">
 
-    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 9 of 9</p>
+    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 9 of 10</p>
 
     <div class="lab-topstrip reveal">
       <span>Godfrey Osagiede &middot; Lab Notes</span>
@@ -250,7 +250,7 @@
 
     <div class="run-nav-top mono reveal">
       <a href="run-8.html"><span class="lbl">Previous</span>← Run 8 — The Trial Goes On Trial</a>
-      <a class="next" href="the-week.html"><span class="lbl">Next</span>Article 0 — The Week I Built an Evolution Lab →</a>
+      <a class="next" href="run-10.html"><span class="lbl">Next</span>Run 10 — The Receiver Problem →</a>
     </div>
 
     <div class="article-head reveal">
@@ -297,7 +297,7 @@
           </tbody>
         </table>
       </div>
-      <p><strong>Run 7's published conclusion that prompt-injected lessons were "largely placebo for this model" is hereby retracted.</strong> They reduce the crash rate by about six points, and the effect is not marginal.</p>
+      <p><strong>Run 7's published conclusion that prompt-injected lessons were "largely placebo for this model" is hereby retracted.</strong> They reduce the crash rate by about six points, and the effect is not marginal. <strong>This result is specific to <code>gpt-oss-120b</code></strong> — <a href="run-10.html">Run 10</a> replicated the whole protocol on a weaker model and found nothing at all, so nothing on this page should be read as a claim about the method in general.</p>
     </section>
 
     <section class="block reveal">
@@ -415,9 +415,12 @@
     </section>
 
     <section class="block reveal">
-      <span class="block-head mono">What's next</span>
-      <p>The obvious continuation is a cheaper one. <code>gpt-oss-20b</code> costs half of what this run used per token and runs twice as fast, which puts a Run-9-scale experiment near seven dollars. It cannot be pooled with anything here — a different model is a different crash profile and a different baseline — but that is the point rather than the problem. If the lesson effect survives on a weaker model, it is a property of the method. If it disappears, it was a property of this particular model, and that is worth knowing before anyone generalises a word of this page.</p>
-      <p>Two older items still stand: hold a lesson accountable for the whole crash budget rather than only its own error signature, and gate tool extraction on whether a fresh model can re-derive the helper from its description alone.</p>
+      <span class="block-head mono">The correction this page needed</span>
+      <p>Read on its own, the finding above is a tragedy with no exit: the colony was right to reject each lesson, and wrong in aggregate, and nothing can be done. That framing is half wrong, and the half that is wrong matters more than the half that is right.</p>
+      <p>What is genuinely structural is narrow — one agent holding twenty samples cannot resolve a six-point effect. Arithmetic; no design fixes it. But <em>"therefore the knowledge is lost"</em> is not a consequence of that. It is a consequence of what this lab did with a rejected lesson, which was to delete it. A rejection left behind a signature and a counter; the distilled sentence a bot had died to produce was erased rather than annotated.</p>
+      <p>The effect measured on this page was recoverable <strong>only</strong> because trial records began being kept partway through the run — a change made for statistical bookkeeping, not for this reason. Under the original design, these verdicts were unrecoverable and the six-point effect would have been published as non-existent.</p>
+      <p class="quote-block">The loss is not in rejecting. It is in forgetting.</p>
+      <p>Keep every verdict with the context it was reached in, gate <em>action</em> rather than memory, and the pooled truth reassembles itself for free. <a href="run-10.html">Run 10</a> carries that argument out in full, and gives it the case that makes it undeniable: one lesson, two models, two opposite verdicts, and a design that would have thrown one of them away.</p>
     </section>
 
 
@@ -430,7 +433,7 @@
 
     <div class="run-nav mono reveal">
       <a href="run-8.html"><span class="lbl">Previous</span>← Run 8 — The Trial Goes On Trial</a>
-      <a class="next" href="the-week.html"><span class="lbl">Next</span>Article 0 — The Week I Built an Evolution Lab →</a>
+      <a class="next" href="run-10.html"><span class="lbl">Next</span>Run 10 — The Receiver Problem →</a>
     </div>
 
   </div>
