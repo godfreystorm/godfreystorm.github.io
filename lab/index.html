@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lab Notes — Godfrey Osagiede</title>
+<meta name="description" content="Ratchet Lab: a homemade AI evolution lab built in one week. Eight runs, honest nulls included.">
+<meta property="og:title" content="Lab Notes — Godfrey Osagiede">
+<meta property="og:description" content="A homemade AI evolution lab, built in one week. Eight runs, real numbers, honest nulls included.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Lab Notes — Godfrey Osagiede">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E0D16;
+    --ink: #F4EEE4;
+    --tangerine: #FF7A33;
+    --amber: #f5a35c;
+    --ink-fade: color-mix(in oklab, var(--ink), transparent 38%);
+    --ink-faint: color-mix(in oklab, var(--ink), transparent 55%);
+    --card-bg: color-mix(in oklab, var(--bg), var(--ink) 6%);
+    --border: color-mix(in oklab, var(--ink), transparent 85%);
+
+    --space-1: 0.5rem;
+    --space-2: 1rem;
+    --space-3: 1.5rem;
+    --space-4: 2.5rem;
+    --space-5: 4rem;
+    --container: 980px;
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Instrument Sans', sans-serif;
+    font-size: 16px;
+    line-height: 1.62;
+    overflow-x: hidden;
+  }
+
+  ::selection { background: var(--amber); color: #0E0D16; }
+
+  a { color: inherit; }
+
+  h1, h2, h3 { font-family: 'Fraunces', serif; margin: 0; }
+
+  .mono {
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+  }
+
+  code, .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-weight: 600;
+  }
+
+  .container {
+    max-width: var(--container);
+    margin: 0 auto;
+    padding: 0 var(--space-4);
+  }
+
+  img, svg { max-width: 100%; display: block; }
+
+  .lab-header-img {
+    width: 100%;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    margin: var(--space-4) 0 0;
+  }
+
+  .grain {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.028;
+    mix-blend-mode: overlay;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+  }
+
+  a:focus-visible, button:focus-visible {
+    outline: 2px solid var(--amber);
+    outline-offset: 3px;
+    border-radius: 2px;
+  }
+
+  /* ---------- nav ---------- */
+  .site-nav {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-2) var(--space-4);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    background: color-mix(in oklab, var(--bg), transparent 15%);
+    border-bottom: 1px solid var(--border);
+  }
+  .nav-back {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: 1.15rem;
+    text-decoration: none;
+    letter-spacing: 0.01em;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.4em;
+    transition: transform 0.25s ease, color 0.25s ease;
+  }
+  .nav-back:hover { color: var(--amber); transform: translateX(-3px); }
+  .nav-lab-label {
+    font-size: 0.68rem;
+    color: var(--ink-fade);
+    text-decoration: none;
+    transition: color 0.2s ease;
+  }
+  .nav-lab-label:hover { color: var(--amber); }
+
+  main { position: relative; z-index: 1; padding-top: 5.5rem; padding-bottom: var(--space-5); }
+
+  /* ---------- masthead ---------- */
+  .masthead { padding: var(--space-4) 0 var(--space-3); }
+  .lab-eyebrow { color: var(--amber); font-size: 0.72rem; margin-bottom: var(--space-2); display: inline-block; }
+  .masthead-name {
+    font-size: clamp(2.4rem, 7vw, 4.6rem);
+    font-weight: 620;
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+  }
+  .masthead-sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 400;
+    font-size: clamp(1.05rem, 2.4vw, 1.35rem);
+    color: var(--ink-fade);
+    margin-top: var(--space-3);
+    max-width: 62ch;
+  }
+
+  .hairline {
+    height: 2px;
+    background: var(--amber);
+    margin: var(--space-4) 0;
+  }
+
+  .intro {
+    max-width: 68ch;
+    font-size: 1.05rem;
+    color: var(--ink-fade);
+    margin-bottom: var(--space-5);
+  }
+  .intro strong { color: var(--ink); font-weight: 600; }
+
+  /* ---------- series grid ---------- */
+  .series-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: var(--space-3);
+  }
+  .run-card {
+    display: block;
+    text-decoration: none;
+    color: var(--ink);
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: var(--space-3);
+    transition: transform 0.3s cubic-bezier(0.22,1,0.36,1), border-color 0.3s ease;
+  }
+  .run-card:hover, .run-card:focus-visible {
+    transform: translateY(-3px);
+    border-color: var(--amber);
+  }
+  .run-card.flagship {
+    grid-column: 1 / -1;
+    background: color-mix(in oklab, var(--amber), var(--bg) 88%);
+    border-color: color-mix(in oklab, var(--amber), transparent 40%);
+  }
+  .run-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--amber);
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+  }
+  .run-title {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin: 0.4em 0 0.5em;
+    letter-spacing: -0.01em;
+  }
+  .run-summary {
+    font-size: 0.9rem;
+    color: var(--ink-fade);
+    line-height: 1.55;
+  }
+  .run-stats {
+    margin-top: var(--space-2);
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.4em 1em;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.68rem;
+    color: var(--amber);
+  }
+
+  footer.lab-footer {
+    max-width: var(--container);
+    margin: var(--space-5) auto 0;
+    padding: var(--space-3) var(--space-4) 0;
+    border-top: 1px solid var(--border);
+    font-size: 0.62rem;
+    letter-spacing: 0.1em;
+    color: var(--ink-faint);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 0.5em;
+  }
+
+  .reveal {
+    opacity: 0;
+    transform: translateY(18px);
+    transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1);
+  }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 780px) {
+    .series-grid { grid-template-columns: 1fr; }
+  }
+
+  @media (max-width: 480px) {
+    .container { padding-left: var(--space-3); padding-right: var(--space-3); }
+    footer.lab-footer { padding-left: var(--space-3); padding-right: var(--space-3); }
+    .site-nav { padding-left: var(--space-3); padding-right: var(--space-3); }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none; opacity: 1; transform: none; }
+    .nav-back, .run-card { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<header class="site-nav">
+  <a href="../index.html" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>G.O.</span>
+  </a>
+  <span class="nav-lab-label mono">Lab Notes</span>
+</header>
+
+<main>
+  <div class="container">
+
+    <img class="lab-header-img reveal" src="img/h-index.webp" alt="Hand-drawn technical schematic of the 20x20 battle arena grid, annotated with a bell-curve chart, a hand-tool sketch of wrenches, and a lab ledger table, all in amber ink on black — the Lab Notes masthead illustration." width="1600" height="800" loading="eager">
+
+    <div class="masthead reveal">
+      <span class="lab-eyebrow mono">Ratchet Lab · Experiment Log</span>
+      <h1 class="masthead-name">Lab Notes</h1>
+      <p class="masthead-sub">A homemade AI evolution lab, one week, honest nulls included.</p>
+    </div>
+
+    <div class="hairline reveal" aria-hidden="true"></div>
+
+    <p class="intro reveal">
+      I built a small arena where simple bots fight each other, and let an LLM rewrite the losers into new bots, generation after generation. The question I actually wanted answered wasn't "can I make a bot win" — it was whether a colony of AI agents can accumulate real, shared knowledge over time, the way human culture does, instead of just getting reshuffled by a smarter model. I ran eight experiments over one week to find out. Some of them worked. Two of them are null results I'm keeping in the record on purpose, because the honest version of this story is more interesting than the flattering one. Numbers below are exactly what the runs produced — no rounding up.
+    </p>
+
+    <div class="series-grid">
+
+      <a class="run-card flagship reveal" href="the-week.html">
+        <span class="run-num mono">Article 0 · The flagship</span>
+        <h2 class="run-title">The Week I Built an Evolution Lab</h2>
+        <p class="run-summary">The full story: the bet, the arena, the tool libraries, the false law the colony obeyed into deaths, the trial that caught it, and the scoreboard that says science didn't make my bots stronger — it kept them from lying to themselves.</p>
+      </a>
+
+      <a class="run-card reveal" href="run-0.html">
+        <span class="run-num mono">Run 0</span>
+        <h2 class="run-title">Dry Prototype</h2>
+        <p class="run-summary">The whole loop — arena, archive, sandbox, replay, report — proven end to end before spending a cent. Two bugs found by watching raw replays instead of trusting the summary.</p>
+        <div class="run-stats"><span>$0 spent</span><span>~210 gens</span><span>2 bugs caught</span></div>
+      </a>
+
+      <a class="run-card reveal" href="run-1.html">
+        <span class="run-num mono">Run 1</span>
+        <h2 class="run-title">First Haiku Run</h2>
+        <p class="run-summary">Swap the mock mutator for a real model. Coverage jumps, inherited tools get called a quarter-million times — and a tempting but unproven story starts to form.</p>
+        <div class="run-stats"><span class="num">77.8%</span> coverage<span class="num">11</span> tools</div>
+      </a>
+
+      <a class="run-card reveal" href="run-2.html">
+        <span class="run-num mono">Run 2</span>
+        <h2 class="run-title">Three-Arm Ablation</h2>
+        <p class="run-summary">The control I should have run first. Verdict: the tool library did nothing measurable. A null result, owned in public.</p>
+        <div class="run-stats"><span>Null result</span></div>
+      </a>
+
+      <a class="run-card reveal" href="run-3.html">
+        <span class="run-num mono">Run 3</span>
+        <h2 class="run-title">Bold Mutator on Groq</h2>
+        <p class="run-summary">A bolder prompt makes tool adoption explode — 726,000 inherited-tool calls — but bold mutations of complex bots start crashing at runtime. The complexity death spiral.</p>
+        <div class="run-stats"><span class="num">726K</span> tool calls<span>champion collapsed</span></div>
+      </a>
+
+      <a class="run-card reveal" href="run-4.html">
+        <span class="run-num mono">Run 4</span>
+        <h2 class="run-title">Error Feedback</h2>
+        <p class="run-summary">Feed a bot's own crash back into the next mutation prompt. The death spiral is cured — and the run nearly beats every other arm on both axes at once.</p>
+        <div class="run-stats"><span class="num">66.7%</span> coverage<span class="num">1066</span> Elo</div>
+      </a>
+
+      <a class="run-card reveal" href="run-5.html">
+        <span class="run-num mono">Run 5</span>
+        <h2 class="run-title">Lessons Library</h2>
+        <p class="run-summary">Distilled crash-lessons get injected into every prompt — untested. One lesson is flat wrong, and the colony obeys it into new deaths. Unfiltered culture breeds superstition.</p>
+        <div class="run-stats"><span>Failed — instructively</span></div>
+      </a>
+
+      <a class="run-card reveal" href="run-6.html">
+        <span class="run-num mono">Run 6</span>
+        <h2 class="run-title">Living Playbooks</h2>
+        <p class="run-summary">Lessons must survive an A/B trial before they're canonized, and can be retired later. A real superstition gets caught and rejected — on camera.</p>
+        <div class="run-stats"><span class="num">-34%</span> crashes<span class="num">1</span> law kept</div>
+      </a>
+
+      <a class="run-card reveal" href="run-7.html">
+        <span class="run-num mono">Run 7</span>
+        <h2 class="run-title">The Long Game</h2>
+        <p class="run-summary">300 generations, no new mechanisms — just time. All-time records fall. Then the final scoreboard delivers the series' honest closing line.</p>
+        <div class="run-stats"><span class="num">94.4%</span> best coverage<span>2 laws repealed</span></div>
+      </a>
+
+    </div>
+
+  </div>
+
+  <footer class="lab-footer mono">
+    <span>Godfrey Osagiede · Lab Notes</span>
+    <span>Ratchet Lab · 2026</span>
+  </footer>
+</main>
+
+<script>
+(function() {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var revealEls = document.querySelectorAll('.reveal');
+  if (reduceMotion) {
+    revealEls.forEach(function(el) { el.classList.add('in'); });
+  } else {
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('in');
+          io.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.1 });
+    revealEls.forEach(function(el) { io.observe(el); });
+  }
+})();
+</script>
+
+</body>
+</html>

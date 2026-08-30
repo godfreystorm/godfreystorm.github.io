@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Week I Built an Evolution Lab — Lab Notes</title>
+<meta name="description" content="A homemade AI evolution lab, built in one week: the arena, the tool libraries, a false law the colony obeyed into deaths, and the scoreboard that says science didn't make my bots stronger — it kept them from lying to themselves.">
+<meta property="og:title" content="The Week I Built an Evolution Lab">
+<meta property="og:description" content="Eight experiments, real numbers, honest nulls included. Ratchet Lab, Article 0.">
+<meta property="og:type" content="article">
+<meta name="twitter:card" content="summary">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E0D16; --ink: #F4EEE4; --tangerine: #FF7A33; --amber: #f5a35c;
+    --ink-fade: color-mix(in oklab, var(--ink), transparent 38%);
+    --ink-faint: color-mix(in oklab, var(--ink), transparent 55%);
+    --card-bg: color-mix(in oklab, var(--bg), var(--ink) 6%);
+    --border: color-mix(in oklab, var(--ink), transparent 85%);
+    --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
+    --container: 780px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', sans-serif; font-size: 16px; line-height: 1.68; overflow-x: hidden; }
+  ::selection { background: var(--amber); color: #0E0D16; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: 'Fraunces', serif; margin: 0; }
+  .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+  code, .num { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--amber); }
+  .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--space-4); }
+  img, svg { max-width: 100%; display: block; }
+
+  .lab-header-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin: 0 0 var(--space-3); }
+  .lab-clip { width: 100%; border-radius: 10px; border: 1px solid var(--border); background: #000; }
+  .lab-clip-caption { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--ink-faint); text-align: center; margin: 0.7em 0 0; }
+  .lab-chart-svg { width: 100%; height: auto; display: block; margin: var(--space-2) 0 var(--space-3); }
+  .grain { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.028; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 2px; }
+  .site-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: var(--space-2) var(--space-4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: color-mix(in oklab, var(--bg), transparent 15%); border-bottom: 1px solid var(--border); }
+  .nav-back { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 1.15rem; text-decoration: none; letter-spacing: 0.01em; display: inline-flex; align-items: center; gap: 0.4em; transition: transform 0.25s ease, color 0.25s ease; }
+  .nav-back:hover { color: var(--amber); transform: translateX(-3px); }
+  .nav-lab-label { font-size: 0.68rem; color: var(--ink-fade); text-decoration: none; transition: color 0.2s ease; }
+  .nav-lab-label:hover { color: var(--amber); }
+  main { position: relative; z-index: 1; padding-top: 5.5rem; padding-bottom: var(--space-5); }
+  .breadcrumb { font-size: 0.66rem; color: var(--ink-faint); margin-bottom: var(--space-2); }
+  .breadcrumb a { color: var(--ink-fade); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--amber); }
+  .article-head { padding: var(--space-3) 0 var(--space-3); }
+  .run-eyebrow { color: var(--amber); font-size: 0.72rem; margin-bottom: var(--space-2); display: inline-block; }
+  .article-title { font-size: clamp(2.1rem, 6.5vw, 3.6rem); font-weight: 620; letter-spacing: -0.02em; line-height: 1.05; }
+  .article-meta { margin-top: var(--space-2); font-size: 0.72rem; color: var(--ink-faint); }
+  .hairline { height: 2px; background: var(--amber); margin: var(--space-4) 0; }
+  .lede { font-family: 'Fraunces', serif; font-style: italic; font-size: 1.2rem; color: var(--ink); max-width: 62ch; margin-bottom: var(--space-4); }
+  section.block { margin-bottom: var(--space-4); }
+  h2.section-h { font-size: 1.5rem; font-weight: 600; color: var(--ink); margin-bottom: var(--space-2); letter-spacing: -0.01em; }
+  h2.section-h .idx { color: var(--amber); font-family: 'JetBrains Mono', monospace; font-size: 0.6em; letter-spacing: 0.1em; display: block; margin-bottom: 0.4em; }
+  .block p { font-size: 1.02rem; color: var(--ink); max-width: 68ch; margin: 0 0 1em; }
+  .block p.fade { color: var(--ink-fade); }
+  .block ul { padding-left: 1.3em; margin: 0.8em 0; }
+  .block ul li { margin-bottom: 0.55em; max-width: 64ch; }
+  .quote-block { border-left: 2px solid var(--amber); padding-left: var(--space-3); margin: var(--space-3) 0; font-family: 'Fraunces', serif; font-style: italic; font-size: 1.3rem; color: var(--ink); max-width: 32ch; }
+  .data-table { width: 100%; border-collapse: collapse; margin: var(--space-2) 0 var(--space-3); font-size: 0.85rem; }
+  .table-wrap { overflow-x: auto; margin: var(--space-2) 0 var(--space-3); }
+  .data-table th, .data-table td { text-align: left; padding: 0.6em 0.9em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .data-table th { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+  .data-table tr.highlight td { color: var(--amber); font-weight: 600; }
+  .clip-note, .chart-placeholder { border: 1px dashed var(--border); border-radius: 10px; padding: var(--space-3); color: var(--ink-faint); font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; text-align: center; margin: var(--space-3) 0; }
+  .run-nav { display: flex; justify-content: space-between; gap: var(--space-2); margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--border); font-size: 0.78rem; }
+  .run-nav a { text-decoration: none; color: var(--ink-fade); transition: color 0.2s ease; }
+  .run-nav a:hover { color: var(--amber); }
+  .run-nav .next { text-align: right; }
+  .run-nav .lbl { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--ink-faint); margin-bottom: 0.3em; }
+  footer.lab-footer { max-width: var(--container); margin: var(--space-5) auto 0; padding: var(--space-3) var(--space-4) 0; border-top: 1px solid var(--border); font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5em; }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  @media (max-width: 480px) {
+    .container { padding-left: var(--space-3); padding-right: var(--space-3); }
+    footer.lab-footer, .site-nav { padding-left: var(--space-3); padding-right: var(--space-3); }
+    .run-nav { flex-direction: column; gap: var(--space-2); }
+    .run-nav .next { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) { .reveal { transition: none; opacity: 1; transform: none; } .nav-back { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<header class="site-nav">
+  <a href="../index.html" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>G.O.</span>
+  </a>
+  <a href="index.html" class="nav-lab-label mono">Lab Notes</a>
+</header>
+
+<main>
+  <div class="container">
+
+    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Article 0</p>
+
+    <img class="lab-header-img reveal" src="img/h-the-week.webp" alt="A flow diagram of the arena grid feeding into five stages -- mutate, fight, inherit, believe, test -- ending in a small report icon, with a faint rising line beneath representing progress over generations." width="1600" height="800" loading="eager">
+
+
+    <div class="article-head reveal">
+      <span class="run-eyebrow mono">Ratchet Lab · Article 0</span>
+      <h1 class="article-title">The Week I Built an Evolution Lab</h1>
+      <p class="article-meta mono">Eight runs · real numbers · honest nulls included</p>
+    </div>
+
+    <div class="hairline reveal" aria-hidden="true"></div>
+
+    <p class="lede reveal">I built a small arena where bots fight each other, wired a cheap model to rewrite the losers, and let the colony run for a week. I wasn't trying to make a bot that wins. I was trying to find out whether a population of AI agents can accumulate real, shared knowledge over time — the way a human culture does — instead of just getting reshuffled by a smarter model every generation. Here's what happened, including the parts that didn't work.</p>
+
+    <section class="block reveal">
+      <h2 class="section-h"><span class="idx">01</span>The bet</h2>
+      <p>I'd been chewing on a question for a while: what actually separates human intelligence from animal intelligence? Not raw brainpower alone — plenty of animals have plenty of brain. My best answer, after reading around it, is culture — specifically <em>cumulative</em> culture. Humans copy solutions from each other accurately, without needing to understand why they work, so each generation starts where the last one stopped instead of starting from zero. Call it the ratchet: copy, vary, filter, and the survivor becomes the new baseline. Reality does the filtering for humans — a bad spear design just doesn't work, and gets discarded.</p>
+      <p>Modern AI training is already extremely good at the "copy" step — that's what pretraining is. What's usually missing in open-ended domains is the filter, and it's missing a population: one model, one lineage, no divergent cultures recombining. I wanted to build the smallest possible version of a system that has both — a real filter and a real population — and see if anything actually accumulates, or if it just drifts. One week, mostly free models, honest answer either way.</p>
+    </section>
+
+    <section class="block reveal">
+      <h2 class="section-h"><span class="idx">02</span>The arena</h2>
+      <p>The rules, on purpose, are almost boring:</p>
+      <ul>
+        <li>A 20×20 grid, two bots per duel, 3 hit points each, a 300-tick time limit.</li>
+        <li>Line-of-sight shooting with a 5-tick weapon cooldown — no melee, no complexity beyond aim and cover.</li>
+        <li>Everything is seeded and deterministic — the same match replays identically every time, and every match is recorded as a full JSON replay I can watch later.</li>
+        <li>Win or loss is the <em>only</em> fitness signal. That's the non-negotiable part: no filter means drift, not progress, so the arena needed a free, automatic, unarguable way to say "this one was better."</li>
+        <li>Bot code runs untrusted, inside a sandbox, with a hard timeout and a three-strikes forfeit rule, so a broken bot just loses instead of crashing the whole system.</li>
+        <li>An archive keeps the single best bot ever seen in each of 36 cells of a grid, binned by two measured traits — aggression and mobility — so the colony holds a whole population of different strategies, not one champion repeatedly beating itself.</li>
+      </ul>
+    </section>
+
+    <section class="block reveal">
+      <h2 class="section-h"><span class="idx">03</span>Mutation</h2>
+      <p>Every generation: pick a random <em>filled</em> cell from the archive — not the best one, a random one — plus a second "inspiration" bot pulled from a distant cell. Hand both to a language model and ask for a mutated child. Picking parents at random from what already works, rather than always breeding the reigning champion, is a deliberate choice borrowed from open-endedness research — always breeding the best tends to converge fast and explore very little. Evaluate the child against a few hand-written baselines and a sample of the archive's current elites. If it beats the incumbent in its cell, it takes over. Repeat, for hundreds of generations.</p>
+    </section>
+
+    <section class="block reveal">
+      <h2 class="section-h"><span class="idx">04</span>Inherited tool libraries</h2>
+      <p>Roughly one mutation in four, the model gets asked to pull a reusable helper — a distance calculation, a line-of-sight check — out of one bot's code and into a shared library instead. Every bot born after that point can call it. This is the actual ratchet mechanic: not a smarter individual bot, but capability sitting somewhere every future generation can reach, instead of getting reinvented — or lost — every time. At its peak this library grew to 18 tools, and in one run the colony called its inherited tools roughly 2.84 million times across a single 100-generation stretch.</p>
+    </section>
+
+    <section class="block reveal">
+      <h2 class="section-h"><span class="idx">05</span>The lessons system</h2>
+      <p>Tools carry capability. I wanted a second channel that carries caution — the "don't eat that berry" kind of knowledge. The system I eventually settled on runs a real belief lifecycle: an observation accumulates (the same crash killing multiple children), a candidate lesson forms only once that pattern is real (five or more instances, not two), the candidate is then run through an actual A/B trial — some children get it injected into their prompt, some don't, and survival is compared — and only a lesson that demonstrably helps gets canonized. Canonized lessons carry an evidence counter and can later be retired if they stop earning their keep.</p>
+    </section>
+
+    <section class="block reveal">
+      <h2 class="section-h"><span class="idx">06</span>The superstition</h2>
+      <p>My first version of that system had no trial step — a pattern got noticed, distilled into a rule by one model call, and injected into every future prompt, untested. It broke almost immediately, and in the most instructive way it could have. From a real string of crashes, the distiller wrote a rule telling every future bot to check <code>state.arena?.walls</code> before looping over it. That's wrong — the game actually stores walls at <code>state.walls</code>. Nobody caught it, because nothing checked it. The colony obeyed the false law for the rest of the run: crashes rose from 19 in the first half to 31 in the second, right after all three of its "commandments" existed, and late bots carried comment headers reading like genuine safety notices — written in good faith, following doctrine straight into new deaths.</p>
+      <p>The root cause is an asymmetry I should have seen coming: tools only enter the shared library after passing through a real fitness filter — they come from bots that already won. My first version of lessons had no such filter at all. An untested channel is exactly where a culture accumulates its wrong beliefs, same as it would in a human one.</p>
+      <video class="lab-clip reveal" src="media/death-commandment-16x9.mp4" controls muted loop playsinline preload="metadata"></video>
+      <p class="lab-clip-caption mono">A gen-49 bot dying under Law 1; the law was retired at gen 64.</p>
+    </section>
+
+    <section class="block reveal">
+      <h2 class="section-h"><span class="idx">07</span>Teaching them science</h2>
+      <p>So I rebuilt the pipeline around the trial step described above, and the first real test came almost immediately: a candidate rule about never reassigning a certain variable went to its A/B trial, and the children following it actually crashed <em>more</em> than the control group — 4 out of 4, versus 3 out of 4. Rejected, on the spot, by the trial itself. That's the precise failure Run 5 would have sleepwalked straight into.</p>
+      <p>Running the same design for 300 generations instead of 100 pushed the mechanism further than I'd expected: two separately canonized rules each failed their own family five times over and were formally retired — repealed with zero human votes, purely because the evidence had turned against them. I watched a small artificial culture propose a law, verify it, adopt it, and later take it back on its own.</p>
+      <video class="lab-clip reveal" src="media/evolution-cuts-16x9.mp4" controls muted loop playsinline preload="metadata"></video>
+      <p class="lab-clip-caption mono">Real replays: gen 4 wanderer, gen 61 even fight, gen 218 corner ambush.</p>
+    </section>
+
+    <section class="block reveal">
+      <h2 class="section-h"><span class="idx">08</span>The scoreboard</h2>
+      <p>Here's the part that stings a little, and the part I'm keeping in the writeup anyway. I ran the trial-gated "science" colony and a "credulous" colony — same crash-feedback loop, no lessons at all — for 300 generations each, measuring how much of the possible strategy space each one actually explored (archive coverage) and how often bots crashed along the way.</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Arm</th><th>Coverage</th><th>Best Elo</th><th>Crashes</th></tr></thead>
+          <tbody>
+            <tr><td>Science (living playbooks)</td><td class="num">91.7%</td><td class="num">1099</td><td class="num">71</td></tr>
+            <tr><td>Science (replicate)</td><td class="num">77.8%</td><td class="num">1054</td><td class="num">240</td></tr>
+            <tr class="highlight"><td>Credulous (feedback only)</td><td class="num">94.4%</td><td class="num">1079</td><td class="num">69</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <svg class="lab-chart-svg" viewBox="0 0 860 300" width="100%" height="300" id="compareCoverageChart" role="img" aria-label="Archive coverage (%) over generation">
+    <rect x="0" y="0" width="860" height="300" fill="#12151c" rx="8"/>
+    <text x="52" y="18" font-size="13" fill="#c7cdd9" font-family="ui-sans-serif,system-ui">Archive coverage (%) over generation</text>
+    <g transform="translate(52, 26)">
+          <rect width="12" height="12" rx="2" fill="#5ad1a4"/>
+          <text x="18" y="10" font-size="11" fill="#e6e9ef">science 300 (A) (data-run7-science300)</text>
+        </g>
+<g transform="translate(272, 26)">
+          <rect width="12" height="12" rx="2" fill="#f5a35c"/>
+          <text x="18" y="10" font-size="11" fill="#e6e9ef">credulous 300 (data-run7-credulous300)</text>
+        </g>
+<g transform="translate(492, 26)">
+          <rect width="12" height="12" rx="2" fill="#6fb3ff"/>
+          <text x="18" y="10" font-size="11" fill="#e6e9ef">science 300 (B) (data-run7-feedback300)</text>
+        </g>
+<g transform="translate(712, 26)">
+          <rect width="12" height="12" rx="2" fill="#e589f0"/>
+          <text x="18" y="10" font-size="11" fill="#e6e9ef">science 100 (data-run6-living)</text>
+        </g>
+<g transform="translate(932, 26)">
+          <rect width="12" height="12" rx="2" fill="#ffd166"/>
+          <text x="18" y="10" font-size="11" fill="#e6e9ef">credulous 100 (data-run4-feedback)</text>
+        </g>
+    <line x1="52" y1="272.0" x2="844" y2="272.0" stroke="#2a2f3a" stroke-width="1"/>
+        <text x="46" y="276.0" font-size="10" fill="#9aa4b2" text-anchor="end">0.0</text>
+<line x1="52" y1="215.5" x2="844" y2="215.5" stroke="#2a2f3a" stroke-width="1"/>
+        <text x="46" y="219.5" font-size="10" fill="#9aa4b2" text-anchor="end">24.8</text>
+<line x1="52" y1="159.0" x2="844" y2="159.0" stroke="#2a2f3a" stroke-width="1"/>
+        <text x="46" y="163.0" font-size="10" fill="#9aa4b2" text-anchor="end">49.6</text>
+<line x1="52" y1="102.5" x2="844" y2="102.5" stroke="#2a2f3a" stroke-width="1"/>
+        <text x="46" y="106.5" font-size="10" fill="#9aa4b2" text-anchor="end">74.4</text>
+<line x1="52" y1="46.0" x2="844" y2="46.0" stroke="#2a2f3a" stroke-width="1"/>
+        <text x="46" y="50.0" font-size="10" fill="#9aa4b2" text-anchor="end">99.2</text>
+    <polyline points="57.3,240.3 54.6,240.3 62.6,240.3 65.2,234.0 67.8,234.0 70.5,234.0 73.1,234.0 59.9,234.0 78.4,227.7 81.0,221.4 83.7,215.0 86.3,215.0 75.8,215.0 91.6,202.4 96.9,202.4 89.0,202.4 94.2,196.0 99.5,196.0 102.2,189.7 110.1,189.7 104.8,189.7 107.4,189.7 112.7,189.7 120.6,189.7 118.0,183.4 123.3,183.4 125.9,177.0 115.4,177.0 128.6,177.0 133.8,177.0 131.2,170.7 136.5,164.4 141.8,158.1 144.4,158.1 139.1,158.1 147.0,158.1 152.3,151.7 149.7,151.7 157.6,151.7 155.0,151.7 162.9,151.7 168.2,151.7 160.2,151.7 165.5,151.7 176.1,151.7 173.4,151.7 170.8,151.7 181.4,145.4 184.0,145.4 178.7,145.4 189.3,145.4 186.6,139.1 199.8,139.1 194.6,139.1 202.5,139.1 197.2,139.1 205.1,139.1 210.4,139.1 207.8,139.1 213.0,139.1 218.3,139.1 215.7,139.1 221.0,139.1 223.6,139.1 228.9,132.7 231.5,126.4 226.2,120.1 234.2,120.1 236.8,120.1 191.9,120.1 247.4,120.1 239.4,120.1 244.7,120.1 250.0,120.1 255.3,120.1 252.6,113.7 257.9,113.7 260.6,113.7 263.2,113.7 265.8,113.7 268.5,113.7 271.1,113.7 273.8,113.7 279.0,113.7 281.7,113.7 276.4,113.7 289.6,113.7 287.0,113.7 292.2,113.7 242.1,113.7 294.9,113.7 297.5,113.7 302.8,113.7 300.2,113.7 305.4,113.7 310.7,113.7 308.1,113.7 313.4,113.7 316.0,113.7 318.6,113.7 321.3,113.7 323.9,113.7 329.2,113.7 326.6,113.7 331.8,113.7 334.5,113.7 337.1,113.7 339.8,113.7 342.4,107.4 345.0,107.4 347.7,107.4 284.3,107.4 350.3,107.4 353.0,107.4 358.2,107.4 360.9,107.4 366.2,107.4 363.5,107.4 368.8,107.4 374.1,107.4 376.7,107.4 371.4,107.4 382.0,107.4 384.6,107.4 387.3,107.4 389.9,107.4 392.6,107.4 395.2,107.4 397.8,107.4 400.5,107.4 403.1,107.4 355.6,107.4 405.8,107.4 411.0,107.4 379.4,107.4 419.0,107.4 413.7,107.4 424.2,107.4 421.6,107.4 426.9,107.4 429.5,107.4 432.2,107.4 434.8,107.4 437.4,107.4 440.1,107.4 442.7,101.1 445.4,101.1 448.0,101.1 450.6,101.1 416.3,101.1 408.4,101.1 453.3,101.1 455.9,101.1 466.5,101.1 461.2,101.1 463.8,101.1 458.6,101.1 471.8,101.1 474.4,101.1 469.1,101.1 477.0,101.1 482.3,101.1 485.0,101.1 490.2,101.1 479.7,101.1 487.6,101.1 492.9,101.1 495.5,101.1 498.2,101.1 506.1,94.7 500.8,94.7 508.7,94.7 511.4,94.7 514.0,94.7 516.6,94.7 519.3,94.7 524.6,94.7 527.2,94.7 521.9,94.7 529.8,94.7 535.1,94.7 532.5,94.7 537.8,94.7 540.4,88.4 543.0,88.4 548.3,88.4 545.7,88.4 553.6,88.4 551.0,88.4 556.2,88.4 503.4,88.4 561.5,88.4 566.8,88.4 564.2,88.4 572.1,88.4 569.4,88.4 574.7,88.4 577.4,88.4 580.0,88.4 582.6,88.4 585.3,88.4 587.9,88.4 593.2,88.4 590.6,88.4 595.8,82.1 603.8,82.1 601.1,82.1 598.5,82.1 609.0,82.1 606.4,82.1 611.7,82.1 614.3,82.1 617.0,82.1 619.6,82.1 624.9,82.1 622.2,82.1 558.9,82.1 627.5,82.1 630.2,82.1 632.8,82.1 635.4,82.1 638.1,82.1 640.7,82.1 646.0,82.1 648.6,82.1 643.4,82.1 651.3,82.1 653.9,82.1 656.6,75.8 659.2,75.8 661.8,75.8 667.1,75.8 669.8,75.8 664.5,75.8 672.4,75.8 675.0,75.8 677.7,75.8 683.0,75.8 685.6,75.8 688.2,75.8 680.3,75.8 690.9,75.8 693.5,75.8 696.2,75.8 698.8,75.8 701.4,75.8 706.7,75.8 704.1,75.8 709.4,75.8 712.0,75.8 717.3,75.8 714.6,75.8 719.9,75.8 722.6,75.8 725.2,69.4 730.5,69.4 727.8,69.4 735.8,69.4 733.1,69.4 738.4,69.4 741.0,69.4 743.7,69.4 746.3,69.4 751.6,69.4 749.0,69.4 754.2,69.4 762.2,69.4 759.5,69.4 756.9,69.4 764.8,69.4 767.4,69.4 770.1,69.4 772.7,69.4 775.4,69.4 783.3,69.4 778.0,69.4 785.9,69.4 791.2,63.1 780.6,63.1 793.8,63.1 796.5,63.1 799.1,63.1 788.6,63.1 809.7,63.1 807.0,63.1 801.8,63.1 804.4,63.1 812.3,63.1 817.6,63.1 815.0,63.1 820.2,63.1 825.5,63.1 822.9,63.1 830.8,63.1 833.4,63.1 828.2,63.1 836.1,63.1 838.7,63.1 841.4,63.1 844.0,63.1" fill="none" stroke="#5ad1a4" stroke-width="2.5"/>
+<polyline points="62.6,234.0 57.3,221.4 54.6,215.0 59.9,215.0 67.8,215.0 73.1,215.0 70.5,215.0 65.2,215.0 78.4,215.0 81.0,215.0 86.3,208.7 75.8,208.7 89.0,208.7 94.2,202.4 83.7,202.4 96.9,202.4 91.6,189.7 99.5,189.7 102.2,189.7 107.4,183.4 112.7,177.0 104.8,177.0 110.1,170.7 115.4,164.4 120.6,164.4 123.3,164.4 131.2,164.4 125.9,164.4 118.0,164.4 128.6,158.1 133.8,151.7 136.5,151.7 139.1,151.7 144.4,151.7 147.0,151.7 141.8,151.7 149.7,151.7 152.3,151.7 157.6,151.7 155.0,151.7 162.9,151.7 160.2,145.4 165.5,145.4 170.8,145.4 168.2,145.4 173.4,139.1 176.1,139.1 184.0,139.1 181.4,139.1 186.6,139.1 189.3,139.1 178.7,139.1 191.9,139.1 194.6,139.1 199.8,139.1 197.2,139.1 202.5,139.1 205.1,139.1 207.8,139.1 210.4,139.1 215.7,139.1 218.3,139.1 221.0,139.1 213.0,139.1 226.2,139.1 228.9,132.7 223.6,132.7 231.5,132.7 234.2,132.7 236.8,132.7 239.4,126.4 242.1,126.4 250.0,120.1 247.4,120.1 244.7,120.1 252.6,120.1 255.3,113.7 257.9,113.7 260.6,113.7 263.2,113.7 271.1,113.7 268.5,107.4 265.8,107.4 273.8,107.4 276.4,107.4 279.0,107.4 281.7,107.4 287.0,107.4 289.6,107.4 292.2,107.4 284.3,107.4 294.9,107.4 297.5,107.4 300.2,107.4 302.8,107.4 305.4,107.4 310.7,101.1 308.1,101.1 316.0,101.1 313.4,94.7 321.3,94.7 318.6,94.7 326.6,94.7 323.9,94.7 329.2,94.7 337.1,94.7 334.5,94.7 331.8,94.7 339.8,94.7 342.4,94.7 345.0,94.7 347.7,94.7 350.3,94.7 358.2,94.7 353.0,88.4 355.6,88.4 363.5,88.4 360.9,88.4 366.2,88.4 368.8,88.4 374.1,88.4 371.4,88.4 376.7,88.4 382.0,88.4 379.4,88.4 389.9,88.4 387.3,88.4 392.6,88.4 384.6,88.4 395.2,82.1 397.8,82.1 405.8,82.1 403.1,82.1 408.4,82.1 400.5,82.1 411.0,82.1 413.7,82.1 419.0,82.1 416.3,82.1 421.6,82.1 424.2,82.1 426.9,82.1 429.5,82.1 434.8,82.1 432.2,82.1 440.1,75.8 442.7,75.8 445.4,75.8 448.0,75.8 450.6,75.8 437.4,75.8 455.9,75.8 453.3,75.8 458.6,75.8 461.2,75.8 463.8,75.8 471.8,75.8 469.1,75.8 466.5,75.8 474.4,75.8 482.3,75.8 479.7,75.8 477.0,75.8 485.0,75.8 490.2,75.8 487.6,75.8 495.5,75.8 492.9,75.8 500.8,75.8 498.2,75.8 503.4,75.8 508.7,75.8 506.1,75.8 511.4,75.8 514.0,75.8 521.9,75.8 516.6,75.8 519.3,75.8 524.6,75.8 527.2,75.8 532.5,75.8 529.8,75.8 537.8,75.8 540.4,75.8 535.1,75.8 543.0,75.8 545.7,75.8 553.6,75.8 548.3,75.8 551.0,75.8 556.2,75.8 561.5,75.8 558.9,69.4 566.8,69.4 564.2,69.4 569.4,69.4 574.7,63.1 580.0,63.1 577.4,63.1 572.1,63.1 582.6,63.1 587.9,63.1 590.6,63.1 585.3,63.1 593.2,63.1 601.1,63.1 595.8,63.1 603.8,63.1 598.5,63.1 606.4,63.1 614.3,63.1 609.0,63.1 619.6,63.1 617.0,63.1 611.7,63.1 627.5,63.1 624.9,63.1 622.2,63.1 630.2,63.1 635.4,63.1 638.1,63.1 632.8,56.8 646.0,56.8 640.7,56.8 643.4,56.8 648.6,56.8 653.9,56.8 651.3,56.8 656.6,56.8 661.8,56.8 664.5,56.8 667.1,56.8 659.2,56.8 672.4,56.8 675.0,56.8 669.8,56.8 677.7,56.8 680.3,56.8 685.6,56.8 688.2,56.8 683.0,56.8 693.5,56.8 696.2,56.8 690.9,56.8 698.8,56.8 701.4,56.8 709.4,56.8 712.0,56.8 704.1,56.8 706.7,56.8 714.6,56.8 717.3,56.8 719.9,56.8 722.6,56.8 725.2,56.8 727.8,56.8 730.5,56.8 733.1,56.8 735.8,56.8 738.4,56.8 741.0,56.8 746.3,56.8 743.7,56.8 749.0,56.8 751.6,56.8 756.9,56.8 754.2,56.8 759.5,56.8 762.2,56.8 764.8,56.8 767.4,56.8 775.4,56.8 772.7,56.8 770.1,56.8 778.0,56.8 780.6,56.8 783.3,56.8 788.6,56.8 785.9,56.8 791.2,56.8 793.8,56.8 796.5,56.8 801.8,56.8 799.1,56.8 807.0,56.8 804.4,56.8 809.7,56.8 812.3,56.8 822.9,56.8 815.0,56.8 820.2,56.8 817.6,56.8 825.5,56.8 833.4,56.8 830.8,56.8 828.2,56.8 836.1,56.8 841.4,56.8 844.0,56.8 838.7,56.8" fill="none" stroke="#f5a35c" stroke-width="2.5"/>
+<polyline points="59.9,234.0 54.6,234.0 57.3,227.7 67.8,227.7 62.6,227.7 70.5,221.4 65.2,221.4 73.1,215.0 75.8,215.0 78.4,208.7 81.0,208.7 86.3,208.7 83.7,202.4 89.0,196.0 96.9,189.7 94.2,183.4 91.6,183.4 99.5,183.4 110.1,177.0 102.2,177.0 104.8,177.0 107.4,170.7 118.0,164.4 112.7,158.1 120.6,158.1 123.3,158.1 115.4,158.1 128.6,158.1 133.8,158.1 125.9,158.1 131.2,158.1 141.8,158.1 144.4,158.1 136.5,158.1 147.0,158.1 152.3,158.1 155.0,158.1 149.7,151.7 157.6,151.7 160.2,145.4 165.5,139.1 168.2,139.1 162.9,139.1 170.8,139.1 173.4,139.1 178.7,139.1 181.4,139.1 176.1,139.1 184.0,139.1 186.6,139.1 189.3,132.7 191.9,132.7 194.6,132.7 197.2,132.7 139.1,126.4 205.1,126.4 202.5,126.4 199.8,126.4 210.4,126.4 213.0,126.4 215.7,126.4 207.8,126.4 223.6,126.4 218.3,126.4 221.0,126.4 228.9,126.4 231.5,126.4 234.2,126.4 236.8,126.4 242.1,126.4 239.4,126.4 244.7,126.4 252.6,120.1 250.0,120.1 247.4,120.1 255.3,113.7 260.6,113.7 263.2,113.7 257.9,113.7 226.2,113.7 265.8,113.7 268.5,113.7 271.1,113.7 273.8,113.7 276.4,113.7 281.7,113.7 284.3,113.7 279.0,113.7 289.6,113.7 287.0,113.7 300.2,113.7 292.2,113.7 294.9,113.7 302.8,113.7 297.5,113.7 308.1,113.7 305.4,113.7 310.7,113.7 321.3,113.7 316.0,113.7 318.6,113.7 323.9,113.7 326.6,113.7 331.8,113.7 329.2,113.7 334.5,113.7 337.1,113.7 342.4,113.7 339.8,113.7 345.0,113.7 350.3,113.7 347.7,113.7 353.0,113.7 355.6,113.7 358.2,113.7 360.9,113.7 313.4,113.7 363.5,113.7 368.8,113.7 376.7,113.7 371.4,113.7 374.1,113.7 379.4,113.7 387.3,113.7 389.9,113.7 366.2,113.7 392.6,113.7 395.2,113.7 382.0,113.7 400.5,113.7 397.8,113.7 403.1,113.7 408.4,113.7 384.6,113.7 411.0,113.7 416.3,113.7 413.7,113.7 419.0,113.7 421.6,113.7 429.5,113.7 426.9,107.4 434.8,107.4 432.2,107.4 437.4,107.4 440.1,107.4 442.7,107.4 405.8,107.4 445.4,107.4 450.6,107.4 453.3,107.4 448.0,107.4 455.9,107.4 424.2,107.4 461.2,107.4 466.5,107.4 463.8,107.4 471.8,107.4 469.1,107.4 474.4,107.4 482.3,107.4 477.0,107.4 479.7,107.4 487.6,107.4 492.9,107.4 490.2,107.4 485.0,107.4 495.5,107.4 500.8,107.4 503.4,107.4 498.2,107.4 508.7,107.4 511.4,107.4 506.1,107.4 516.6,107.4 519.3,107.4 514.0,101.1 458.6,101.1 524.6,101.1 521.9,101.1 529.8,101.1 535.1,101.1 532.5,101.1 540.4,101.1 543.0,101.1 545.7,101.1 551.0,101.1 553.6,101.1 537.8,101.1 527.2,101.1 561.5,101.1 558.9,101.1 566.8,101.1 548.3,101.1 564.2,101.1 572.1,101.1 569.4,101.1 574.7,101.1 582.6,94.7 577.4,94.7 585.3,94.7 556.2,94.7 587.9,94.7 593.2,94.7 590.6,94.7 595.8,94.7 601.1,94.7 603.8,94.7 606.4,94.7 598.5,94.7 611.7,94.7 614.3,94.7 609.0,94.7 619.6,94.7 617.0,94.7 580.0,94.7 622.2,94.7 627.5,94.7 632.8,94.7 638.1,94.7 635.4,94.7 640.7,94.7 643.4,94.7 646.0,94.7 624.9,94.7 653.9,94.7 651.3,94.7 630.2,94.7 656.6,94.7 659.2,94.7 661.8,94.7 664.5,94.7 669.8,94.7 667.1,94.7 677.7,94.7 672.4,94.7 648.6,94.7 685.6,94.7 680.3,94.7 690.9,94.7 688.2,94.7 693.5,94.7 696.2,94.7 701.4,94.7 698.8,94.7 675.0,94.7 704.1,94.7 706.7,94.7 714.6,94.7 712.0,94.7 683.0,94.7 719.9,94.7 717.3,94.7 722.6,94.7 725.2,94.7 727.8,94.7 733.1,94.7 730.5,94.7 738.4,94.7 741.0,94.7 746.3,94.7 709.4,94.7 749.0,94.7 751.6,94.7 754.2,94.7 756.9,94.7 735.8,94.7 759.5,94.7 767.4,94.7 770.1,94.7 772.7,94.7 743.7,94.7 778.0,94.7 775.4,94.7 764.8,94.7 762.2,94.7 785.9,94.7 783.3,94.7 788.6,94.7 791.2,94.7 793.8,94.7 799.1,94.7 796.5,94.7 807.0,94.7 801.8,94.7 809.7,94.7 812.3,94.7 804.4,94.7 817.6,94.7 820.2,94.7 815.0,94.7 822.9,94.7 780.6,94.7 830.8,94.7 836.1,94.7 833.4,94.7 841.4,94.7 838.7,94.7 844.0,94.7 828.2,94.7 825.5,94.7" fill="none" stroke="#6fb3ff" stroke-width="2.5"/>
+<polyline points="62.6,234.0 54.6,234.0 59.9,234.0 57.3,234.0 73.1,234.0 65.2,227.7 67.8,227.7 70.5,227.7 81.0,221.4 86.3,221.4 83.7,215.0 75.8,215.0 78.4,215.0 89.0,208.7 96.9,208.7 94.2,202.4 91.6,202.4 99.5,202.4 102.2,202.4 104.8,202.4 110.1,202.4 115.4,202.4 107.4,196.0 112.7,196.0 118.0,196.0 123.3,196.0 120.6,189.7 125.9,189.7 128.6,189.7 136.5,189.7 133.8,189.7 139.1,189.7 141.8,183.4 131.2,183.4 149.7,177.0 144.4,177.0 147.0,177.0 152.3,177.0 157.6,177.0 160.2,177.0 165.5,177.0 162.9,177.0 170.8,177.0 173.4,177.0 168.2,177.0 176.1,177.0 181.4,177.0 178.7,170.7 186.6,170.7 184.0,164.4 189.3,164.4 194.6,164.4 191.9,164.4 197.2,164.4 199.8,164.4 205.1,164.4 202.5,164.4 207.8,164.4 155.0,164.4 210.4,164.4 213.0,164.4 215.7,164.4 218.3,164.4 226.2,164.4 231.5,164.4 228.9,164.4 223.6,164.4 234.2,158.1 236.8,158.1 242.1,158.1 239.4,158.1 247.4,158.1 250.0,158.1 244.7,158.1 257.9,151.7 255.3,151.7 252.6,151.7 260.6,151.7 265.8,151.7 263.2,151.7 268.5,151.7 221.0,151.7 271.1,151.7 273.8,151.7 276.4,151.7 279.0,145.4 281.7,145.4 284.3,145.4 287.0,145.4 289.6,145.4 292.2,145.4 297.5,145.4 294.9,145.4 305.4,145.4 302.8,145.4 300.2,139.1 308.1,139.1 310.7,139.1 316.0,139.1 313.4,139.1" fill="none" stroke="#e589f0" stroke-width="2.5"/>
+<polyline points="59.9,240.3 62.6,234.0 54.6,234.0 57.3,227.7 65.2,227.7 67.8,227.7 73.1,227.7 70.5,227.7 75.8,221.4 78.4,221.4 83.7,221.4 81.0,221.4 86.3,221.4 89.0,215.0 96.9,208.7 91.6,208.7 94.2,208.7 102.2,208.7 99.5,208.7 107.4,196.0 104.8,196.0 112.7,189.7 110.1,189.7 118.0,189.7 115.4,183.4 120.6,177.0 125.9,170.7 123.3,170.7 128.6,170.7 136.5,170.7 133.8,164.4 131.2,164.4 141.8,164.4 139.1,158.1 147.0,158.1 144.4,158.1 152.3,151.7 149.7,151.7 155.0,151.7 157.6,151.7 162.9,151.7 168.2,151.7 170.8,151.7 160.2,151.7 173.4,151.7 165.5,151.7 176.1,151.7 181.4,151.7 178.7,151.7 184.0,151.7 189.3,151.7 194.6,151.7 186.6,151.7 191.9,145.4 197.2,145.4 199.8,145.4 202.5,145.4 205.1,145.4 210.4,145.4 215.7,145.4 207.8,145.4 218.3,145.4 221.0,145.4 213.0,145.4 223.6,145.4 226.2,145.4 228.9,145.4 231.5,139.1 236.8,139.1 242.1,139.1 244.7,132.7 234.2,132.7 239.4,132.7 250.0,132.7 247.4,132.7 255.3,126.4 263.2,126.4 252.6,126.4 257.9,126.4 268.5,126.4 260.6,126.4 271.1,126.4 265.8,126.4 273.8,126.4 276.4,126.4 281.7,126.4 284.3,126.4 279.0,126.4 287.0,126.4 289.6,126.4 292.2,126.4 294.9,126.4 297.5,126.4 302.8,126.4 300.2,126.4 308.1,126.4 313.4,126.4 305.4,120.1 316.0,120.1 310.7,120.1" fill="none" stroke="#ffd166" stroke-width="2.5"/>
+    <text x="52" y="294" font-size="10" fill="#9aa4b2">gen 0</text>
+    <text x="844" y="294" font-size="10" fill="#9aa4b2" text-anchor="end">gen 300</text>
+  </svg>
+      <p>On raw output, science did not win. The credulous colony matched or beat both science replicates on coverage and on crash count, and it did it with fewer model calls — no lessons machinery to run at all. What science demonstrably bought instead: it prevented the exact superstition that wrecked the naive run, and it caught and repealed its own bad laws without me touching anything.</p>
+      <p class="quote-block">Science didn't make my bots stronger. It kept them from lying to themselves.</p>
+    </section>
+
+    <section class="block reveal">
+      <h2 class="section-h"><span class="idx">09</span>Nulls and scars</h2>
+      <p>Some of the most useful results in this project were failures I initially wanted to bury. An entire run exists purely to prove that the shared tool library, on its own, did nothing — an earlier mutation prompt was so conservative that children never actually needed a new tool, so the whole inheritance mechanic sat there unused the entire time:</p>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Arm</th><th>Coverage</th><th>Best Elo</th><th>Mean Elo</th><th>Tools</th></tr></thead>
+          <tbody>
+            <tr><td>Full ratchet (tool library)</td><td class="num">44.4%</td><td class="num">1070</td><td class="num">1025</td><td class="num">7</td></tr>
+            <tr><td>Evolution only (no library)</td><td class="num">47.2%</td><td class="num">1081</td><td class="num">1022</td><td class="num">0</td></tr>
+            <tr><td>Cold sampling (no evolution)</td><td class="num">69.4%</td><td class="num">1039</td><td class="num">994</td><td class="num">0</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Fixing that by making the mutation prompt bolder immediately overcorrected — tool calls exploded past 700,000, and roughly 90% of the back half of that run died to runtime crashes from bots too complex to survive their own mutation. That one got a name: the complexity death spiral.</p>
+      <p class="fade">I built all eight of these runs on roughly a dollar of free-tier model calls — mostly Groq's free <code>gpt-oss-120b</code> — across one week of evenings. Which tells you the actual bottleneck here was never money. It was watching the raw replays closely enough to catch a false belief and a silent bug before trusting a clean-looking summary number.</p>
+    </section>
+
+    <section class="block reveal">
+      <h2 class="section-h"><span class="idx">10</span>What I'd rebuild</h2>
+      <p>Multi-seed replicates from generation zero, not bolted on after the fact — the same "science" config producing 77.8% coverage one time and 91.7% the next is a real number, and every run in this series deserves to be judged against that noise band instead of compared to its neighbors as if each were precise. And I'd want to push one rung further: not breeding better fighters inside one fixed game, but breeding better <em>games</em> for them to fight in — with the tool library surviving the jump from a game to its descendant, so capability compounds across domains instead of resetting every time the rules change. That's next, if there's a next.</p>
+    </section>
+
+    <div class="run-nav mono reveal">
+      <a href="run-7.html"><span class="lbl">Previous</span>← Run 7 — The Long Game</a>
+      <a class="next" href="index.html"><span class="lbl">Back to</span>Lab Notes index →</a>
+    </div>
+
+  </div>
+
+  <footer class="lab-footer mono">
+    <span>Godfrey Osagiede · Lab Notes</span>
+    <span>Ratchet Lab · Article 0</span>
+  </footer>
+</main>
+
+<script>
+(function() {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var revealEls = document.querySelectorAll('.reveal');
+  if (reduceMotion) { revealEls.forEach(function(el) { el.classList.add('in'); }); }
+  else {
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) { if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); } });
+    }, { threshold: 0.1 });
+    revealEls.forEach(function(el) { io.observe(el); });
+  }
+})();
+</script>
+
+</body>
+</html>

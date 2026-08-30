@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Run 0 — Dry Prototype — Lab Notes</title>
+<meta name="description" content="Ratchet Lab Run 0: the whole evolution loop proven end to end at $0, before spending a cent on a real model.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E0D16;
+    --ink: #F4EEE4;
+    --tangerine: #FF7A33;
+    --amber: #f5a35c;
+    --ink-fade: color-mix(in oklab, var(--ink), transparent 38%);
+    --ink-faint: color-mix(in oklab, var(--ink), transparent 55%);
+    --card-bg: color-mix(in oklab, var(--bg), var(--ink) 6%);
+    --border: color-mix(in oklab, var(--ink), transparent 85%);
+    --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
+    --container: 780px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', sans-serif; font-size: 16px; line-height: 1.65; overflow-x: hidden; }
+  ::selection { background: var(--amber); color: #0E0D16; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: 'Fraunces', serif; margin: 0; }
+  .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+  code, .num { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--amber); }
+  .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--space-4); }
+  img, svg { max-width: 100%; display: block; }
+
+  .lab-header-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin: 0 0 var(--space-3); }
+  .lab-clip { width: 100%; border-radius: 10px; border: 1px solid var(--border); background: #000; }
+  .lab-clip-caption { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--ink-faint); text-align: center; margin: 0.7em 0 0; }
+  .lab-chart-svg { width: 100%; height: auto; display: block; margin: var(--space-2) 0 var(--space-3); }
+  .grain { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.028; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 2px; }
+
+  .site-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: var(--space-2) var(--space-4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: color-mix(in oklab, var(--bg), transparent 15%); border-bottom: 1px solid var(--border); }
+  .nav-back { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 1.15rem; text-decoration: none; letter-spacing: 0.01em; display: inline-flex; align-items: center; gap: 0.4em; transition: transform 0.25s ease, color 0.25s ease; }
+  .nav-back:hover { color: var(--amber); transform: translateX(-3px); }
+  .nav-lab-label { font-size: 0.68rem; color: var(--ink-fade); text-decoration: none; transition: color 0.2s ease; }
+  .nav-lab-label:hover { color: var(--amber); }
+
+  main { position: relative; z-index: 1; padding-top: 5.5rem; padding-bottom: var(--space-5); }
+
+  .breadcrumb { font-size: 0.66rem; color: var(--ink-faint); margin-bottom: var(--space-2); }
+  .breadcrumb a { color: var(--ink-fade); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--amber); }
+
+  .article-head { padding: var(--space-3) 0 var(--space-3); }
+  .run-eyebrow { color: var(--amber); font-size: 0.72rem; margin-bottom: var(--space-2); display: inline-block; }
+  .article-title { font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 620; letter-spacing: -0.02em; line-height: 1.05; }
+  .article-meta { margin-top: var(--space-2); font-size: 0.72rem; color: var(--ink-faint); display: flex; flex-wrap: wrap; gap: 0.3em 1.2em; }
+  .article-meta .sep { color: var(--ink-faint); }
+
+  .hairline { height: 2px; background: var(--amber); margin: var(--space-4) 0; }
+
+  section.block { margin-bottom: var(--space-4); }
+  .block-head { font-size: 0.7rem; color: var(--amber); margin-bottom: var(--space-2); display: block; padding-bottom: 0.4em; border-bottom: 1px solid var(--border); }
+  .block p { font-size: 1rem; color: var(--ink); max-width: 66ch; }
+  .block p.fade { color: var(--ink-fade); }
+  .block ul { padding-left: 1.3em; margin: 0.6em 0; }
+  .block ul li { margin-bottom: 0.5em; max-width: 64ch; }
+
+  .badge { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3em 0.7em; border-radius: 999px; margin-bottom: 0.6em; }
+  .badge.fail { color: #FF7A33; border: 1px solid color-mix(in oklab, #FF7A33, transparent 50%); background: color-mix(in oklab, #FF7A33, transparent 90%); }
+  .badge.null { color: var(--ink-fade); border: 1px solid var(--border); background: var(--card-bg); }
+  .badge.win { color: var(--amber); border: 1px solid color-mix(in oklab, var(--amber), transparent 50%); background: color-mix(in oklab, var(--amber), transparent 90%); }
+
+  .data-table { width: 100%; border-collapse: collapse; margin: var(--space-2) 0 var(--space-3); font-size: 0.85rem; }
+  .table-wrap { overflow-x: auto; margin: var(--space-2) 0 var(--space-3); }
+  .data-table th, .data-table td { text-align: left; padding: 0.6em 0.9em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .data-table th { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+  .data-table td.num, .data-table td { font-variant-numeric: tabular-nums; }
+  .data-table tr.highlight td { color: var(--amber); font-weight: 600; }
+
+  .clip-note, .chart-placeholder {
+    border: 1px dashed var(--border);
+    border-radius: 10px;
+    padding: var(--space-3);
+    color: var(--ink-faint);
+    font-size: 0.78rem;
+    font-family: 'JetBrains Mono', monospace;
+    text-align: center;
+    margin: var(--space-3) 0;
+  }
+
+  .run-nav { display: flex; justify-content: space-between; gap: var(--space-2); margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--border); font-size: 0.78rem; }
+  .run-nav a { text-decoration: none; color: var(--ink-fade); transition: color 0.2s ease; }
+  .run-nav a:hover { color: var(--amber); }
+  .run-nav .next { text-align: right; }
+  .run-nav .lbl { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--ink-faint); margin-bottom: 0.3em; }
+
+  footer.lab-footer { max-width: var(--container); margin: var(--space-5) auto 0; padding: var(--space-3) var(--space-4) 0; border-top: 1px solid var(--border); font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5em; }
+
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+
+  @media (max-width: 480px) {
+    .container { padding-left: var(--space-3); padding-right: var(--space-3); }
+    footer.lab-footer, .site-nav { padding-left: var(--space-3); padding-right: var(--space-3); }
+    .run-nav { flex-direction: column; gap: var(--space-2); }
+    .run-nav .next { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .reveal { transition: none; opacity: 1; transform: none; }
+    .nav-back { transition: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<header class="site-nav">
+  <a href="../index.html" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>G.O.</span>
+  </a>
+  <a href="index.html" class="nav-lab-label mono">Lab Notes</a>
+</header>
+
+<main>
+  <div class="container">
+
+    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 0 of 7</p>
+
+    <img class="lab-header-img reveal" src="img/h-run-0.webp" alt="Hand-drawn technical schematic of the 20x20 battle arena grid, marking two bots' positions and facing directions, two obstacle blocks, and a dotted line-of-sight ray, in amber ink on black." width="1600" height="800" loading="eager">
+
+
+    <div class="article-head reveal">
+      <span class="run-eyebrow mono">Ratchet Lab · Run 0 · Mock mutator, $0</span>
+      <h1 class="article-title">Dry Prototype</h1>
+      <p class="article-meta mono">
+        <span>Engine: deterministic mock, no LLM calls</span>
+        <span class="sep">·</span>
+        <span>~210 generations accumulated</span>
+      </p>
+    </div>
+
+    <div class="hairline reveal" aria-hidden="true"></div>
+
+    <section class="block reveal">
+      <span class="block-head mono">Hypothesis</span>
+      <p>Before spending a cent on a real model, can the whole machine — the arena, the shared tool archive, the sandbox that runs untrusted bot code, the replay recorder, the report — actually work end to end?</p>
+    </section>
+
+    <section class="block reveal">
+      <span class="block-head mono">Setup</span>
+      <p>A deterministic mock mutator stands in for the LLM: it swaps directions and pastes in a few canned "weird" templates instead of writing anything genuinely new. No API key, no cost. I let it run for roughly 210 generations across a few sessions, purely to shake out plumbing bugs.</p>
+    </section>
+
+    <section class="block reveal">
+      <span class="block-head mono">What changed</span>
+      <p class="fade">Nothing yet — this is the first build. The loop itself is the thing under test, not any particular idea inside it.</p>
+    </section>
+
+    <section class="block reveal">
+      <span class="block-head mono">What was measured</span>
+      <ul>
+        <li>Archive coverage — the percentage of behavior cells (a grid binned on aggression × mobility) that have ever been filled by a winning bot.</li>
+        <li>Whether the sandbox could run arbitrary generated code safely and record full match replays.</li>
+        <li>Whether a handful of hand-written baseline bots (a camper, a rusher, a random walker) could reliably beat a bot with no strategy at all — a sanity floor for the whole arena.</li>
+      </ul>
+    </section>
+
+    <section class="block reveal">
+      <span class="badge win mono">Held up</span>
+      <span class="block-head mono">Result</span>
+      <p>The loop, archive, sandbox, replays, and report all worked end to end at zero cost. Archive coverage reached somewhere between 50% and 78% across the accumulated sessions, and the mock mutator extracted 3 reusable tools into the shared library — even though the mock bots barely used them. All three hand-written baselines beat the no-strategy bot with zero losses across 10 seeds, so the arena's win condition was doing real work.</p>
+      <p>The more interesting finding had nothing to do with intelligence: even a completely mindless mutator, wired to nothing but random shuffling and a survival filter, produced corner-campers and ambushers. Selection pressure alone was enough to generate behavior that <em>looks</em> strategic. That's a useful thing to know before crediting any future run's cleverness to the model doing the mutating.</p>
+    </section>
+
+    <section class="block reveal">
+      <span class="badge fail mono">What failed</span>
+      <p>Two bugs, both caught the same way — by watching the raw output instead of trusting a summary number:</p>
+      <ul>
+        <li><strong>The replay picker was broken.</strong> The "interestingness" score used to pick the ten most interesting matches for the report saturated at a maximum value (equal damage dealt on both sides, zero margin), so ties were resolved by insertion order — meaning "top 10 replays" was silently just the ten <em>oldest</em> replays in the database. Fixed by picking the best replay from each generation-era instead of a single global top 10.</li>
+        <li><strong>A silent engine fallback.</strong> A synchronous-only stdin option made the CLI mutation engine quietly fall back to the mock mutator while still reporting a successful run. This one was only caught because the run summary's call count read <code>apiCallsMade: 0</code>, which contradicted a report that otherwise looked completely normal. The lesson: a proxy metric (report looks fine) is not proof (calls were actually made) — the discipline that shaped every later run's instrumentation.</li>
+      </ul>
+    </section>
+
+    <section class="block reveal">
+      <span class="block-head mono">Next</span>
+      <p>Build in honest failure handling — a loud abort instead of a silent fallback — an era-spread replay picker, and treat the raw API-call count as the one number in every report that can't lie. Then spend the first real dollar on Run 1.</p>
+    </section>
+
+    <div class="run-nav mono reveal">
+      <span></span>
+      <a class="next" href="run-1.html"><span class="lbl">Next</span>Run 1 — First Haiku Run →</a>
+    </div>
+
+  </div>
+
+  <footer class="lab-footer mono">
+    <span>Godfrey Osagiede · Lab Notes</span>
+    <span>Ratchet Lab · Run 0</span>
+  </footer>
+</main>
+
+<script>
+(function() {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var revealEls = document.querySelectorAll('.reveal');
+  if (reduceMotion) { revealEls.forEach(function(el) { el.classList.add('in'); }); }
+  else {
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) { if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); } });
+    }, { threshold: 0.1 });
+    revealEls.forEach(function(el) { io.observe(el); });
+  }
+})();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Run 4 — Error Feedback — Lab Notes</title>
+<meta name="description" content="Ratchet Lab Run 4: feeding a bot's own crash back into the next mutation prompt cures the complexity death spiral.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..900;1,9..144,300..900&family=Instrument+Sans:ital,wght@0,400..700;1,400..700&family=JetBrains+Mono:wght@400..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0E0D16; --ink: #F4EEE4; --tangerine: #FF7A33; --amber: #f5a35c;
+    --ink-fade: color-mix(in oklab, var(--ink), transparent 38%);
+    --ink-faint: color-mix(in oklab, var(--ink), transparent 55%);
+    --card-bg: color-mix(in oklab, var(--bg), var(--ink) 6%);
+    --border: color-mix(in oklab, var(--ink), transparent 85%);
+    --space-1: 0.5rem; --space-2: 1rem; --space-3: 1.5rem; --space-4: 2.5rem; --space-5: 4rem;
+    --container: 780px;
+  }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--ink); font-family: 'Instrument Sans', sans-serif; font-size: 16px; line-height: 1.65; overflow-x: hidden; }
+  ::selection { background: var(--amber); color: #0E0D16; }
+  a { color: inherit; }
+  h1, h2, h3 { font-family: 'Fraunces', serif; margin: 0; }
+  .mono { font-family: 'JetBrains Mono', monospace; letter-spacing: 0.1em; text-transform: uppercase; }
+  code, .num { font-family: 'JetBrains Mono', monospace; font-weight: 600; color: var(--amber); }
+  .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--space-4); }
+  img, svg { max-width: 100%; display: block; }
+
+  .lab-header-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin: 0 0 var(--space-3); }
+  .lab-clip { width: 100%; border-radius: 10px; border: 1px solid var(--border); background: #000; }
+  .lab-clip-caption { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--ink-faint); text-align: center; margin: 0.7em 0 0; }
+  .lab-chart-svg { width: 100%; height: auto; display: block; margin: var(--space-2) 0 var(--space-3); }
+  .grain { position: fixed; inset: 0; z-index: 0; pointer-events: none; opacity: 0.028; mix-blend-mode: overlay; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--amber); outline-offset: 3px; border-radius: 2px; }
+  .site-nav { position: fixed; top: 0; left: 0; right: 0; z-index: 50; display: flex; align-items: center; justify-content: space-between; padding: var(--space-2) var(--space-4); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); background: color-mix(in oklab, var(--bg), transparent 15%); border-bottom: 1px solid var(--border); }
+  .nav-back { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 1.15rem; text-decoration: none; letter-spacing: 0.01em; display: inline-flex; align-items: center; gap: 0.4em; transition: transform 0.25s ease, color 0.25s ease; }
+  .nav-back:hover { color: var(--amber); transform: translateX(-3px); }
+  .nav-lab-label { font-size: 0.68rem; color: var(--ink-fade); text-decoration: none; transition: color 0.2s ease; }
+  .nav-lab-label:hover { color: var(--amber); }
+  main { position: relative; z-index: 1; padding-top: 5.5rem; padding-bottom: var(--space-5); }
+  .breadcrumb { font-size: 0.66rem; color: var(--ink-faint); margin-bottom: var(--space-2); }
+  .breadcrumb a { color: var(--ink-fade); text-decoration: none; }
+  .breadcrumb a:hover { color: var(--amber); }
+  .article-head { padding: var(--space-3) 0 var(--space-3); }
+  .run-eyebrow { color: var(--amber); font-size: 0.72rem; margin-bottom: var(--space-2); display: inline-block; }
+  .article-title { font-size: clamp(2rem, 6vw, 3.2rem); font-weight: 620; letter-spacing: -0.02em; line-height: 1.05; }
+  .article-meta { margin-top: var(--space-2); font-size: 0.72rem; color: var(--ink-faint); display: flex; flex-wrap: wrap; gap: 0.3em 1.2em; }
+  .article-meta .sep { color: var(--ink-faint); }
+  .hairline { height: 2px; background: var(--amber); margin: var(--space-4) 0; }
+  section.block { margin-bottom: var(--space-4); }
+  .block-head { font-size: 0.7rem; color: var(--amber); margin-bottom: var(--space-2); display: block; padding-bottom: 0.4em; border-bottom: 1px solid var(--border); }
+  .block p { font-size: 1rem; color: var(--ink); max-width: 66ch; }
+  .block p.fade { color: var(--ink-fade); }
+  .block ul { padding-left: 1.3em; margin: 0.6em 0; }
+  .block ul li { margin-bottom: 0.5em; max-width: 64ch; }
+  .badge { display: inline-block; font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; padding: 0.3em 0.7em; border-radius: 999px; margin-bottom: 0.6em; }
+  .badge.fail { color: #FF7A33; border: 1px solid color-mix(in oklab, #FF7A33, transparent 50%); background: color-mix(in oklab, #FF7A33, transparent 90%); }
+  .badge.null { color: var(--ink-fade); border: 1px solid var(--border); background: var(--card-bg); }
+  .badge.win { color: var(--amber); border: 1px solid color-mix(in oklab, var(--amber), transparent 50%); background: color-mix(in oklab, var(--amber), transparent 90%); }
+  .data-table { width: 100%; border-collapse: collapse; margin: var(--space-2) 0 var(--space-3); font-size: 0.85rem; }
+  .table-wrap { overflow-x: auto; margin: var(--space-2) 0 var(--space-3); }
+  .data-table th, .data-table td { text-align: left; padding: 0.6em 0.9em; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .data-table th { font-family: 'JetBrains Mono', monospace; font-size: 0.62rem; letter-spacing: 0.08em; text-transform: uppercase; color: var(--amber); }
+  .data-table tr.highlight td { color: var(--amber); font-weight: 600; }
+  .clip-note, .chart-placeholder { border: 1px dashed var(--border); border-radius: 10px; padding: var(--space-3); color: var(--ink-faint); font-size: 0.78rem; font-family: 'JetBrains Mono', monospace; text-align: center; margin: var(--space-3) 0; }
+  .run-nav { display: flex; justify-content: space-between; gap: var(--space-2); margin-top: var(--space-5); padding-top: var(--space-3); border-top: 1px solid var(--border); font-size: 0.78rem; }
+  .run-nav a { text-decoration: none; color: var(--ink-fade); transition: color 0.2s ease; }
+  .run-nav a:hover { color: var(--amber); }
+  .run-nav .next { text-align: right; }
+  .run-nav .lbl { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--ink-faint); margin-bottom: 0.3em; }
+  footer.lab-footer { max-width: var(--container); margin: var(--space-5) auto 0; padding: var(--space-3) var(--space-4) 0; border-top: 1px solid var(--border); font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5em; }
+  .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
+  .reveal.in { opacity: 1; transform: translateY(0); }
+  @media (max-width: 480px) {
+    .container { padding-left: var(--space-3); padding-right: var(--space-3); }
+    footer.lab-footer, .site-nav { padding-left: var(--space-3); padding-right: var(--space-3); }
+    .run-nav { flex-direction: column; gap: var(--space-2); }
+    .run-nav .next { text-align: left; }
+  }
+  @media (prefers-reduced-motion: reduce) { .reveal { transition: none; opacity: 1; transform: none; } .nav-back { transition: none; } }
+</style>
+</head>
+<body>
+
+<div class="grain" aria-hidden="true"></div>
+
+<header class="site-nav">
+  <a href="../index.html" class="nav-back">
+    <svg width="14" height="14" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M13 8H3M3 8L7 4M3 8L7 12" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+    <span>G.O.</span>
+  </a>
+  <a href="index.html" class="nav-lab-label mono">Lab Notes</a>
+</header>
+
+<main>
+  <div class="container">
+
+    <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 4 of 7</p>
+
+    <img class="lab-header-img reveal" src="img/h-run-4.webp" alt="A grid, hand-drawn tool icons, a rising line chart, and a torn ledger fragment connected by dotted lines, illustrating error feedback flowing back into the next mutation." width="1600" height="800" loading="eager">
+
+
+    <div class="article-head reveal">
+      <span class="run-eyebrow mono">Ratchet Lab · Run 4 · gpt-oss-120b via Groq, bold prompt + crash-feedback retry, 100 gens</span>
+      <h1 class="article-title">Error Feedback</h1>
+      <p class="article-meta mono">
+        <span>The information-pressure idea</span>
+        <span class="sep">·</span>
+        <span>Inheritance of pain</span>
+      </p>
+    </div>
+
+    <div class="hairline reveal" aria-hidden="true"></div>
+
+    <section class="block reveal">
+      <span class="block-head mono">Hypothesis</span>
+      <p>Run 3 demanded a fix, not less boldness. If a child that crashes gets one retry with its own actual error message fed into the prompt — "your previous child crashed with this exact error" — will that cure the death spiral without giving up the exploration boldness bought?</p>
+    </section>
+
+    <section class="block reveal">
+      <span class="block-head mono">Setup</span>
+      <p>Identical to Run 3, plus: every new child first plays a fast smoke match against a dummy opponent before real evaluation. If it crash-forfeits, it gets exactly one retry, with the real runtime error text inserted into the mutation prompt. A corpse-streak detector and rate-limit backoff were added at the same time.</p>
+    </section>
+
+    <section class="block reveal">
+      <span class="block-head mono">What changed</span>
+      <p>A smoke-check-then-retry loop, feeding each bot's own crash back into its own rewrite. Nothing else about the prompt or engine changed from Run 3.</p>
+    </section>
+
+    <section class="block reveal">
+      <span class="block-head mono">What was measured</span>
+      <p>Coverage, best Elo, tool count, number of crash-triggered retries, and how the run compared against every prior arm on the same two axes (exploration and champion strength).</p>
+    </section>
+
+    <section class="badge win mono reveal" style="display:inline-block">Best evolutionary arm to date</section>
+
+    <section class="block reveal">
+      <span class="block-head mono">Result</span>
+      <div class="table-wrap">
+        <table class="data-table">
+          <thead><tr><th>Arm</th><th>Coverage</th><th>Best Elo</th></tr></thead>
+          <tbody>
+            <tr><td>R2 full ratchet (Haiku)</td><td class="num">44.4%</td><td class="num">1070</td></tr>
+            <tr><td>R2 evolution only (Haiku)</td><td class="num">47.2%</td><td class="num">1081</td></tr>
+            <tr><td>R2 cold sampling (Haiku)</td><td class="num">69.4%</td><td class="num">1039</td></tr>
+            <tr><td>R3 bold, no feedback (Groq)</td><td class="num">61.1%</td><td class="num">1029</td></tr>
+            <tr class="highlight"><td>R4 bold + feedback (Groq)</td><td class="num">66.7%</td><td class="num">1066</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <p>Coverage reached <span class="num">66.7%</span> — the best evolutionary arm run so far — with best Elo at <span class="num">1066</span>, 5 tools, and 148 total calls (48 of them crash-feedback retries). Crashes were exactly as frequent as Run 3 (about 48 caught), but the loop absorbed them instead of dying to them: corpse streaks maxed out at 4 in a row and always recovered, and the run was still discovering new archive cells at generations 96–100, right where Run 3 had flatlined at generation 51.</p>
+      <p>This run came close to beating every other arm on both axes at once — near cold-sampling exploration (66.7% vs 69.4%) and near evolved-arm champion strength (1066 vs 1070/1081), in a single configuration. Inherited-tool use also became the loudest signal in the whole system: roughly <span class="num">2.84 million</span> inherited-tool calls this run, <code>manhattanDistance</code> alone accounting for 2,754,344 of them.</p>
+    </section>
+
+    <section class="block reveal">
+      <span class="badge fail mono">What failed</span>
+      <p>The crash pattern turned out to be <strong>systematic</strong>, and per-child feedback only ever treats the symptom. Two errors accounted for nearly every crash: <code>Cannot read properties of undefined (reading 'some')</code> and <code>lib is not defined</code>. The model kept making the same category mistake — defining helper functions <em>outside</em> <code>act()</code> that try to close over <code>act</code>'s own parameters (<code>lib</code>, <code>state</code>), which simply don't exist out there. Dozens of unrelated children independently made this mistake, got it corrected individually through their own retry, and then the next unrelated child made it again from scratch. Nothing was learned collectively.</p>
+    </section>
+
+    <section class="block reveal">
+      <span class="block-head mono">Next</span>
+      <p>The tool library already inherits <em>capability</em>. Nothing yet inherits <em>warnings</em>. The obvious next step is a lessons library: aggregate the recurring crash patterns into short rules, inject them into every future mutation prompt — culturally transmitted "don't eat that plant" knowledge, the second half of what human generations actually pass down.</p>
+    </section>
+
+    <div class="run-nav mono reveal">
+      <a href="run-3.html"><span class="lbl">Previous</span>← Run 3 — Bold Mutator on Groq</a>
+      <a class="next" href="run-5.html"><span class="lbl">Next</span>Run 5 — Lessons Library →</a>
+    </div>
+
+  </div>
+
+  <footer class="lab-footer mono">
+    <span>Godfrey Osagiede · Lab Notes</span>
+    <span>Ratchet Lab · Run 4</span>
+  </footer>
+</main>
+
+<script>
+(function() {
+  var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var revealEls = document.querySelectorAll('.reveal');
+  if (reduceMotion) { revealEls.forEach(function(el) { el.classList.add('in'); }); }
+  else {
+    var io = new IntersectionObserver(function(entries) {
+      entries.forEach(function(entry) { if (entry.isIntersecting) { entry.target.classList.add('in'); io.unobserve(entry.target); } });
+    }, { threshold: 0.1 });
+    revealEls.forEach(function(el) { io.observe(el); });
+  }
+})();
+</script>
+
+</body>
+</html>
