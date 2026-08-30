@@ -6,10 +6,13 @@
 <title>Lab Notes — Godfrey Osagiede</title>
 <meta name="description" content="Ratchet Lab: a homemade AI evolution lab built in one week. Eight runs, honest nulls included.">
 <meta property="og:title" content="Lab Notes — Godfrey Osagiede">
-<meta property="og:description" content="A homemade AI evolution lab, built in one week. Eight runs, real numbers, honest nulls included.">
+<meta property="og:description" content="Ratchet Lab: a homemade AI evolution lab built in one week. Eight runs, honest nulls included.">
 <meta property="og:type" content="website">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://godfreystorm.github.io/lab/img/h-index.webp">
+<meta name="twitter:card" content="summary_large_image">
 <meta name="twitter:title" content="Lab Notes — Godfrey Osagiede">
+<meta name="twitter:description" content="Ratchet Lab: a homemade AI evolution lab built in one week. Eight runs, honest nulls included.">
+<meta name="twitter:image" content="https://godfreystorm.github.io/lab/img/h-index.webp">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -72,9 +75,12 @@
 
   .lab-header-img {
     width: 100%;
+    height: clamp(180px, 28vw, 300px);
+    object-fit: cover;
+    object-position: center;
     border-radius: 10px;
     border: 1px solid var(--border);
-    margin: var(--space-4) 0 0;
+    margin: var(--space-3) 0 var(--space-4);
   }
 
   .grain {
@@ -233,6 +239,20 @@
     gap: 0.5em;
   }
 
+  .lab-receipts {
+    max-width: var(--container);
+    margin: 0.8em auto 0;
+    padding: 0 var(--space-4);
+    font-size: 0.68rem;
+    letter-spacing: 0.02em;
+    text-transform: none;
+    color: var(--ink-faint);
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .lab-receipts a { color: var(--ink-fade); text-decoration: underline; text-underline-offset: 2px; }
+  .lab-receipts a:hover { color: var(--amber); }
+  @media (max-width: 480px) { .lab-receipts { padding-left: var(--space-3); padding-right: var(--space-3); } }
+
   .reveal {
     opacity: 0;
     transform: translateY(18px);
@@ -254,6 +274,11 @@
     .reveal { transition: none; opacity: 1; transform: none; }
     .nav-back, .run-card { transition: none; }
   }
+
+  .to-top-btn { position: fixed; right: var(--space-3); bottom: var(--space-3); z-index: 40; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in oklab, var(--bg), transparent 8%); border: 1px solid var(--border); color: var(--amber); cursor: pointer; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease, border-color 0.2s ease; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .to-top-btn.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .to-top-btn:hover { border-color: var(--amber); }
+  @media (prefers-reduced-motion: reduce) { .to-top-btn { transition: opacity 0.2s ease; } }
 </style>
 </head>
 <body>
@@ -271,18 +296,18 @@
 <main>
   <div class="container">
 
-    <img class="lab-header-img reveal" src="img/h-index.webp" alt="Hand-drawn technical schematic of the 20x20 battle arena grid, annotated with a bell-curve chart, a hand-tool sketch of wrenches, and a lab ledger table, all in amber ink on black — the Lab Notes masthead illustration." width="1600" height="800" loading="eager">
-
     <div class="masthead reveal">
       <span class="lab-eyebrow mono">Ratchet Lab · Experiment Log</span>
       <h1 class="masthead-name">Lab Notes</h1>
       <p class="masthead-sub">A homemade AI evolution lab, one week, honest nulls included.</p>
     </div>
 
+    <img class="lab-header-img reveal" src="img/h-index.webp" alt="A hand-drawn technical schematic of the 20x20 battle arena grid in amber ink on black, showing two bots' positions linked by a dotted line-of-sight ray past two hatched obstacle blocks, with a small 'Lab Notes' title card in the corner." width="1600" height="800" loading="eager">
+
     <div class="hairline reveal" aria-hidden="true"></div>
 
     <p class="intro reveal">
-      I built a small arena where simple bots fight each other, and let an LLM rewrite the losers into new bots, generation after generation. The question I actually wanted answered wasn't "can I make a bot win" — it was whether a colony of AI agents can accumulate real, shared knowledge over time, the way human culture does, instead of just getting reshuffled by a smarter model. I ran eight experiments over one week to find out. Some of them worked. Two of them are null results I'm keeping in the record on purpose, because the honest version of this story is more interesting than the flattering one. Numbers below are exactly what the runs produced — no rounding up.
+      I built a small arena where simple bots fight each other, and let an LLM rewrite the losers into new bots, generation after generation. The question I actually wanted answered wasn't "can I make a bot win" — it was whether a colony of AI agents can accumulate real, shared knowledge over time, the way human culture does, instead of just getting reshuffled by a smarter model. I ran eight experiments over one week to find out. Some of them worked. Two of them are null results I'm keeping in the record on purpose, because the honest version of this story is more interesting than the flattering one. Numbers below are exactly what the runs produced — no rounding up. Full source and every raw run artifact are on <a href="https://github.com/godfreystorm/ratchet-lab" style="color: var(--amber); text-decoration: underline; text-underline-offset: 2px;">GitHub</a>.
     </p>
 
     <div class="series-grid">
@@ -290,7 +315,7 @@
       <a class="run-card flagship reveal" href="the-week.html">
         <span class="run-num mono">Article 0 · The flagship</span>
         <h2 class="run-title">The Week I Built an Evolution Lab</h2>
-        <p class="run-summary">The full story: the bet, the arena, the tool libraries, the false law the colony obeyed into deaths, the trial that caught it, and the scoreboard that says science didn't make my bots stronger — it kept them from lying to themselves.</p>
+        <p class="run-summary">The full story: the bet, the arena, the tool libraries, the false law the colony obeyed into deaths, the trial that caught it, and the scoreboard at the end. A false map, two repealed laws, and a control that out-covered science.</p>
       </a>
 
       <a class="run-card reveal" href="run-0.html">
@@ -346,7 +371,7 @@
         <span class="run-num mono">Run 7</span>
         <h2 class="run-title">The Long Game</h2>
         <p class="run-summary">300 generations, no new mechanisms — just time. All-time records fall. Then the final scoreboard delivers the series' honest closing line.</p>
-        <div class="run-stats"><span class="num">94.4%</span> best coverage<span>2 laws repealed</span></div>
+        <div class="run-stats"><span class="num">94.4%</span> control coverage<span>1099 science A Elo</span><span>2 laws repealed</span></div>
       </a>
 
     </div>
@@ -357,6 +382,11 @@
     <span>Godfrey Osagiede · Lab Notes</span>
     <span>Ratchet Lab · 2026</span>
   </footer>
+  <p class="lab-receipts">Raw receipts — every archive, lessons ledger, metrics file, and match replay: <a href="https://github.com/godfreystorm/ratchet-lab">github.com/godfreystorm/ratchet-lab</a></p>
+
+<button class="to-top-btn" id="toTopBtn" type="button" aria-label="Scroll to top">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 12.5V3.5M8 3.5L3.5 8M8 3.5L12.5 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
 </main>
 
 <script>
@@ -376,6 +406,24 @@
     }, { threshold: 0.1 });
     revealEls.forEach(function(el) { io.observe(el); });
   }
+})();
+</script>
+
+
+<script>
+(function() {
+  var btn = document.getElementById('toTopBtn');
+  if (!btn) return;
+  var onScroll = function() {
+    if (window.scrollY > 400) { btn.classList.add('show'); }
+    else { btn.classList.remove('show'); }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  btn.addEventListener('click', function() {
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
 })();
 </script>
 

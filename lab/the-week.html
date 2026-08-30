@@ -4,11 +4,15 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>The Week I Built an Evolution Lab — Lab Notes</title>
-<meta name="description" content="A homemade AI evolution lab, built in one week: the arena, the tool libraries, a false law the colony obeyed into deaths, and the scoreboard that says science didn't make my bots stronger — it kept them from lying to themselves.">
-<meta property="og:title" content="The Week I Built an Evolution Lab">
-<meta property="og:description" content="Eight experiments, real numbers, honest nulls included. Ratchet Lab, Article 0.">
+<meta name="description" content="A homemade AI evolution lab, built in one week: the arena, the tool libraries, a false law the colony obeyed into deaths, the trial that caught two more, and the final scoreboard.">
+<meta property="og:title" content="The Week I Built an Evolution Lab — Lab Notes">
+<meta property="og:description" content="A homemade AI evolution lab, built in one week: the arena, the tool libraries, a false law the colony obeyed into deaths, the trial that caught two more, and the final scoreboard.">
 <meta property="og:type" content="article">
-<meta name="twitter:card" content="summary">
+<meta property="og:image" content="https://godfreystorm.github.io/lab/img/h-the-week.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="The Week I Built an Evolution Lab — Lab Notes">
+<meta name="twitter:description" content="A homemade AI evolution lab, built in one week: the arena, the tool libraries, a false law the colony obeyed into deaths, the trial that caught two more, and the final scoreboard.">
+<meta name="twitter:image" content="https://godfreystorm.github.io/lab/img/h-the-week.webp">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -33,7 +37,7 @@
   .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--space-4); }
   img, svg { max-width: 100%; display: block; }
 
-  .lab-header-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin: 0 0 var(--space-3); }
+  .lab-header-img { width: 100%; height: clamp(180px, 28vw, 300px); object-fit: cover; object-position: center; border-radius: 10px; border: 1px solid var(--border); margin: var(--space-3) 0 var(--space-4); }
   .lab-clip { width: 100%; border-radius: 10px; border: 1px solid var(--border); background: #000; }
   .lab-clip-caption { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--ink-faint); text-align: center; margin: 0.7em 0 0; }
   .lab-chart-svg { width: 100%; height: auto; display: block; margin: var(--space-2) 0 var(--space-3); }
@@ -73,7 +77,17 @@
   .run-nav a:hover { color: var(--amber); }
   .run-nav .next { text-align: right; }
   .run-nav .lbl { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--ink-faint); margin-bottom: 0.3em; }
+  .run-nav-top { display: flex; justify-content: space-between; gap: var(--space-2); margin: 0 0 var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--border); font-size: 0.7rem; }
+  .run-nav-top a { text-decoration: none; color: var(--ink-fade); transition: color 0.2s ease; }
+  .run-nav-top a:hover { color: var(--amber); }
+  .run-nav-top .next { text-align: right; margin-left: auto; }
+  .run-nav-top .lbl { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: var(--ink-faint); margin-bottom: 0.2em; }
+  @media (max-width: 480px) { .run-nav-top { flex-direction: column; gap: 0.5em; } .run-nav-top .next { text-align: left; margin-left: 0; } }
   footer.lab-footer { max-width: var(--container); margin: var(--space-5) auto 0; padding: var(--space-3) var(--space-4) 0; border-top: 1px solid var(--border); font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5em; }
+  .lab-receipts { max-width: var(--container); margin: 0.8em auto 0; padding: 0 var(--space-4); font-size: 0.68rem; letter-spacing: 0.02em; text-transform: none; color: var(--ink-faint); font-family: 'JetBrains Mono', monospace; }
+  .lab-receipts a { color: var(--ink-fade); text-decoration: underline; text-underline-offset: 2px; }
+  .lab-receipts a:hover { color: var(--amber); }
+  @media (max-width: 480px) { .lab-receipts { padding-left: var(--space-3); padding-right: var(--space-3); } }
   .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
   .reveal.in { opacity: 1; transform: translateY(0); }
   @media (max-width: 480px) {
@@ -83,6 +97,11 @@
     .run-nav .next { text-align: left; }
   }
   @media (prefers-reduced-motion: reduce) { .reveal { transition: none; opacity: 1; transform: none; } .nav-back { transition: none; } }
+
+  .to-top-btn { position: fixed; right: var(--space-3); bottom: var(--space-3); z-index: 40; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in oklab, var(--bg), transparent 8%); border: 1px solid var(--border); color: var(--amber); cursor: pointer; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease, border-color 0.2s ease; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .to-top-btn.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .to-top-btn:hover { border-color: var(--amber); }
+  @media (prefers-reduced-motion: reduce) { .to-top-btn { transition: opacity 0.2s ease; } }
 </style>
 </head>
 <body>
@@ -102,13 +121,17 @@
 
     <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Article 0</p>
 
-    <img class="lab-header-img reveal" src="img/h-the-week.webp" alt="A flow diagram of the arena grid feeding into five stages -- mutate, fight, inherit, believe, test -- ending in a small report icon, with a faint rising line beneath representing progress over generations." width="1600" height="800" loading="eager">
-
-
     <div class="article-head reveal">
       <span class="run-eyebrow mono">Ratchet Lab · Article 0</span>
       <h1 class="article-title">The Week I Built an Evolution Lab</h1>
       <p class="article-meta mono">Eight runs · real numbers · honest nulls included</p>
+    </div>
+
+    <img class="lab-header-img reveal" src="img/h-the-week.webp" alt="Split image: the battle arena grid tracing a cracked path from a bot circled at generation 3 to one at generation 200, beside a worn index card stamped RETIRED, representing a canonized lesson later taken back." width="1600" height="800" loading="eager">
+
+    <div class="run-nav-top mono reveal">
+      <a href="run-7.html"><span class="lbl">Previous</span>← Run 7 — The Long Game</a>
+      <a class="next" href="index.html"><span class="lbl">Back to</span>Lab Notes index →</a>
     </div>
 
     <div class="hairline reveal" aria-hidden="true"></div>
@@ -132,6 +155,8 @@
         <li>Bot code runs untrusted, inside a sandbox, with a hard timeout and a three-strikes forfeit rule, so a broken bot just loses instead of crashing the whole system.</li>
         <li>An archive keeps the single best bot ever seen in each of 36 cells of a grid, binned by two measured traits — aggression and mobility — so the colony holds a whole population of different strategies, not one champion repeatedly beating itself.</li>
       </ul>
+      <video class="lab-clip reveal" src="media/evolution-cuts-16x9.mp4" poster="media/poster-evolution.webp" controls muted loop playsinline preload="metadata"></video>
+      <p class="lab-clip-caption mono">Real replays from the 300-generation science arm: gen 4 wanders, gen 61 trades even, gen 218 wins from the corner.</p>
     </section>
 
     <section class="block reveal">
@@ -153,16 +178,16 @@
       <h2 class="section-h"><span class="idx">06</span>The superstition</h2>
       <p>My first version of that system had no trial step — a pattern got noticed, distilled into a rule by one model call, and injected into every future prompt, untested. It broke almost immediately, and in the most instructive way it could have. From a real string of crashes, the distiller wrote a rule telling every future bot to check <code>state.arena?.walls</code> before looping over it. That's wrong — the game actually stores walls at <code>state.walls</code>. Nobody caught it, because nothing checked it. The colony obeyed the false law for the rest of the run: crashes rose from 19 in the first half to 31 in the second, right after all three of its "commandments" existed, and late bots carried comment headers reading like genuine safety notices — written in good faith, following doctrine straight into new deaths.</p>
       <p>The root cause is an asymmetry I should have seen coming: tools only enter the shared library after passing through a real fitness filter — they come from bots that already won. My first version of lessons had no such filter at all. An untested channel is exactly where a culture accumulates its wrong beliefs, same as it would in a human one.</p>
-      <video class="lab-clip reveal" src="media/death-commandment-16x9.mp4" controls muted loop playsinline preload="metadata"></video>
-      <p class="lab-clip-caption mono">A gen-49 bot dying under Law 1; the law was retired at gen 64.</p>
+      <img class="lab-clip reveal" src="img/artifact-false-map.webp" alt="A screenshot of the run's lessons.json ledger showing the false law about state.arena?.walls, the correction noting walls actually live at state.walls, and crashes rising from 19 to 31 after the law existed." width="1600" height="900" loading="lazy">
+      <p class="lab-clip-caption mono">The false law, from the run's own lessons ledger. Crashes went 19 to 31 after it existed.</p>
     </section>
 
     <section class="block reveal">
       <h2 class="section-h"><span class="idx">07</span>Teaching them science</h2>
       <p>So I rebuilt the pipeline around the trial step described above, and the first real test came almost immediately: a candidate rule about never reassigning a certain variable went to its A/B trial, and the children following it actually crashed <em>more</em> than the control group — 4 out of 4, versus 3 out of 4. Rejected, on the spot, by the trial itself. That's the precise failure Run 5 would have sleepwalked straight into.</p>
       <p>Running the same design for 300 generations instead of 100 pushed the mechanism further than I'd expected: two separately canonized rules each failed their own family five times over and were formally retired — repealed with zero human votes, purely because the evidence had turned against them. I watched a small artificial culture propose a law, verify it, adopt it, and later take it back on its own.</p>
-      <video class="lab-clip reveal" src="media/evolution-cuts-16x9.mp4" controls muted loop playsinline preload="metadata"></video>
-      <p class="lab-clip-caption mono">Real replays: gen 4 wanderer, gen 61 even fight, gen 218 corner ambush.</p>
+      <video class="lab-clip reveal" src="media/death-commandment-16x9.mp4" poster="media/poster-death.webp" controls muted loop playsinline preload="metadata"></video>
+      <p class="lab-clip-caption mono">A bot under Law 1, adopted gen 33. The law failed its crash family 5 times and was retired at gen 64. Votes: 0 humans.</p>
     </section>
 
     <section class="block reveal">
@@ -256,6 +281,11 @@
     <span>Godfrey Osagiede · Lab Notes</span>
     <span>Ratchet Lab · Article 0</span>
   </footer>
+  <p class="lab-receipts">Raw receipts — every archive, lessons ledger, metrics file, and match replay: <a href="https://github.com/godfreystorm/ratchet-lab">github.com/godfreystorm/ratchet-lab</a></p>
+
+<button class="to-top-btn" id="toTopBtn" type="button" aria-label="Scroll to top">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 12.5V3.5M8 3.5L3.5 8M8 3.5L12.5 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
 </main>
 
 <script>
@@ -269,6 +299,24 @@
     }, { threshold: 0.1 });
     revealEls.forEach(function(el) { io.observe(el); });
   }
+})();
+</script>
+
+
+<script>
+(function() {
+  var btn = document.getElementById('toTopBtn');
+  if (!btn) return;
+  var onScroll = function() {
+    if (window.scrollY > 400) { btn.classList.add('show'); }
+    else { btn.classList.remove('show'); }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  btn.addEventListener('click', function() {
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
 })();
 </script>
 

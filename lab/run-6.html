@@ -5,6 +5,14 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Run 6 — Living Playbooks — Lab Notes</title>
 <meta name="description" content="Ratchet Lab Run 6: lessons must pass an A/B trial before canonization. A real superstition gets caught and rejected, on camera.">
+<meta property="og:title" content="Run 6 — Living Playbooks — Lab Notes">
+<meta property="og:description" content="Ratchet Lab Run 6: lessons must pass an A/B trial before canonization. A real superstition gets caught and rejected, on camera.">
+<meta property="og:type" content="article">
+<meta property="og:image" content="https://godfreystorm.github.io/lab/img/h-run-6.webp">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Run 6 — Living Playbooks — Lab Notes">
+<meta name="twitter:description" content="Ratchet Lab Run 6: lessons must pass an A/B trial before canonization. A real superstition gets caught and rejected, on camera.">
+<meta name="twitter:image" content="https://godfreystorm.github.io/lab/img/h-run-6.webp">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ccircle cx='50' cy='50' r='40' fill='%23E8621A'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -29,7 +37,7 @@
   .container { max-width: var(--container); margin: 0 auto; padding: 0 var(--space-4); }
   img, svg { max-width: 100%; display: block; }
 
-  .lab-header-img { width: 100%; border-radius: 10px; border: 1px solid var(--border); margin: 0 0 var(--space-3); }
+  .lab-header-img { width: 100%; height: clamp(180px, 28vw, 300px); object-fit: cover; object-position: center; border-radius: 10px; border: 1px solid var(--border); margin: var(--space-3) 0 var(--space-4); }
   .lab-clip { width: 100%; border-radius: 10px; border: 1px solid var(--border); background: #000; }
   .lab-clip-caption { font-family: 'JetBrains Mono', monospace; font-size: 0.7rem; color: var(--ink-faint); text-align: center; margin: 0.7em 0 0; }
   .lab-chart-svg { width: 100%; height: auto; display: block; margin: var(--space-2) 0 var(--space-3); }
@@ -71,7 +79,17 @@
   .run-nav a:hover { color: var(--amber); }
   .run-nav .next { text-align: right; }
   .run-nav .lbl { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.6rem; color: var(--ink-faint); margin-bottom: 0.3em; }
+  .run-nav-top { display: flex; justify-content: space-between; gap: var(--space-2); margin: 0 0 var(--space-3); padding-bottom: var(--space-2); border-bottom: 1px solid var(--border); font-size: 0.7rem; }
+  .run-nav-top a { text-decoration: none; color: var(--ink-fade); transition: color 0.2s ease; }
+  .run-nav-top a:hover { color: var(--amber); }
+  .run-nav-top .next { text-align: right; margin-left: auto; }
+  .run-nav-top .lbl { display: block; font-family: 'JetBrains Mono', monospace; font-size: 0.58rem; color: var(--ink-faint); margin-bottom: 0.2em; }
+  @media (max-width: 480px) { .run-nav-top { flex-direction: column; gap: 0.5em; } .run-nav-top .next { text-align: left; margin-left: 0; } }
   footer.lab-footer { max-width: var(--container); margin: var(--space-5) auto 0; padding: var(--space-3) var(--space-4) 0; border-top: 1px solid var(--border); font-size: 0.62rem; letter-spacing: 0.1em; color: var(--ink-faint); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 0.5em; }
+  .lab-receipts { max-width: var(--container); margin: 0.8em auto 0; padding: 0 var(--space-4); font-size: 0.68rem; letter-spacing: 0.02em; text-transform: none; color: var(--ink-faint); font-family: 'JetBrains Mono', monospace; }
+  .lab-receipts a { color: var(--ink-fade); text-decoration: underline; text-underline-offset: 2px; }
+  .lab-receipts a:hover { color: var(--amber); }
+  @media (max-width: 480px) { .lab-receipts { padding-left: var(--space-3); padding-right: var(--space-3); } }
   .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.7s cubic-bezier(0.22,1,0.36,1), transform 0.7s cubic-bezier(0.22,1,0.36,1); }
   .reveal.in { opacity: 1; transform: translateY(0); }
   @media (max-width: 480px) {
@@ -81,6 +99,11 @@
     .run-nav .next { text-align: left; }
   }
   @media (prefers-reduced-motion: reduce) { .reveal { transition: none; opacity: 1; transform: none; } .nav-back { transition: none; } }
+
+  .to-top-btn { position: fixed; right: var(--space-3); bottom: var(--space-3); z-index: 40; width: 42px; height: 42px; border-radius: 50%; display: flex; align-items: center; justify-content: center; background: color-mix(in oklab, var(--bg), transparent 8%); border: 1px solid var(--border); color: var(--amber); cursor: pointer; opacity: 0; transform: translateY(8px); pointer-events: none; transition: opacity 0.25s ease, transform 0.25s ease, border-color 0.2s ease; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+  .to-top-btn.show { opacity: 1; transform: translateY(0); pointer-events: auto; }
+  .to-top-btn:hover { border-color: var(--amber); }
+  @media (prefers-reduced-motion: reduce) { .to-top-btn { transition: opacity 0.2s ease; } }
 </style>
 </head>
 <body>
@@ -100,15 +123,19 @@
 
     <p class="breadcrumb mono reveal"><a href="index.html">Lab Notes</a> / Run 6 of 7</p>
 
-    <img class="lab-header-img reveal" src="img/h-run-6.webp" alt="A Lessons Ledger page listing colony operating rules, every entry stamped REJECTED with tally marks counting strikes against it." width="1600" height="800" loading="eager">
-
-
     <div class="article-head reveal">
       <span class="run-eyebrow mono">Ratchet Lab · Run 6 · gpt-oss-120b via Groq, verified-lessons pipeline, 100 gens</span>
       <h1 class="article-title">Living Playbooks</h1>
       <p class="article-meta mono">
         <span>The colony gets an epistemology</span>
       </p>
+    </div>
+
+    <img class="lab-header-img reveal" src="img/h-run-6.webp" alt="A redacted lessons ledger page showing two candidate rules and their A/B trial results: one stamped ADOPTED at trial 2/4 vs 3/4, the other stamped REJECTED at trial 4/4 vs 3/4, ending with 'votes: 0.'" width="1600" height="800" loading="eager">
+
+    <div class="run-nav-top mono reveal">
+      <a href="run-5.html"><span class="lbl">Previous</span>← Run 5 — Lessons Library</a>
+      <a class="next" href="run-7.html"><span class="lbl">Next</span>Run 7 — The Long Game →</a>
     </div>
 
     <div class="hairline reveal" aria-hidden="true"></div>
@@ -133,15 +160,13 @@
       <p>Coverage, best Elo, tool count, total smoke crashes (compared directly against Run 5's 50), and how many candidate lessons were trialed, accepted, or rejected.</p>
     </section>
 
-    <section class="badge win mono reveal" style="display:inline-block">The epistemology worked</section>
+    <section class="badge win mono reveal" style="display:inline-block">The trial caught a bad law.</section>
 
     <section class="block reveal">
       <span class="block-head mono">Result</span>
       <p>Coverage held at 58.3%, best Elo reached 1061, the library grew to <span class="num">9</span> tools — the most of any run — and total crashes fell to <span class="num">33</span>, down 34% from Run 5's 50. Only <strong>one</strong> lesson made it to canonization, versus Run 5's three.</p>
       <p>Crash counts split into halves tell the real story: 15 in generations 1–50, 18 in 51–100 — essentially flat — against Run 5's accelerating 19 → 31. Total deaths were down by a third against the same model and the same base prompt.</p>
-      <p>The trial mechanism visibly did its job on camera: a candidate lesson ("never reassign <code>wallSet</code>…") went to its A/B trial and children following it crashed <em>more</em> than the control group — 4 out of 4 versus 3 out of 4. It was rejected. Run 5's pipeline would have canonized that exact candidate into scripture. This is the precise failure mode from Run 5, caught by the exact mechanism its autopsy called for.</p>
-      <video class="lab-clip reveal" src="media/evolution-cuts-16x9.mp4" controls muted loop playsinline preload="metadata"></video>
-      <p class="lab-clip-caption mono">Real replays: gen 4 wanderer, gen 61 even fight, gen 218 corner ambush.</p>
+      <p>The trial mechanism visibly did its job: a candidate lesson ("never reassign <code>wallSet</code>…") went to its A/B trial and children following it crashed <em>more</em> than the control group — 4 out of 4 versus 3 out of 4. It was rejected. Run 5's pipeline would have canonized that exact candidate into scripture. This is the precise failure mode from Run 5, caught by the exact mechanism its autopsy called for.</p>
     </section>
 
     <section class="block reveal">
@@ -166,6 +191,11 @@
     <span>Godfrey Osagiede · Lab Notes</span>
     <span>Ratchet Lab · Run 6</span>
   </footer>
+  <p class="lab-receipts">Raw receipts — every archive, lessons ledger, metrics file, and match replay: <a href="https://github.com/godfreystorm/ratchet-lab">github.com/godfreystorm/ratchet-lab</a></p>
+
+<button class="to-top-btn" id="toTopBtn" type="button" aria-label="Scroll to top">
+  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true"><path d="M8 12.5V3.5M8 3.5L3.5 8M8 3.5L12.5 8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+</button>
 </main>
 
 <script>
@@ -179,6 +209,24 @@
     }, { threshold: 0.1 });
     revealEls.forEach(function(el) { io.observe(el); });
   }
+})();
+</script>
+
+
+<script>
+(function() {
+  var btn = document.getElementById('toTopBtn');
+  if (!btn) return;
+  var onScroll = function() {
+    if (window.scrollY > 400) { btn.classList.add('show'); }
+    else { btn.classList.remove('show'); }
+  };
+  window.addEventListener('scroll', onScroll, { passive: true });
+  onScroll();
+  btn.addEventListener('click', function() {
+    var reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    window.scrollTo({ top: 0, behavior: reduceMotion ? 'auto' : 'smooth' });
+  });
 })();
 </script>
 
