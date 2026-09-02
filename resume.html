@@ -387,19 +387,19 @@
 
   /* ---------- print ---------- */
   @media print {
-    @page { size: letter; margin: 0.45in 0.55in; }
+    @page { size: letter; margin: 0.4in 0.5in; }
     html, body {
       background: #FFFFFF;
       color: #141414;
       font-size: 10.5pt;
-      line-height: 1.36;
+      line-height: 1.3;
     }
     .grain, .site-nav, .print-btn { display: none !important; }
     main { padding-top: 0; padding-bottom: 0; }
     .container { max-width: 100%; padding: 0; }
     .masthead { padding: 0 0 var(--space-2); }
-    .summary-text { max-width: none; font-size: 9.2pt; }
-    .masthead-name { font-size: 22pt; color: #141414; }
+    .summary-text { max-width: none; font-size: 9pt; }
+    .masthead-name { font-size: 20pt; color: #141414; }
     .masthead-role { font-size: 10.5pt; color: #B8471A; }
     .masthead-contact { font-size: 8pt; color: #333333; }
     .hairline { height: 1.4pt; background: #E8621A !important; margin: var(--space-2) 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
@@ -407,17 +407,17 @@
        the aside on its own page and leaves half-empty sheets */
     .resume-grid { display: block; }
     .main-col, .aside-col { display: block; }
-    section.block { margin-bottom: 0.7rem; break-inside: auto; }
+    section.block { margin-bottom: 0.55rem; break-inside: auto; }
     /* Education is three lines; never strand it on a page of its own */
     .edu-school { break-before: avoid; }
-    .aside-col section.block:first-child { margin-top: 0.7rem; }
+    .aside-col section.block:first-child { margin-top: 0.55rem; }
     .block-head { break-after: avoid; }
     ul.bullets li { break-inside: avoid; }
     /* Links duplicate the masthead contact line on paper */
     .links-block { display: none; }
     /* let a long role fragment rather than shove a whole page of it forward;
        the pieces that must stay together are guarded individually below */
-    .exp-item { margin-bottom: 0.7rem; break-inside: auto; gap: 1rem; grid-template-columns: 118px 1fr; }
+    .exp-item { margin-bottom: 0.55rem; break-inside: auto; gap: 1rem; grid-template-columns: 118px 1fr; }
     .exp-role, .exp-org, .exp-blurb, .sub-role-name, .sub-role-meta { break-after: avoid; }
     .exp-blurb, .exp-role, .exp-org { break-inside: avoid; }
     p, li { orphans: 2; widows: 2; }
@@ -425,13 +425,13 @@
     .exp-org { font-size: 9.6pt; color: #141414; }
     .exp-meta { font-size: 7.2pt; color: #555555; }
     .exp-meta .exp-dates { color: #B8471A; }
-    .exp-blurb { font-size: 8.6pt; color: #444444; margin: 0.25em 0 0.4em; }
-    ul.bullets li { font-size: 8.6pt; margin-bottom: 0.24em; color: #1a1a1a; }
+    .exp-blurb { font-size: 8.4pt; color: #444444; margin: 0.2em 0 0.3em; }
+    ul.bullets li { font-size: 8.4pt; margin-bottom: 0.18em; color: #1a1a1a; }
     ul.bullets li strong { font-weight: 650; color: #000000; }
     ul.bullets li::before { background: #E8621A !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     /* a product sub-block may span the page break; only its heading is glued
        to the first bullet (break-after: avoid above) */
-    .sub-role { margin-top: 0.6rem; break-inside: auto; }
+    .sub-role { margin-top: 0.48rem; break-inside: auto; }
     .sub-role-name { font-size: 9.2pt; }
     .sub-role-meta { font-size: 7pt; color: #555555; }
     .block-head { color: #B8471A; border-bottom-color: #cccccc; font-size: 7.4pt; margin-bottom: 0.45rem; }
@@ -479,7 +479,7 @@
       <h1 class="masthead-name">Godfrey Osagiede</h1>
       <p class="masthead-role">Software Engineer — Payments &amp; AI Product</p>
       <p class="masthead-contact mono">
-        <span>Dallas–Fort Worth, TX</span>
+        <span>Dallas–Fort Worth, TX · open to NYC · remote-friendly</span>
         <span class="sep">·</span>
         <a href="tel:+14696607278">(469) 660-7278</a>
         <span class="sep">·</span>
@@ -492,6 +492,10 @@
         <a href="https://apps.apple.com/us/app/focus-down-adhd-study-timer/id6755708778" target="_blank" rel="noopener">FocusDown on the App Store</a>
         <span class="sep">·</span>
         <a href="https://throwda.com" target="_blank" rel="noopener">throwda.com</a>
+        <span class="sep">·</span>
+        <a href="https://curbtip.com" target="_blank" rel="noopener">curbtip.com</a>
+        <span class="sep">·</span>
+        <a href="https://godfreystorm.github.io/lab/" target="_blank" rel="noopener">godfreystorm.github.io/lab</a>
       </p>
     </div>
 
@@ -502,7 +506,7 @@
 
         <section class="block reveal">
           <span class="block-head mono">Summary</span>
-          <p class="summary-text">Payments-focused software engineer who owns Adyen operations across 8,000+ stores in production, and ships products end-to-end outside of work — an iOS app with 10,000+ customers and a production-grade WhatsApp fintech ready for launch. Deep production database experience (MongoDB, MySQL, Postgres) and an AI-agent-driven development workflow (Claude Code, custom agents, MCP) that lets me deliver at multiple-engineer velocity.</p>
+          <p class="summary-text">Payments-focused software engineer who owns Adyen operations across <strong>8,000+ stores</strong> in production and ships products end-to-end outside of work — an iOS app with <strong>10,000+ customers</strong>, an NFC tap-to-tip payments product, and a production-grade WhatsApp fintech. Also build and run agent systems as real engineering, not tooling: a public evolution lab that ran <strong>41 LLM-agent colonies</strong> over 10,810 generations and 356 pre-registered A/B trials, and published the result that disproved its own founding thesis. Deep production database experience (MongoDB, MySQL, Postgres).</p>
         </section>
 
         <section class="block reveal">
@@ -523,7 +527,6 @@
                 <li>Leading a timezone migration touching <strong>30–40M records</strong> across 2,905 organizations (in code review).</li>
                 <li>Operate daily in production MongoDB (aggregation pipelines, <code>$graphLookup</code> over 2,500+ org hierarchies, bulkWrite backfills) and MySQL (284-table CRM schema, FK-cascade-safe bulk operations, 600K+ row inserts) across multiple environments.</li>
                 <li>Every production mutation follows dry-run → verified backup → stakeholder approval → per-document apply → count verification; scripts ship through Bitbucket PR review.</li>
-                <li>Authored the team's operational knowledge base: 24+ runbooks, 236 reusable query pages, and 300+ reproducible per-ticket docs.</li>
               </ul>
             </div>
           </div>
@@ -536,7 +539,7 @@
             <div class="exp-body">
               <p class="exp-role">Software Engineer (Products)</p>
               <p class="exp-org">Raidersoul LLC</p>
-              <p class="exp-blurb">Build and operate two products end-to-end alongside my full-time role — one earning on the App Store, one production-grade and pre-launch.</p>
+              <p class="exp-blurb">Build and operate three products end-to-end alongside my full-time role — one earning on the App Store, two payments products in production-grade build.</p>
 
               <div class="sub-role">
                 <div class="sub-role-head">
@@ -553,6 +556,19 @@
 
               <div class="sub-role">
                 <div class="sub-role-head">
+                  <span class="sub-role-name">Curbtip — NFC tap-to-tip for rideshare drivers</span>
+                  <span class="sub-role-meta mono">In build, deployed · Next.js, TypeScript, Supabase/Postgres, Stripe Connect, SwiftUI App Clip, React Native/Expo</span>
+                </div>
+                <ul class="bullets">
+                  <li>Riders tap an NFC tag and tip in one Apple Pay confirm — no app, no signup; the driver keeps <strong>100%</strong> and revenue comes from a rider-side service fee.</li>
+                  <li>Shipped the full money path on the deployed site: phone-OTP driver auth, tag/kit activation lifecycle, server-priced Stripe PaymentIntents, and an idempotent webhook ledger verified against replayed and deliberately dropped events.</li>
+                  <li>Set the fee structure from a choice model calibrated on a published 12M-trip pricing experiment, after re-validating the category's tipping assumptions against <strong>20M NYC rideshare trip records</strong> — the modeling overturned four of the five stats the original spec was built on.</li>
+                  <li>Built a SwiftUI App Clip (NFC lock-screen invocation → Apple Pay, zero install) and a React Native/Expo driver dashboard; wrote a Puppeteer audit harness covering 19 routes × 2 color schemes × 4 widths for WCAG contrast and tap-target compliance.</li>
+                </ul>
+              </div>
+
+              <div class="sub-role">
+                <div class="sub-role-head">
                   <span class="sub-role-name">Throwda — WhatsApp-native fintech for Nigeria</span>
                   <span class="sub-role-meta mono">Production-grade, pre-launch · TypeScript, Node.js, Next.js, Supabase/Postgres, Paystack</span>
                 </div>
@@ -562,6 +578,23 @@
                   <li>Designed a direct-charge payment architecture (Paystack <code>charge_authorization</code>, zero stored value) that avoided a <strong>₦100M PSSP licensing requirement</strong>; multi-provider routing (VTPass/eBills) with margin-based failover and SQL kill switches.</li>
                 </ul>
               </div>
+            </div>
+          </div>
+
+          <div class="exp-item">
+            <div class="exp-meta mono">
+              Independent
+              <span class="exp-dates">2026</span>
+            </div>
+            <div class="exp-body">
+              <p class="exp-role">Ratchet Lab — open-endedness research on LLM agent populations</p>
+              <p class="exp-org"><a href="https://godfreystorm.github.io/lab/" target="_blank" rel="noopener">godfreystorm.github.io/lab</a></p>
+              <p class="exp-blurb">Independent research on whether populations of LLM-written agents accumulate capability across generations.</p>
+              <ul class="bullets">
+                <li>Built the full evolution harness (Node.js, SQLite archives, multi-provider LLM routing) and ran <strong>41 colonies</strong>, 10,810 generations, 30,287 API calls, and 356 A/B trials for ~$30 total compute.</li>
+                <li>Pre-registered runs with a Fisher significance gate after finding an earlier trial arm statistically empty; every run ships raw archives, spend ledgers, and full match replays.</li>
+                <li>Published the ablation that <strong>disproved the thesis the project was built on</strong> — the no-library control beat the shared-library arm — plus two retractions of my own earlier claims.</li>
+              </ul>
             </div>
           </div>
 
@@ -590,7 +623,7 @@
 
           <div class="skill-group">
             <span class="skill-group-name mono">Payments</span>
-            <p class="skill-list">Adyen, Paystack, RevenueCat, Apple StoreKit, Superwall, double-entry ledgers</p>
+            <p class="skill-list">Adyen, Stripe Connect, Paystack, RevenueCat, Apple StoreKit, Superwall, double-entry ledgers</p>
           </div>
           <div class="skill-group">
             <span class="skill-group-name mono">AI Engineering</span>
@@ -644,6 +677,18 @@
               </a>
             </li>
             <li>
+              <a href="https://curbtip.com" target="_blank" rel="noopener" data-print-url="curbtip.com">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5" stroke="currentColor" stroke-width="1.6"/><path d="M8.5 12.5C9.4 11.2 9.4 10.3 8.5 9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><path d="M11.3 14C13 11.8 13 10 11.3 7.8" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                Curbtip
+              </a>
+            </li>
+            <li>
+              <a href="https://godfreystorm.github.io/lab/" target="_blank" rel="noopener" data-print-url="godfreystorm.github.io/lab">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M10 3V9.5L4.6 18C4 19 4.7 20.3 5.9 20.3H18.1C19.3 20.3 20 19 19.4 18L14 9.5V3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/><line x1="9" y1="3" x2="15" y2="3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><line x1="7.2" y1="14.5" x2="16.8" y2="14.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+                Ratchet Lab
+              </a>
+            </li>
+            <li>
               <a href="mailto:godfreystorm@gmail.com" data-print-url="godfreystorm@gmail.com">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="2" y="4" width="20" height="16" rx="2" stroke="currentColor" stroke-width="1.6"/><path d="M3 6L12 13L21 6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
                 Email
@@ -659,7 +704,7 @@
 
   <footer class="resume-footer mono">
     <span>Godfrey Osagiede · Résumé</span>
-    <span>Updated 2026</span>
+    <span>Updated September 2026</span>
   </footer>
 </main>
 
