@@ -392,7 +392,7 @@
       background: #FFFFFF;
       color: #141414;
       font-size: 10.5pt;
-      line-height: 1.3;
+      line-height: 1.26;
     }
     .grain, .site-nav, .print-btn { display: none !important; }
     main { padding-top: 0; padding-bottom: 0; }
@@ -407,7 +407,7 @@
        the aside on its own page and leaves half-empty sheets */
     .resume-grid { display: block; }
     .main-col, .aside-col { display: block; }
-    section.block { margin-bottom: 0.55rem; break-inside: auto; }
+    section.block { margin-bottom: 0.45rem; break-inside: auto; }
     /* Education is three lines; never strand it on a page of its own */
     .edu-school { break-before: avoid; }
     .aside-col section.block:first-child { margin-top: 0.55rem; }
@@ -417,7 +417,7 @@
     .links-block { display: none; }
     /* let a long role fragment rather than shove a whole page of it forward;
        the pieces that must stay together are guarded individually below */
-    .exp-item { margin-bottom: 0.55rem; break-inside: auto; gap: 1rem; grid-template-columns: 118px 1fr; }
+    .exp-item { margin-bottom: 0.45rem; break-inside: auto; gap: 1rem; grid-template-columns: 118px 1fr; }
     .exp-role, .exp-org, .exp-blurb, .sub-role-name, .sub-role-meta { break-after: avoid; }
     .exp-blurb, .exp-role, .exp-org { break-inside: avoid; }
     p, li { orphans: 2; widows: 2; }
@@ -426,7 +426,7 @@
     .exp-meta { font-size: 7.2pt; color: #555555; }
     .exp-meta .exp-dates { color: #B8471A; }
     .exp-blurb { font-size: 8.4pt; color: #444444; margin: 0.2em 0 0.3em; }
-    ul.bullets li { font-size: 8.4pt; margin-bottom: 0.18em; color: #1a1a1a; }
+    ul.bullets li { font-size: 8.2pt; margin-bottom: 0.14em; color: #1a1a1a; }
     ul.bullets li strong { font-weight: 650; color: #000000; }
     ul.bullets li::before { background: #E8621A !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     /* a product sub-block may span the page break; only its heading is glued
@@ -525,8 +525,10 @@
                 <li>Primary engineer for all Adyen payment operations (Balance Platform, Management, Legal Entity APIs): store configuration, fee structures, KYC enablement/resets, and sweep management across <strong>8,000+ stores</strong>.</li>
                 <li>Built a Node.js audit-and-repair tool that validated 8,651 Adyen stores across two production environments, cut indeterminate cases from 2,393 to 87 via Legal Entity API lookups, and safely repaired <strong>4,088 misconfigured stores</strong> under a compliance deadline — with rate-limit retry/backoff.</li>
                 <li>Leading a timezone migration touching <strong>30–40M records</strong> across 2,905 organizations (in code review).</li>
+                <li>Shipping the superadmin billing epic that lets staff set Adyen platform fees in-app, <strong>retiring an entire class of engineering ticket</strong> — fee changes were previously out-of-band DB edits. Two phases released; permission-gated <code>updatePlatformFees</code> method with server-side validation in build.</li>
+                <li>Wrote <strong>~570 lines of unit tests</strong> against ~1,340 lines of feature code on that epic, shipping design doc → plan → code → tests → PR review.</li>
                 <li>Operate daily in production MongoDB (aggregation pipelines, <code>$graphLookup</code> over 2,500+ org hierarchies, bulkWrite backfills) and MySQL (284-table CRM schema, FK-cascade-safe bulk operations, 600K+ row inserts) across multiple environments.</li>
-                <li>Every production mutation follows dry-run → verified backup → stakeholder approval → per-document apply → count verification; scripts ship through Bitbucket PR review.</li>
+                <li>Every production mutation follows dry-run → verified backup → approval → apply → count verification, shipped through Bitbucket PR review.</li>
               </ul>
             </div>
           </div>
