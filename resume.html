@@ -321,6 +321,10 @@
     margin-top: 0.3em;
   }
 
+  /* the six numbers that carry the story - near-black, so they don't
+     compete with the tangerine already used for dates and bullet marks */
+  ul.bullets li strong { font-weight: 600; color: var(--ink); }
+
   .link-list { list-style: none; margin: 0; padding: 0; }
   .link-list li { margin-bottom: 0.7em; }
   .link-list li:last-child { margin-bottom: 0; }
@@ -423,6 +427,7 @@
     .exp-meta .exp-dates { color: #B8471A; }
     .exp-blurb { font-size: 8.6pt; color: #444444; margin: 0.25em 0 0.4em; }
     ul.bullets li { font-size: 8.6pt; margin-bottom: 0.24em; color: #1a1a1a; }
+    ul.bullets li strong { font-weight: 650; color: #000000; }
     ul.bullets li::before { background: #E8621A !important; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
     /* a product sub-block may span the page break; only its heading is glued
        to the first bullet (break-after: avoid above) */
@@ -513,9 +518,9 @@
               <p class="exp-org">LineLeader</p>
               <p class="exp-blurb">Childcare-management SaaS serving 2,500+ franchise organizations across US, AU, and UK.</p>
               <ul class="bullets">
-                <li>Primary engineer for all Adyen payment operations (Balance Platform, Management, Legal Entity APIs): store configuration, fee structures, KYC enablement/resets, and sweep management across 8,000+ stores.</li>
-                <li>Built a Node.js audit-and-repair tool that validated 8,651 Adyen stores across two production environments, cut indeterminate cases from 2,393 to 87 via Legal Entity API lookups, and safely repaired 4,088 misconfigured stores under a compliance deadline — with rate-limit retry/backoff.</li>
-                <li>Leading a timezone migration touching 30–40M records across 2,905 organizations (in code review).</li>
+                <li>Primary engineer for all Adyen payment operations (Balance Platform, Management, Legal Entity APIs): store configuration, fee structures, KYC enablement/resets, and sweep management across <strong>8,000+ stores</strong>.</li>
+                <li>Built a Node.js audit-and-repair tool that validated 8,651 Adyen stores across two production environments, cut indeterminate cases from 2,393 to 87 via Legal Entity API lookups, and safely repaired <strong>4,088 misconfigured stores</strong> under a compliance deadline — with rate-limit retry/backoff.</li>
+                <li>Leading a timezone migration touching <strong>30–40M records</strong> across 2,905 organizations (in code review).</li>
                 <li>Operate daily in production MongoDB (aggregation pipelines, <code>$graphLookup</code> over 2,500+ org hierarchies, bulkWrite backfills) and MySQL (284-table CRM schema, FK-cascade-safe bulk operations, 600K+ row inserts) across multiple environments.</li>
                 <li>Every production mutation follows dry-run → verified backup → stakeholder approval → per-document apply → count verification; scripts ship through Bitbucket PR review.</li>
                 <li>Authored the team's operational knowledge base: 24+ runbooks, 236 reusable query pages, and 300+ reproducible per-ticket docs.</li>
@@ -539,8 +544,8 @@
                   <span class="sub-role-meta mono">App Store · Launched Feb 2026 · 4.8★ · React Native/Expo, TypeScript, Swift, Supabase</span>
                 </div>
                 <ul class="bullets">
-                  <li>Grew to 10,000+ customers and ~1,500 monthly active users with paying subscribers in 5 months; 510 commits solo.</li>
-                  <li>Wrote ~8K lines of native Swift: WidgetKit home-screen widgets, Live Activities/Dynamic Island, and a Screen Time (Family Controls) app-blocking stack.</li>
+                  <li>Grew to <strong>10,000+ customers</strong> and ~1,500 monthly active users with paying subscribers in 5 months; 510 commits solo.</li>
+                  <li>Wrote <strong>~8K lines of native Swift</strong>: WidgetKit home-screen widgets, Live Activities/Dynamic Island, and a Screen Time (Family Controls) app-blocking stack.</li>
                   <li>Built the full monetization funnel — StoreKit + RevenueCat + remotely configurable Superwall paywalls with webhook processing on Supabase edge functions — and instrumented a 20+ step onboarding funnel in Mixpanel, fixing the #1 drop-off (22.6%) found in the data.</li>
                   <li>Automated growth operations with AI agent pipelines: daily content generation/posting, creator outreach, and a contracted influencer program (10 signed creators).</li>
                 </ul>
@@ -554,7 +559,7 @@
                 <ul class="bullets">
                   <li>Bill payments, P2P, and community collections entirely inside WhatsApp; launch-partner dashboard seeded with a Lagos church's real 84-account chart of accounts.</li>
                   <li>Implemented double-entry bookkeeping with DB-enforced balanced journals, bank reconciliation from real bank CSV/XLSX statements, and financial reports (balance sheet, cashflow, budget variance) — ~45K LOC dashboard with 75+ test files (Vitest + Playwright).</li>
-                  <li>Designed a direct-charge payment architecture (Paystack <code>charge_authorization</code>, zero stored value) that avoided a ₦100M PSSP licensing requirement; multi-provider routing (VTPass/eBills) with margin-based failover and SQL kill switches.</li>
+                  <li>Designed a direct-charge payment architecture (Paystack <code>charge_authorization</code>, zero stored value) that avoided a <strong>₦100M PSSP licensing requirement</strong>; multi-provider routing (VTPass/eBills) with margin-based failover and SQL kill switches.</li>
                 </ul>
               </div>
             </div>
@@ -585,23 +590,23 @@
 
           <div class="skill-group">
             <span class="skill-group-name mono">Payments</span>
-            <p class="skill-list">Adyen (Balance Platform, Management, Legal Entity APIs), Paystack, RevenueCat, Apple StoreKit, Superwall, KYC/onboarding flows, double-entry ledgers, idempotent payment processing, webhook pipelines</p>
+            <p class="skill-list">Adyen, Paystack, RevenueCat, Apple StoreKit, Superwall, double-entry ledgers</p>
           </div>
           <div class="skill-group">
             <span class="skill-group-name mono">AI Engineering</span>
-            <p class="skill-list">LLM integration (Anthropic/OpenAI APIs), AI agents &amp; orchestration, MCP servers, Claude Code (advanced), RAG, prompt pipelines, autonomous workflow automation</p>
+            <p class="skill-list">LLM integration, AI agents &amp; orchestration, MCP servers, Claude Code</p>
           </div>
           <div class="skill-group">
             <span class="skill-group-name mono">Languages</span>
-            <p class="skill-list">TypeScript/JavaScript, PHP (Symfony), SQL, Python, Swift, Bash</p>
+            <p class="skill-list">TypeScript/JavaScript, PHP, SQL, Python, Swift, Bash</p>
           </div>
           <div class="skill-group">
             <span class="skill-group-name mono">Databases</span>
-            <p class="skill-list">MongoDB (production aggregation pipelines, Atlas), MySQL, Postgres (Supabase, RLS, migrations)</p>
+            <p class="skill-list">MongoDB, MySQL, Postgres, Supabase</p>
           </div>
           <div class="skill-group">
             <span class="skill-group-name mono">Platforms</span>
-            <p class="skill-list">Node.js, React, Next.js, React Native/Expo, WhatsApp Business API, Supabase edge functions, Docker, Railway, AWS, Git/Bitbucket, Mixpanel</p>
+            <p class="skill-list">Node.js, React, Next.js, React Native/Expo, Docker, Railway, AWS, Git/Bitbucket, Mixpanel</p>
           </div>
         </section>
 
