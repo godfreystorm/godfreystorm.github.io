@@ -169,8 +169,16 @@
     flex-wrap: wrap;
     gap: 0.2em 1em;
   }
-  .masthead-contact a { text-decoration: none; transition: color 0.2s ease; }
-  .masthead-contact a:hover { color: var(--tangerine); }
+  /* read as links without needing a hover: tangerine ink + a soft rule under */
+  .masthead-contact a {
+    color: var(--tangerine);
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--tangerine), transparent 55%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    transition: color 0.2s ease, text-decoration-color 0.2s ease;
+  }
+  .masthead-contact a:hover { text-decoration-color: var(--tangerine); }
   .masthead-contact .sep { color: var(--ink-faint); }
 
   .hairline {
@@ -320,12 +328,15 @@
     display: flex;
     align-items: center;
     gap: 0.6em;
-    text-decoration: none;
+    text-decoration: underline;
+    text-decoration-color: color-mix(in oklab, var(--tangerine), transparent 60%);
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
     font-size: 0.82rem;
     color: var(--ink-fade);
-    transition: color 0.2s ease, transform 0.2s ease;
+    transition: color 0.2s ease, transform 0.2s ease, text-decoration-color 0.2s ease;
   }
-  .link-list a:hover { color: var(--tangerine); transform: translateX(2px); }
+  .link-list a:hover { color: var(--tangerine); transform: translateX(2px); text-decoration-color: var(--tangerine); }
   .link-list svg { flex-shrink: 0; }
 
   footer.resume-footer {
