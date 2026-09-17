@@ -338,7 +338,7 @@
 
     <section class="block reveal">
       <span class="block-head mono">Next</span>
-      <p>Build in honest failure handling — a loud abort instead of a silent fallback — an era-spread replay picker, and treat the raw API-call count as the one number in every report that can't lie. Then spend the first real dollar on Run 1.</p>
+      <p>Build in honest failure handling (a loud abort instead of a silent fallback), an era-spread replay picker, and treat the raw API-call count as the one number in every report that can't lie. Then spend the first real dollar on Run 1.</p>
     </section>
 
 
@@ -347,7 +347,7 @@
     <section class="block reveal" id="cost-strip">
       <span class="block-head mono">What this run cost</span>
       <p>This run made <span class="num">no API calls at all</span> — it ran on the free deterministic mock mutator.</p>
-      <p class="fade">Series through Run 0: <span class="num">0</span> calls · <span class="num">$0.00–$0.00</span>. Call counts are exact, straight from each run's metrics file. Costs are a <em>range</em> rather than a figure, for a reason worth stating: the provider bills cached input tokens at half price and does not report the cached fraction in the API response — it appears only in the console dashboard — so the upper bound prices every input token as uncached and the lower bound prices all of them as cache hits. A sampled dashboard minute showed 68% of input tokens were cache hits, which puts the truth nearer the bottom of each range. Token counts are measured exactly from Run 8 onward; earlier runs additionally reconstruct tokens from Run 8b's measured per-call profile (3,642 in / 1,348 out), because the usage field was discarded before it was ever written down. A bound is not a measurement and a reconstruction is neither, so both are labelled.</p>
+      <p class="fade">Series through Run 0: <span class="num">0</span> calls · <span class="num">$0.00–$0.00</span>. Call counts are exact, straight from each run's metrics file. Costs are a <em>range</em> rather than a figure because the provider bills cached input tokens at half price and does not report the cached fraction in the API response, only in the console dashboard, so the upper bound prices every input token as uncached and the lower bound prices all of them as cache hits. A sampled dashboard minute showed 68% of input tokens were cache hits, which puts the truth nearer the bottom of each range. Token counts are measured exactly from Run 8 onward; earlier runs additionally reconstruct tokens from Run 8b's measured per-call profile (3,642 in / 1,348 out), because the usage field was discarded before it was ever written down. A bound is not a measurement and a reconstruction is neither, so both are labelled.</p>
     </section>
 
     <div class="run-nav mono reveal">

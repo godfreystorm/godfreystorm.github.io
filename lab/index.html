@@ -3,8 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Lab Notes — Godfrey Osagiede</title>
-<meta name="description" content="Ratchet Lab: a homemade AI evolution lab built in one week. Eight runs, honest nulls included.">
+<title>Lab Notes — LLM agent evaluation, Godfrey Osagiede</title>
+<meta name="description" content="Ratchet Lab: an evaluation harness for LLM-written agents. Pre-registered A/B trials behind a significance gate, raw archives and spend ledgers per run, and the published null that killed the founding thesis.">
 <meta property="og:title" content="Lab Notes — Godfrey Osagiede">
 <meta property="og:description" content="Ratchet Lab: a homemade AI evolution lab built in one week. Eight runs, honest nulls included.">
 <meta property="og:type" content="website">
@@ -431,7 +431,19 @@
     <div class="hairline reveal" aria-hidden="true"></div>
 
     <p class="intro reveal">
-      I built a small arena where simple bots fight each other, and let an LLM rewrite the losers into new bots, generation after generation. The question I actually wanted answered wasn't "can I make a bot win" — it was whether a colony of AI agents can accumulate real, shared knowledge over time, the way human culture does, instead of just getting reshuffled by a smarter model. I ran eight experiments over one week to find out. Some of them worked. Two of them are null results I'm keeping in the record on purpose, because the honest version of this story is more interesting than the flattering one. Numbers below are exactly what the runs produced — no rounding up. Full source and every raw run artifact are on <a href="https://github.com/godfreystorm/ratchet-lab" style="color: var(--amber); text-decoration: underline; text-underline-offset: 2px;">GitHub</a>.
+      I built a small arena where simple bots fight each other, and let an LLM rewrite the losers into new bots, generation after generation. The question I actually wanted answered wasn't "can I make a bot win" — it was whether a colony of AI agents can accumulate real, shared knowledge over time, the way human culture does, instead of just getting reshuffled by a smarter model. I ran eleven experiments to find out, the first eight of them in one week. Some of them worked. Two of them are null results I'm keeping in the record on purpose, because the honest version of this story is more interesting than the flattering one. Numbers below are exactly what the runs produced — no rounding up. Full source and every raw run artifact are on <a href="https://github.com/godfreystorm/ratchet-lab" style="color: var(--amber); text-decoration: underline; text-underline-offset: 2px;">GitHub</a>.
+    </p>
+
+    <div class="hairline reveal" aria-hidden="true"></div>
+
+    <span class="lab-eyebrow mono reveal">How the runs are evaluated</span>
+
+    <p class="intro reveal">
+      Every claim on this page comes out of the same harness, and the harness is the part I'd defend in a code review. Runs are pre-registered: the arms, the metric and the stopping point are written down before the first generation, because an early trial of mine turned out to be statistically empty and I had already started reading a story into it. Comparisons go through a Fisher significance gate, so a null stays a null. Every run ships its own receipts in the repo — the SQLite archive, the lessons ledger, the spend bill, the metrics stream and full match replays — and nothing is cleaned up after the fact.
+    </p>
+
+    <p class="intro reveal">
+      That discipline is what produced the most useful result here: a three-arm ablation where the no-library control beat the shared-library arm, which is the opposite of what the project was built to show. Two earlier claims of mine are retracted in the record below. If you are reading this to work out whether I can measure an AI system rather than just ship one, those two facts are the ones that answer it.
     </p>
 
     <div class="series-grid">

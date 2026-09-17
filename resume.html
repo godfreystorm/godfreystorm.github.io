@@ -506,7 +506,7 @@
 
         <section class="block reveal">
           <span class="block-head mono">Summary</span>
-          <p class="summary-text">Payments-focused software engineer who owns Adyen operations across <strong>8,000+ stores</strong> in production and ships products end-to-end outside of work — an iOS app with <strong>10,000+ customers</strong>, an NFC tap-to-tip payments product, and a production-grade WhatsApp fintech. Also build and run agent systems as real engineering, not tooling: a public evolution lab that ran <strong>41 LLM-agent colonies</strong> over 10,810 generations and 356 pre-registered A/B trials, and published the result that disproved its own founding thesis. Deep production database experience (MongoDB, MySQL, Postgres).</p>
+          <p class="summary-text">Payments-focused software engineer who owns Adyen operations across <strong>8,000+ stores</strong> in production and ships products end-to-end outside of work — an iOS app with <strong>10,000+ customers</strong>, an NFC tap-to-tip payments product, and a production-grade WhatsApp fintech. Also run agent systems as measured experiments: a public evolution lab that ran <strong>41 LLM-agent colonies</strong> over 10,810 generations and 356 pre-registered A/B trials, and published the result that disproved its own founding thesis. Deep production database experience (MongoDB, MySQL, Postgres).</p>
         </section>
 
         <section class="block reveal">
@@ -523,7 +523,7 @@
               <p class="exp-blurb">Childcare-management SaaS serving 2,500+ franchise organizations across US, AU, and UK.</p>
               <ul class="bullets">
                 <li>Primary engineer for all Adyen payment operations (Balance Platform, Management, Legal Entity APIs): store configuration, fee structures, KYC enablement/resets, and sweep management across <strong>8,000+ stores</strong>.</li>
-                <li>Built a Node.js audit-and-repair tool that validated 8,651 Adyen stores across two production environments, cut indeterminate cases from 2,393 to 87 via Legal Entity API lookups, and safely repaired <strong>4,088 misconfigured stores</strong> under a compliance deadline — with rate-limit retry/backoff.</li>
+                <li>Built a Node.js audit-and-repair tool that validated 8,651 Adyen stores across two production environments, cut indeterminate cases from 2,393 to 87 via Legal Entity API lookups, and safely repaired <strong>4,088 misconfigured stores</strong> under a compliance deadline, with rate-limit retry/backoff.</li>
                 <li>Leading a timezone migration touching <strong>30–40M records</strong> across 2,905 organizations (in code review).</li>
                 <li>Built the superadmin billing epic that lets staff set Adyen platform fees in-app, <strong>retiring an entire class of engineering ticket</strong> — fee changes were previously out-of-band DB edits. Shipped the tabbed shell, the fee table, and a permission-gated <code>updatePlatformFees</code> method with server-side validation; now extending it to onboard organizations onto Adyen sub-accounts from the UI, replacing scripts run by hand today.</li>
                 <li>Wrote <strong>~570 lines of unit tests</strong> against ~1,340 lines of feature code on that epic, shipping design doc → plan → code → tests → PR review.</li>
@@ -541,7 +541,7 @@
             <div class="exp-body">
               <p class="exp-role">Software Engineer (Products)</p>
               <p class="exp-org">Raidersoul LLC</p>
-              <p class="exp-blurb">Build and operate three products end-to-end alongside my full-time role — one earning on the App Store, two payments products in production-grade build.</p>
+              <p class="exp-blurb">Build and operate three products end-to-end alongside my full-time role — one earning on the App Store, two payments products built and deployed, pre-launch.</p>
 
               <div class="sub-role">
                 <div class="sub-role-head">
@@ -563,7 +563,7 @@
                 </div>
                 <ul class="bullets">
                   <li>Riders tap an NFC tag and tip in one Apple Pay confirm — no app, no signup; the driver keeps <strong>100%</strong> and revenue comes from a rider-side service fee.</li>
-                  <li>Shipped the full money path on the deployed site: phone-OTP driver auth, tag/kit activation lifecycle, server-priced Stripe PaymentIntents, and an idempotent webhook ledger verified against replayed and deliberately dropped events.</li>
+                  <li>Built the full money path end-to-end: phone-OTP driver auth, tag/kit activation lifecycle, server-priced Stripe PaymentIntents, and an idempotent webhook ledger verified against replayed and deliberately dropped events.</li>
                   <li>Set the fee structure from a choice model calibrated on a published 12M-trip pricing experiment, after re-validating the category's tipping assumptions against <strong>20M NYC rideshare trip records</strong> — the modeling overturned four of the five stats the original spec was built on.</li>
                   <li>Built a SwiftUI App Clip (NFC lock-screen invocation → Apple Pay, zero install) and a React Native/Expo driver dashboard; wrote a Puppeteer audit harness covering 19 routes × 2 color schemes × 4 widths for WCAG contrast and tap-target compliance.</li>
                 </ul>
@@ -589,12 +589,12 @@
               <span class="exp-dates">2026</span>
             </div>
             <div class="exp-body">
-              <p class="exp-role">Ratchet Lab — open-endedness research on LLM agent populations</p>
+              <p class="exp-role">Ratchet Lab — LLM agent evaluation harness &amp; open-endedness research</p>
               <p class="exp-org"><a href="https://godfreystorm.github.io/lab/" target="_blank" rel="noopener">godfreystorm.github.io/lab</a></p>
               <p class="exp-blurb">Independent research on whether populations of LLM-written agents accumulate capability across generations.</p>
               <ul class="bullets">
                 <li>Built the full evolution harness (Node.js, SQLite archives, multi-provider LLM routing) and ran <strong>41 colonies</strong>, 10,810 generations, 30,287 API calls, and 356 A/B trials for ~$30 total compute.</li>
-                <li>Pre-registered runs with a Fisher significance gate after finding an earlier trial arm statistically empty; every run ships raw archives, spend ledgers, and full match replays.</li>
+                <li>Pre-registered every run behind a Fisher significance gate after an earlier trial arm proved statistically empty; every run ships raw archives, spend ledgers, and full match replays.</li>
                 <li>Published the ablation that <strong>disproved the thesis the project was built on</strong> — the no-library control beat the shared-library arm — plus two retractions of my own earlier claims.</li>
               </ul>
             </div>
